@@ -76,7 +76,7 @@
   </div>
 
   <div class="left-img">
-    <img src="{{ asset('dist/img/') }}" alt="Laundry Illustration">
+    <img src="{{ asset('images/mesin-cuci.png') }}" alt="Laundry Illustration">
   </div>
 
   <div class="login-box">
@@ -89,7 +89,7 @@
           <span>Sistem Informasi Laundry</span>
         </div>
 
-        <form action="{{ route('login') }}" method="post">
+        <form action="" method="post">
           @csrf
           <div class="input-group mb-3">
             <input type="email" name="email" class="form-control" placeholder="Email" required>
@@ -107,7 +107,7 @@
 
           <div class="row">
             <div class="col-12 text-right">
-              <a href="{{ route('register') }}">buat akun?</a>
+              <a href="">buat akun?</a>
             </div>
           </div>
 
