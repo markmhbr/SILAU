@@ -1,0 +1,37 @@
+/* sidebar custom */
+.main-sidebar {
+  background-color: #8BBAC4;
+}
+
+.main-sidebar .input-group {
+  border: 1px solid #000;   /* border hitam */
+  border-radius: 5px;       /* biar agak rounded */
+  overflow: hidden;         /* biar border rapih nempel sama tombol */
+}
+
+.main-sidebar .form-control-sidebar {
+  border: none !important;  /* hapus border default input */
+  box-shadow: none !important;
+}
+
+.main-sidebar .btn-sidebar {
+  border: none !important;  /* hapus border default button */
+}
+
+/* hasil search di sidebar menu */
+.sidebar-search-results .list-group-item {
+  color: #000 !important;      /* teks jadi hitam */
+  background-color: #f8f9fa;   /* biar beda dari sidebar */
+}
+
+/* pas hover */
+.sidebar-search-results .list-group-item:hover {
+  background-color: #e2e6ea;   /* abu-abu hover */
+  color: #000 !important;
+}
+
+.search-highlight {
+  color: #808080; 
+  font-weight: bold; /* Opsional: membuatnya tebal agar lebih terlihat */
+  background-color: transparent; /* Pastikan tidak ada warna latar belakang tambahan */
+}

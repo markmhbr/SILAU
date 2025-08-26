@@ -11,8 +11,14 @@
   <link rel="stylesheet" href="{{ asset ('plugins/fontawesome-free/css/all.min.css') }}">
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="{{ asset ('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
+  
+  <!-- DataTables -->
+  <link rel="stylesheet" href="{{ asset ('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+  <link rel="stylesheet" href="{{ asset ('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+  <link rel="stylesheet" href="{{ asset ('plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset ('dist/css/adminlte.min.css') }}">
+  <link rel="stylesheet" href="{{ asset ('css/custom.css') }}">
 </head>
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 <div class="wrapper">
@@ -161,7 +167,7 @@
   <!-- /.navbar -->
 
   <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <aside class="main-sidebar sidebar-ligth-primary elevation-4">
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
       <img src="{{ asset ('dist/img/logo_SILAU.png')}}" width="10%" height="10%" alt="">
@@ -190,7 +196,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item menu-open">
-            <a href="{{ url('/') }}" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
+            <a href="{{ route('dashboard') }}" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Dashboard
@@ -199,7 +205,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('pelanggan') }}" class="nav-link {{ request()->is('pelanggan*') ? 'active' : '' }}">
+            <a href="{{ route('pelanggan.index') }}" class="nav-link {{ request()->is('pelanggan*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-columns"></i>
               <p>
                 Pelanggan
@@ -283,5 +289,36 @@
 <script src="{{ asset ('dist/js/demo.js') }}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="{{ asset ('dist/js/pages/dashboard2.js') }}"></script>
+
+<!-- DataTables  & Plugins -->
+<script src="{{ asset ('plugins/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset ('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset ('plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset ('plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+<script src="{{ asset ('plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ asset ('plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+<script src="{{ asset ('plugins/jszip/jszip.min.js') }}"></script>
+<script src="{{ asset ('plugins/pdfmake/pdfmake.min.js') }}"></script>
+<script src="{{ asset ('plugins/pdfmake/vfs_fonts.js') }}"></script>
+<script src="{{ asset ('plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ asset ('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
+
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "buttons": ["copy", "excel", "pdf", "print"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
 </body>
 </html>

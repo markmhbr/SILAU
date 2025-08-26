@@ -2,17 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\Admin\PelangganController;
 
-Route::get('/', function () {
-    return view('content.dashboard');
-});
+Route::get('/', [LoginController::class, 'formLogin']);
 
-Route::get('/pelanggan', function () {
-    return view('content.Pelanggan');
-})->name('pelanggan');
+Route::group(['admin'], function () {
+
+    Route::get('/dashboard', function () {
+        return view('content.dashboard');
+    })->name('dashboard');
+    Route::resource('pelanggan', PelangganController::class);
+})->middleware('auth');
 
 
 
-Route::get('/login', [LoginController::class, 'formLogin']);
 
 
