@@ -1,6 +1,6 @@
 @extends('layouts.home')
 
-@section('title', 'Pelanggan')
+@section('title', 'Transaksi')
 
 @section('content')
 <style>
@@ -25,7 +25,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Pelanggan</h1>
+            <h1 class="m-0">Transaksi</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -45,11 +45,11 @@
         <div class="alert alert-custom" role="alert">
           <p>
             <i class="fas fa-edit"></i>
-            Untuk edit data pelanggan
+            Untuk edit data Transaksi
           </p>
           <p>
             <i class="fas fa-trash"></i>
-            untuk menghapus data pelanggan
+            untuk menghapus data Transaksi
           </p>
         </div>
 
@@ -57,8 +57,8 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header d-flex align-items-center">
-              <h3 class="card-title mb-0">Data Pelanggan</h3>
-              <a href="{{ route('pelanggan.create') }}" class="btn btn-primary btn-sm ml-auto">Tambah</a>
+              <h3 class="card-title mb-0">Data Transaksi</h3>
+              <a href="{{ route('layanan.create') }}" class="btn btn-primary btn-sm ml-auto">Tambah</a>
               </div>
 
               <!-- /.card-header -->
@@ -66,37 +66,39 @@
                 <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr>
-                    <th>id</th>
-                    <th>Nama</th>
-                    <th>Alamat</th>
-                    <th>No HP</th>
+                    <th>No</th>
+                    <th>Nama Layanan</th>
+                    <th>Jenis Layanan</th>
+                    <th>Harga Perkilo</th>
                     <th>Aksi</th>
                   </tr>
                   </thead>
                   <tbody>
-                    @foreach($pelanggans as $pelanggan)
+                    {{-- @foreach($layanans as $layanan) --}}
                     <tr>
-                      <td>{{ $loop->iteration }}</td>
-                      <td>{{ $pelanggan->nama}}</td>
-                      <td>{{ $pelanggan->alamat}}</td>
-                      <td>{{ $pelanggan->no_hp}}</td>
+                      {{-- <td>{{ $loop->iteration }}</td>
+                      <td>{{ $layanan->nama_layanan}}</td>
+                      <td>{{ $layanan->jenis_layanan}}</td>
+                      <td>Rp {{ number_format($layanan->harga_perkilo, 0, ',', '.') }}</td> --}}
+                      <td>p</td>
+                      <td>p</td>
+                      <td>p</td>
+                      <td>p</td>
                       <td>
-                        <a href="{{ route('pelanggan.edit', $pelanggan->id) }}" class="btn btn-primary">
+                        <a href="{{-- {{ route('layanan.edit', $layanan->id) }} --}}" class="btn btn-primary">
                             <i class="fas fa-edit"></i>
                         </a>
 
-                        <form action="{{ route('pelanggan.destroy', $pelanggan->id) }}" method="POST" style="display:inline-block;">
+                        <form action="{{-- {{ route('layanan.destroy', $layanan->id) }} --}}" method="POST" style="display:inline-block;">
                             @csrf
                             @method('DELETE')
                             <button type="button" class="btn btn-danger btn-delete">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
-
-
                       </td>
                     </tr>
-                    @endforeach
+                    {{-- @endforeach --}}
                   </tbody>
                 </table>
               </div>

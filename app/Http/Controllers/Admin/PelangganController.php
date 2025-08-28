@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Pelanggan;
 
 class PelangganController extends Controller
 {
@@ -12,7 +13,8 @@ class PelangganController extends Controller
      */
     public function index()
     {
-        return view ('content.pelanggan.index');
+        $pelanggans = Pelanggan::all();
+        return view ('content.pelanggan.index', compact('pelanggans'));
     }
 
     /**
@@ -20,7 +22,7 @@ class PelangganController extends Controller
      */
     public function create()
     {
-        //
+        return view ('content.pelanggan.form');   
     }
 
     /**
@@ -28,7 +30,23 @@ class PelangganController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $request->validate([
+                'nama' => 'required|string|max:255',
+                'alamat' => 'required|string',
+                'no_hp' => 'required|string|max:15',
+            ]);
+
+            Pelanggan::create([
+                'nama' => $request->nama,
+                'alamat' => $request->alamat,
+                'no_hp' => $request->no_hp,
+            ]);
+
+            return redirect()->route('pelanggan.index')->with('success', 'Data pelanggan berhasil ditambahkan.');
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
@@ -44,7 +62,8 @@ class PelangganController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $pelanggan = Pelanggan::findOrFail($id); // ambil data pelanggan berdasarkan ID
+        return view('content.pelanggan.form', compact('pelanggan'));
     }
 
     /**
@@ -52,7 +71,20 @@ class PelangganController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'no_hp' => 'required|string|max:15',
+            'alamat' => 'required|string',
+        ]);
+
+        $pelanggan = Pelanggan::findOrFail($id);
+        $pelanggan->update([
+            'nama' => $request->nama,
+            'no_hp' => $request->no_hp,
+            'alamat' => $request->alamat,
+        ]);
+
+        return redirect()->route('pelanggan.index')->with('success', 'Data pelanggan berhasil diupdate!');
     }
 
     /**
@@ -60,6 +92,9 @@ class PelangganController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $pelanggan = Pelanggan::findOrFail($id);
+        $pelanggan->delete();
+
+        return redirect()->route('pelanggan.index')->with('success', 'Data berhasil dihapus!');
     }
 }

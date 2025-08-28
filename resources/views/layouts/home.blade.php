@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SILAU</title>
+  <title>{{ env('APP_NAME') }} | @yield('title')</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -24,9 +24,9 @@
 <div class="wrapper">
 
   <!-- Preloader -->
-  <div class="preloader flex-column justify-content-center align-items-center">
-    <img class="animation__wobble" src="dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">
-  </div>
+  {{-- <div class="preloader flex-column justify-content-center align-items-center">
+    <img class="animation__wobble" src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTELogo" height="60" width="60">
+  </div> --}}
 
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand navbar-light ">
@@ -206,14 +206,14 @@
           </li>
           <li class="nav-item">
             <a href="{{ route('pelanggan.index') }}" class="nav-link {{ request()->is('pelanggan*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-columns"></i>
+              <i class="nav-icon fas fa-users"></i>
               <p>
                 Pelanggan
               </p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="pages/kanban.html" class="nav-link">
+            <a href="{{ route('transaksi.index') }}" class="nav-link {{ request()->is('transaksi*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-columns"></i>
               <p>
                 Transaksi
@@ -221,16 +221,16 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="pages/kanban.html" class="nav-link">
-              <i class="nav-icon fas fa-columns"></i>
+            <a href="{{ route('layanan.index') }}" class="nav-link {{ request()->is('layanan*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-user"></i>
               <p>
                 Layanan
               </p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="pages/kanban.html" class="nav-link">
-              <i class="nav-icon fas fa-columns"></i>
+            <a href="{{-- {{ route('laporan.index')}} --}}" class="nav-link {{ request()->is('laporan*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-book"></i>
               <p>
                 Laporan
               </p>
@@ -245,6 +245,7 @@
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
+
     @yield('content')
   </div>
   <!-- /.content-wrapper -->
@@ -286,39 +287,14 @@
 <script src="{{ asset ('plugins/chart.js/Chart.min.js') }}"></script>
 
 <!-- AdminLTE for demo purposes -->
-<script src="{{ asset ('dist/js/demo.js') }}"></script>
+{{-- <script src="{{ asset ('dist/js/demo.js') }}"></script> --}}
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="{{ asset ('dist/js/pages/dashboard2.js') }}"></script>
 
 <!-- DataTables  & Plugins -->
-<script src="{{ asset ('plugins/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset ('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset ('plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset ('plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-<script src="{{ asset ('plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ asset ('plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
-<script src="{{ asset ('plugins/jszip/jszip.min.js') }}"></script>
-<script src="{{ asset ('plugins/pdfmake/pdfmake.min.js') }}"></script>
-<script src="{{ asset ('plugins/pdfmake/vfs_fonts.js') }}"></script>
-<script src="{{ asset ('plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
-<script src="{{ asset ('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
+@include('partials.dataTables')
+<!-- SweetAlert2 -->
+@include('partials._sweetalert')
 
-<script>
-  $(function () {
-    $("#example1").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,
-      "buttons": ["copy", "excel", "pdf", "print"]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": false,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      "responsive": true,
-    });
-  });
-</script>
 </body>
 </html>
