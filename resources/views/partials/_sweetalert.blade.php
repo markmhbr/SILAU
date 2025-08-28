@@ -52,3 +52,30 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
+<!-- Konfirmasi Status -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteButtons = document.querySelectorAll('.btn-status');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const form = this.closest('form');
+
+            Swal.fire({
+                title: "Apakah sudah selesai?",
+                text: "Data ini akan dihapus permanen!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Ya, selesai!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+});
+</script>

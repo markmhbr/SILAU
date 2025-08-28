@@ -58,7 +58,7 @@
             <div class="card">
               <div class="card-header d-flex align-items-center">
               <h3 class="card-title mb-0">Data Transaksi</h3>
-              <a href="{{ route('layanan.create') }}" class="btn btn-primary btn-sm ml-auto">Tambah</a>
+              <a href="{{ route('transaksi.create') }}" class="btn btn-primary btn-sm ml-auto">Tambah</a>
               </div>
 
               <!-- /.card-header -->
@@ -67,38 +67,56 @@
                   <thead>
                   <tr>
                     <th>No</th>
-                    <th>Nama Layanan</th>
+                    <th>Pelanggan</th>
+                    <th>Layanan</th>
                     <th>Jenis Layanan</th>
-                    <th>Harga Perkilo</th>
+                    <th>Berat (kg)</th>
+                    <th>Harga</th>
+                    <th>Tanggal Masuk</th>
+                    <th>Tanggal Selesai</th>
+                    <th>Status</th>
                     <th>Aksi</th>
                   </tr>
                   </thead>
                   <tbody>
-                    {{-- @foreach($layanans as $layanan) --}}
+                    @foreach($transaksis as $transaksi)
                     <tr>
-                      {{-- <td>{{ $loop->iteration }}</td>
-                      <td>{{ $layanan->nama_layanan}}</td>
-                      <td>{{ $layanan->jenis_layanan}}</td>
-                      <td>Rp {{ number_format($layanan->harga_perkilo, 0, ',', '.') }}</td> --}}
-                      <td>p</td>
-                      <td>p</td>
-                      <td>p</td>
-                      <td>p</td>
+                      <td>{{ $loop->iteration }}</td>
+                      <td>{{ $transaksi->pelanggan->nama}}</td>
+                      <td>{{ $transaksi->layanan->nama_layanan}}</td>
+                      <td>{{ $transaksi->layanan->jenis_layanan}}</td>
+                      <td>{{ intval($transaksi->berat) == $transaksi->berat ? intval($transaksi->berat) : $transaksi->berat }} kg</td>
+                      <td>Rp {{ number_format($transaksi->harga_total, 0, ',', '.') }}</td>
+                      <td>{{ $transaksi->tanggal_masuk}}</td>
+                      <td>{{ $transaksi->tanggal_selesai}}</td>
                       <td>
-                        <a href="{{-- {{ route('layanan.edit', $layanan->id) }} --}}" class="btn btn-primary">
+                        <form action="{{-- {{ route('transaksi.status') }} --}}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('PUT')
+                            <button type="button" class="btn btn-info btn-status">
+                                {{ $transaksi->status}}
+                            </button>
+                        </form>
+                        </td>
+                      <td>
+                        <a href="{{ route('transaksi.edit', $transaksi->id) }}" class="btn btn-primary">
                             <i class="fas fa-edit"></i>
                         </a>
-
-                        <form action="{{-- {{ route('layanan.destroy', $layanan->id) }} --}}" method="POST" style="display:inline-block;">
-                            @csrf
+                        
+                        <form action="{{ route('transaksi.destroy', $transaksi->id) }}" method="POST" style="display:inline-block;">
+                          @csrf
                             @method('DELETE')
                             <button type="button" class="btn btn-danger btn-delete">
                                 <i class="fas fa-trash"></i>
-                            </button>
+                              </button>
                         </form>
+                            
+                        <a href="{{ route('transaksi.show', $transaksi->id) }}" class="btn btn-secondary">
+                            <i class="fas fa-file-invoice"></i>
+                        </a>
                       </td>
                     </tr>
-                    {{-- @endforeach --}}
+                    @endforeach
                   </tbody>
                 </table>
               </div>
