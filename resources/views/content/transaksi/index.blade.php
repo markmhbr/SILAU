@@ -69,11 +69,8 @@
                     <th>No</th>
                     <th>Pelanggan</th>
                     <th>Layanan</th>
-                    <th>Jenis Layanan</th>
                     <th>Berat (kg)</th>
                     <th>Harga</th>
-                    <th>Tanggal Masuk</th>
-                    <th>Tanggal Selesai</th>
                     <th>Status</th>
                     <th>Aksi</th>
                   </tr>
@@ -83,12 +80,9 @@
                     <tr>
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $transaksi->pelanggan->nama}}</td>
-                      <td>{{ $transaksi->layanan->nama_layanan}}</td>
-                      <td>{{ $transaksi->layanan->jenis_layanan}}</td>
+                      <td>{{ $transaksi->layanan->nama_layanan}} - {{ $transaksi->layanan->jenis_layanan}}</td>
                       <td>{{ intval($transaksi->berat) == $transaksi->berat ? intval($transaksi->berat) : $transaksi->berat }} kg</td>
                       <td>Rp {{ number_format($transaksi->harga_total, 0, ',', '.') }}</td>
-                      <td>{{ $transaksi->tanggal_masuk}}</td>
-                      <td>{{ $transaksi->tanggal_selesai}}</td>
                       <td>
                         <form action="{{-- {{ route('transaksi.status') }} --}}" method="POST" style="display:inline-block;">
                             @csrf

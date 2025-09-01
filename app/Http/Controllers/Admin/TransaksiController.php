@@ -28,7 +28,8 @@ class TransaksiController extends Controller
     $pelanggan = Pelanggan::all();
     // dd($pelanggan->toArray());
     $layanan = Layanan::all();
-    return view('content.transaksi.form', compact('pelanggan', 'layanan'));
+    $transaksi = null;
+    return view('content.transaksi.form', compact('pelanggan', 'layanan','transaksi'));
     }
 
     /**
@@ -47,7 +48,7 @@ class TransaksiController extends Controller
                 'catatan' => 'nullable|string',
             ]);
             // dd($request->all());
-
+            
             Transaksi::create([
                 'pelanggan_id' => $request->pelanggan_id,
                 'layanan_id' => $request->layanan_id,
@@ -89,10 +90,48 @@ class TransaksiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        try {    
+            $request->validate([
+                'pelanggan_id' => 'required|exists:pelanggan,id',
+                'layanan_id' => 'required|exists:layanan,id',
+                'berat' => 'required|numeric|min:0.1',
+                'harga_total' => 'required|numeric|min:0',
+                'metode_pembayaran' => 'nullable|string|in:tunai,transfer,e-wallet',
+                'bukti_bayar' => 'nullable|file|mimes:jpg,png,jpeg,pdf',
+                'catatan' => 'nullable|string',
+            ]);
+        
+            $transaksi = Transaksi::findOrFail($id);
+        
+            // kalau upload file baru, hapus file lama dulu biar ga numpuk
+            if ($request->hasFile('bukti_bayar')) {
+                if ($transaksi->bukti_bayar && \Storage::disk('public')->exists($transaksi->bukti_bayar)) {
+                    \Storage::disk('public')->delete($transaksi->bukti_bayar);
+                }
+                $buktiBaru = $request->file('bukti_bayar')->store('bukti_bayar', 'public');
+            } else {
+                $buktiBaru = $transaksi->bukti_bayar; // tetap pakai yang lama
+            }
+        
+            $transaksi->update([
+                'pelanggan_id' => $request->pelanggan_id,
+                'layanan_id' => $request->layanan_id,
+                'berat' => $request->berat,
+                'harga_total' => $request->harga_total,
+                'metode_pembayaran' => $request->metode_pembayaran,
+                'bukti_bayar' => $buktiBaru,
+                'catatan' => $request->catatan,
+                // status jangan diubah kalau memang cuma update data lain
+            ]);
+        
+            return redirect()->route('transaksi.index')->with('success', 'Data transaksi berhasil diperbarui.');
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.

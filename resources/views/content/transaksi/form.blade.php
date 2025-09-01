@@ -72,7 +72,7 @@
                                 {{-- Berat --}}
                                 <div class="form-group col-md-4">
                                   <label>Berat (kg)</label>
-                                  <input type="number" step="0.1" name="berat" class="form-control" value="{{ intval($transaksi->berat) == $transaksi->berat ? intval($transaksi->berat) : $transaksi->berat ?? ''  }}" required>
+                                  <input type="number" step="0.1" name="berat" class="form-control" value="{{ isset($transaksi) ? (intval($transaksi->berat) == $transaksi->berat ? intval($transaksi->berat) : $transaksi->berat) : '' }}" required>
                                 </div>
                                 
                                 {{-- Metode Pembayaran --}}
@@ -80,9 +80,9 @@
                                     <label>Metode Pembayaran</label>
                                     <select name="metode_pembayaran" class="form-control" id="metodePembayaran">
                                         <option value="">-- Pilih Metode --</option>
-                                        <option value="tunai" {{ $transaksi->metode_pembayaran == 'tunai' ? 'selected' : '' }}>Tunai</option>
-                                        <option value="transfer" {{ $transaksi->metode_pembayaran == 'transfer' ? 'selected' : '' }}>Transfer</option>
-                                        <option value="e-wallet" {{ $transaksi->metode_pembayaran == 'e-wallet' ? 'selected' : '' }}>E-wallet</option>
+                                        <option value="tunai" {{ optional($transaksi)->metode_pembayaran == 'tunai' ? 'selected' : '' }}>Tunai</option>
+                                        <option value="transfer" {{ optional($transaksi)->metode_pembayaran == 'transfer' ? 'selected' : '' }}>Transfer</option>
+                                        <option value="e-wallet" {{ optional($transaksi)->metode_pembayaran == 'e-wallet' ? 'selected' : '' }}>E-wallet</option>
                                     </select>
                                 </div>
 
@@ -90,7 +90,7 @@
                                 {{-- Harga --}}
                                 <div class="form-group col-md-4" id="hargaDiv">
                                   <label>Harga</label>
-                                  <input type="number" name="harga_total" id="hargaInput" class="form-control" value="{{ intval($transaksi->harga_total) == $transaksi->harga_total ? intval($transaksi->harga_total) : $transaksi->harga_total ?? ''  }}" readonly>
+                                  <input type="number" name="harga_total" id="hargaInput" class="form-control" value="{{ isset($transaksi) ? (intval($transaksi->harga_total) == $transaksi->harga_total ? intval($transaksi->harga_total) : $transaksi->harga_total) : '' }}" readonly>
                                 </div>
 
                                 {{-- Upload Bukti Bayar --}}
@@ -104,7 +104,7 @@
                                 <div class="form-group col-md-4">
                                     <label>Catatan</label>
                                     <div class="d-flex">
-                                        <textarea name="catatan" class="form-control">{{ $transaksi->catatan }}</textarea>
+                                        <textarea name="catatan" class="form-control">{{ optional($transaksi)->catatan }}</textarea>
                                         <button type="button" class="btn btn-info ml-3" id="previewButton" style="display:none;" data-toggle="modal" data-target="#buktiModal">
                                             Preview Bukti
                                         </button>

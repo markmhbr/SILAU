@@ -68,8 +68,8 @@
                   <tr>
                     <th>id</th>
                     <th>Nama</th>
-                    <th>Alamat</th>
                     <th>No HP</th>
+                    <th>Alamat</th>
                     <th>Aksi</th>
                   </tr>
                   </thead>
@@ -78,8 +78,8 @@
                     <tr>
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $pelanggan->nama}}</td>
-                      <td>{{ $pelanggan->alamat}}</td>
                       <td>{{ $pelanggan->no_hp}}</td>
+                      <td>{{ $pelanggan->alamat}}</td>
                       <td>
                         <a href="{{ route('pelanggan.edit', $pelanggan->id) }}" class="btn btn-primary">
                             <i class="fas fa-edit"></i>
