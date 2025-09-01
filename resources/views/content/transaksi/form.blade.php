@@ -94,10 +94,15 @@
                                 </div>
 
                                 {{-- Upload Bukti Bayar --}}
-                                <div class="form-group col-md-4" id="buktiBayarDiv" style="display:none;">
+                                <div class="form-group col-md-4" id="buktiBayarDiv"
+                                    @if(isset($transaksi) && ($transaksi->metode_pembayaran == 'transfer' || $transaksi->metode_pembayaran == 'e-wallet'))
+                                        style="display:block;"
+                                    @else
+                                        style="display:none;"
+                                    @endif>
+                                    >
                                     <label>Bukti Bayar</label>
                                     <input type="file" name="bukti_bayar" class="form-control" onchange="previewBukti(this)">
-                                    <img id="preview" src="#" alt="Preview Bukti" style="display:none; margin-top:10px; max-width:200px;">
                                 </div>
 
                                 {{-- Catatan --}}
@@ -105,7 +110,7 @@
                                     <label>Catatan</label>
                                     <div class="d-flex">
                                         <textarea name="catatan" class="form-control">{{ optional($transaksi)->catatan }}</textarea>
-                                        <button type="button" class="btn btn-info ml-3" id="previewButton" style="display:none;" data-toggle="modal" data-target="#buktiModal">
+                                        <button type="button" class="btn btn-info ml-3" id="previewButton" style="{{ isset($transaksi->bukti_bayar) ? 'display:inline-block;' : 'display:none;' }}" data-toggle="modal" data-target="#buktiModal">
                                             Preview Bukti
                                         </button>
                                     </div>
@@ -133,7 +138,11 @@
         </button>
       </div>
       <div class="modal-body text-center">
-        <img id="modalPreview" src="#" alt="Bukti Bayar" style="max-width:100%;">
+        @if(isset($transaksi->bukti_bayar))
+            <img id="modalPreview" src="{{ asset('storage/' . $transaksi->bukti_bayar) }}" alt="Bukti Bayar" style="max-width:100%;">
+        @else
+            <img id="modalPreview" src="#" alt="Bukti Bayar" style="max-width:100%;">
+        @endif
       </div>
     </div>
   </div>

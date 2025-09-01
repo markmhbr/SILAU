@@ -1,6 +1,7 @@
 /* sidebar custom */
 .main-sidebar {
   background-color: #8BBAC4;
+  /* color: #000; */
 }
 
 .main-sidebar .input-group {
@@ -34,4 +35,17 @@
   color: #808080; 
   font-weight: bold; /* Opsional: membuatnya tebal agar lebih terlihat */
   background-color: transparent; /* Pastikan tidak ada warna latar belakang tambahan */
+}
+
+.nav-sidebar .nav-item .nav-link:hover {
+    color: #153a42; /* Warna teks saat aktif */
+}
+
+.nav-sidebar .nav-item .nav-link.active {
+    background-color: #0c4f5e; /* Warna latar belakang saat aktif */
+    color: #ffffff !important; /* Warna teks saat aktif */
+}
+.nav-sidebar.menu-open .nav-item .nav-link.active {
+    background-color: #0c4f5e; /* Warna latar belakang saat aktif */
+    color: #ffffff !important; /* Warna teks saat aktif */
 }

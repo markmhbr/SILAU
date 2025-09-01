@@ -84,6 +84,7 @@ class TransaksiController extends Controller
         $transaksi = Transaksi::findOrFail($id); // ambil data pelanggan berdasarkan ID
         $pelanggan = Pelanggan::all();
         $layanan = Layanan::all();
+        
         return view('content.transaksi.form', compact('transaksi', 'pelanggan', 'layanan'));
     }
 
@@ -102,9 +103,9 @@ class TransaksiController extends Controller
                 'bukti_bayar' => 'nullable|file|mimes:jpg,png,jpeg,pdf',
                 'catatan' => 'nullable|string',
             ]);
-        
+
             $transaksi = Transaksi::findOrFail($id);
-        
+
             // kalau upload file baru, hapus file lama dulu biar ga numpuk
             if ($request->hasFile('bukti_bayar')) {
                 if ($transaksi->bukti_bayar && \Storage::disk('public')->exists($transaksi->bukti_bayar)) {
@@ -114,7 +115,7 @@ class TransaksiController extends Controller
             } else {
                 $buktiBaru = $transaksi->bukti_bayar; // tetap pakai yang lama
             }
-        
+
             $transaksi->update([
                 'pelanggan_id' => $request->pelanggan_id,
                 'layanan_id' => $request->layanan_id,
@@ -125,7 +126,7 @@ class TransaksiController extends Controller
                 'catatan' => $request->catatan,
                 // status jangan diubah kalau memang cuma update data lain
             ]);
-        
+
             return redirect()->route('transaksi.index')->with('success', 'Data transaksi berhasil diperbarui.');
         } catch (\Throwable $th) {
             throw $th;

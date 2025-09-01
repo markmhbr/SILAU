@@ -173,7 +173,7 @@
   <aside class="main-sidebar sidebar-ligth-primary elevation-4">
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
-      <img src="{{ asset ('dist/img/logo_SILAU.png')}}" width="10%" height="10%" alt="">
+      <img src="{{ asset('img/Logo_SILAU.png')}}" class="img-logo" alt="">
       {{-- <img src="dist/img/logo_SILAU.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> --}}
     </a>
 
@@ -199,7 +199,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item menu-open">
-            <a href="{{ route('dashboard') }}" class="nav-link {{ request()->is('/') ? 'active' : '' }}">
+            <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ?'active' : '' }}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Dashboard
@@ -216,18 +216,18 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('transaksi.index') }}" class="nav-link {{ request()->is('transaksi*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-columns"></i>
-              <p>
-                Transaksi
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
             <a href="{{ route('layanan.index') }}" class="nav-link {{ request()->is('layanan*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-user"></i>
               <p>
                 Layanan
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('transaksi.index') }}" class="nav-link {{ request()->is('transaksi*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-columns"></i>
+              <p>
+                Transaksi
               </p>
             </a>
           </li>
