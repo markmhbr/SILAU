@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Pelanggan;
 use App\Models\Layanan;
 use App\Models\Transaksi;
+use Illuminate\Support\Facades\Storage;
 
 class TransaksiController extends Controller
 {
@@ -16,7 +17,7 @@ class TransaksiController extends Controller
     public function index()
     {
         $transaksis = Transaksi::with(['pelanggan', 'layanan'])->get();
-        return view('content.transaksi.index', compact('transaksis'));
+        return view('content.admin.transaksi.index', compact('transaksis'));
     }
 
     /**
@@ -29,7 +30,7 @@ class TransaksiController extends Controller
     // dd($pelanggan->toArray());
     $layanan = Layanan::all();
     $transaksi = null;
-    return view('content.transaksi.form', compact('pelanggan', 'layanan','transaksi'));
+    return view('content.admin.transaksi.form', compact('pelanggan', 'layanan','transaksi'));
     }
 
     /**
@@ -85,7 +86,7 @@ class TransaksiController extends Controller
         $pelanggan = Pelanggan::all();
         $layanan = Layanan::all();
         
-        return view('content.transaksi.form', compact('transaksi', 'pelanggan', 'layanan'));
+        return view('content.admin.transaksi.form', compact('transaksi', 'pelanggan', 'layanan'));
     }
 
     /**

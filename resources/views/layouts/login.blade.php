@@ -16,11 +16,6 @@
 	<section class="ftco-section">
 		<div class="container">
 			<div class="row justify-content-center">
-				<div class="col-md-6 text-center mb-5">
-					<h2 class="heading-section">Login</h2>
-				</div>
-			</div>
-			<div class="row justify-content-center">
 				<div class="col-md-12 col-lg-10">
 					<div class="wrap d-md-flex">
 						<div class="img" style="background-image: url({{ asset('img/Logo_SILAU.png')}});">
@@ -28,23 +23,23 @@
 					<div class="login-wrap p-4 p-md-5">
 			      	    <div class="d-flex">
 			      		    <div class="w-100">
-			      			    <h3 class="mb-4">Sign In</h3>
+			      			    <h3 class="mb-4">Login</h3>
 			      		    </div>
 							<div class="w-100">
 								<p class="social-media d-flex justify-content-end">
-									<a href="#" class="social-icon d-flex align-items-center justify-content-center"><span class="fa fa-plus"></span></a>
+									<a href="{{ route('register')}}" class="social-icon d-flex align-items-center justify-content-center"><span class="fa fa-plus"></span></a>
 								</p>
 							</div>
 			      	    </div>
-				        <form action="{{ route('login') }}" method="POST" class="signin-form">
+				        <form action="{{ route('login') }}" method="POST" class="signin-form"  autocomplete="off">
                             @csrf
 			              	<div class="form-group mb-3">
 			              		<label class="label" for="email">Email</label>
-			              		<input type="email" name="email" class="form-control" placeholder="Masukkan Email" required>
+			              		<input type="email" name="email" class="form-control" placeholder="Masukkan Email" required autocomplete="off">
 			              	</div>
 		                    <div class="form-group mb-3">
 		                    	<label class="label" for="password">Password</label>
-		                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+		                        <input type="password" name="password" class="form-control" placeholder="Password" required autocomplete="new-password">
 		                    </div>
 		                    <div class="form-group">
 		                    	<button type="submit" class="form-control btn btn-primary rounded submit px-3">Sign In</button>
@@ -72,6 +67,9 @@
   <script src="{{ asset('js/popper.js') }}"></script>
   <script src="{{ asset('js/bootstrap.min.js') }}"></script>
   <script src="{{ asset('js/main.js') }}"></script>
+  
+<!-- SweetAlert2 -->
+@include('partials._sweetalert')
 
 	</body>
 </html>

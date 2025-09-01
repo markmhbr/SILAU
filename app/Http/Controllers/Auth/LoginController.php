@@ -28,7 +28,9 @@ class LoginController extends Controller
             // Redirect berdasarkan role
             if (Auth::user()->role === 'admin') {
                 return redirect()->intended('/admin/dashboard')->with('success', 'Selamat Anda Berhasil Login');
-            } else {
+            } else if (Auth::user()->role === 'pelanggan') {
+                return redirect()->intended('layanan')->with('success', 'Selamat Anda Berhasil Login');
+            } else{
                 return redirect()->intended('/login')->with('error', 'Username atau Password anda salah');
             }
         }
@@ -43,6 +45,6 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/login');
+        return redirect('/login')->with('success', 'Selamat Anda Berhasil Logout');
     }
 }

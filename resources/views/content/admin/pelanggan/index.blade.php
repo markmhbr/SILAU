@@ -77,7 +77,7 @@
                     @foreach($pelanggans as $pelanggan)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td>{{ $pelanggan->nama}}</td>
+                      <td>{{ $pelanggan->user->name}}</td>
                       <td>{{ $pelanggan->no_hp}}</td>
                       <td>{{ $pelanggan->alamat}}</td>
                       <td>

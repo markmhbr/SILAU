@@ -64,12 +64,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
             Swal.fire({
                 title: "Apakah sudah selesai?",
-                text: "Data ini akan dihapus permanen!",
+                text: "Transaksi ini akan di selesaikan!",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#d33",
                 cancelButtonColor: "#3085d6",
                 confirmButtonText: "Ya, selesai!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+});
+</script>
+
+<!-- Konfirmasi LogOut -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteButtons = document.querySelectorAll('.logout');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const form = this.closest('form');
+
+            Swal.fire({
+                title: "Apakah kamu yakin ingin keluar?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Ya, Logout!"
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();

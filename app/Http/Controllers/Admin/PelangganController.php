@@ -14,7 +14,7 @@ class PelangganController extends Controller
     public function index()
     {
         $pelanggans = Pelanggan::all();
-        return view ('content.pelanggan.index', compact('pelanggans'));
+        return view ('content.admin.pelanggan.index', compact('pelanggans'));
     }
 
     /**
@@ -22,7 +22,7 @@ class PelangganController extends Controller
      */
     public function create()
     {
-        return view ('content.pelanggan.form');   
+        return view ('content.admin.pelanggan.form');   
     }
 
     /**
@@ -63,7 +63,7 @@ class PelangganController extends Controller
     public function edit(string $id)
     {
         $pelanggan = Pelanggan::findOrFail($id); // ambil data pelanggan berdasarkan ID
-        return view('content.pelanggan.form', compact('pelanggan'));
+        return view('content.admin.pelanggan.form', compact('pelanggan'));
     }
 
     /**

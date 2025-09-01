@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('pelanggan', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->text('alamat');
-            $table->string('no_hp');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->text('alamat')->default('-');
+            $table->string('no_hp',15)->default('-');
             $table->timestamps();
         });
     }

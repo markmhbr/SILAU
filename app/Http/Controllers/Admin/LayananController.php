@@ -14,7 +14,7 @@ class LayananController extends Controller
     public function index()
     {
         $layanans = Layanan::all();
-        return view('content.layanan.index', compact('layanans'));
+        return view('content.admin.layanan.index', compact('layanans'));
     }
 
     /**
@@ -22,7 +22,7 @@ class LayananController extends Controller
      */
     public function create()
     {
-        return view('content.layanan.form');
+        return view('content.admin.layanan.form');
     }
 
     /**
@@ -63,7 +63,7 @@ class LayananController extends Controller
     public function edit(string $id)
     {
         $layanan = Layanan::findOrFail($id);
-        return view('content.layanan.form', compact('layanan'));
+        return view('content.admin.layanan.form', compact('layanan'));
     }
 
     /**
