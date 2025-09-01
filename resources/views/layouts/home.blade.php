@@ -39,10 +39,7 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="index3.html" class="nav-link">Home</a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Contact</a>
+        <a href="{{ route('dashboard')}}" class="nav-link">Home</a>
       </li>
     </ul>
 
@@ -173,7 +170,7 @@
   <aside class="main-sidebar sidebar-ligth-primary elevation-4">
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
-      <img src="{{ asset('img/Logo_SILAU.png')}}" class="img-logo" alt="">
+      <img src="{{ asset('img/Logo_SILAU.png')}}" width="20%" height="10%" alt="">
       {{-- <img src="dist/img/logo_SILAU.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> --}}
     </a>
 

@@ -27,9 +27,9 @@ class LoginController extends Controller
 
             // Redirect berdasarkan role
             if (Auth::user()->role === 'admin') {
-                return redirect()->intended('/admin/dashboard');
+                return redirect()->intended('/admin/dashboard')->with('success', 'Selamat Anda Berhasil Login');
             } else {
-                return redirect()->intended('/login');
+                return redirect()->intended('/login')->with('error', 'Username atau Password anda salah');
             }
         }
 
