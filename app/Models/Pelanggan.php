@@ -10,6 +10,7 @@ class Pelanggan extends Model
 
     protected $fillable = [
         'user_id', 
+        'foto', 
         'alamat', 
         'no_hp'
     ];

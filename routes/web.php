@@ -9,6 +9,10 @@ use App\Http\Controllers\Pelanggan\ProfilPelangganController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
+Route::get('/', function () {
+    return view('layouts.login');
+});
+
 Route::middleware(['auth','role:admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return view('content.admin.dashboard');

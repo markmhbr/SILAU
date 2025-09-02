@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('pelanggan', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('foto');
             $table->text('alamat')->default('-');
             $table->string('no_hp',15)->default('-');
             $table->timestamps();

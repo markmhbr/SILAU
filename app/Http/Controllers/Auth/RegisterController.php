@@ -37,10 +37,13 @@ class RegisterController extends Controller
                 'role' => 'pelanggan', // Default role
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]);
+            ], [
+    'email.unique' => 'Email sudah terdaftar, silahkan gunakan email lain!',
+]);
 
             Pelanggan::create([
             'user_id' => $user->id,
+            'foto'    => '-',
             'no_hp'   => '-',
             'alamat'  => '-',
             ]);
