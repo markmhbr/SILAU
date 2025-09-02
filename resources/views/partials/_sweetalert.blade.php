@@ -56,29 +56,41 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- Konfirmasi Status -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const deleteButtons = document.querySelectorAll('.btn-status');
+    const statusButtons = document.querySelectorAll('.btn-status');
 
-    deleteButtons.forEach(button => {
+    statusButtons.forEach(button => {
         button.addEventListener('click', function () {
             const form = this.closest('form');
 
             Swal.fire({
-                title: "Apakah sudah selesai?",
-                text: "Transaksi ini akan di selesaikan!",
+                title: "Ubah status transaksi?",
+                text: "Pilih tindakan yang ingin dilakukan!",
                 icon: "warning",
+                showDenyButton: true,
                 showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Ya, selesai!"
+                confirmButtonText: "Ya, selesai!",
+                denyButtonText: "Dibatalkan",
+                cancelButtonText: "Batal",
+                confirmButtonColor: "#28a745", // hijau untuk selesai
+                denyButtonColor: "#dc3545", // merah untuk dibatalkan
+                cancelButtonColor: "#6c757d" // abu-abu untuk batal
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // tombol "Selesai"
+                    form.action = form.action + '/selesai'; // optional, atau handle di backend
+                    form.submit();
+                } else if (result.isDenied) {
+                    // tombol "Dibatalkan"
+                    form.action = form.action + '/dibatalkan'; // optional, atau handle di backend
                     form.submit();
                 }
+                // cancel tidak perlu action
             });
         });
     });
 });
 </script>
+
 
 <!-- Konfirmasi LogOut -->
 <script>

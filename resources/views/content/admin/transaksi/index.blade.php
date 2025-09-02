@@ -58,7 +58,7 @@
             <div class="card">
               <div class="card-header d-flex align-items-center">
               <h3 class="card-title mb-0">Data Transaksi</h3>
-              <a href="{{ route('transaksi.create') }}" class="btn btn-primary btn-sm ml-auto">Tambah</a>
+              {{-- <a href="{{ route('admin.transaksi.create') }}" class="btn btn-primary btn-sm ml-auto">Tambah</a> --}}
               </div>
 
               <!-- /.card-header -->
@@ -79,25 +79,37 @@
                     @foreach($transaksis as $transaksi)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td>{{ $transaksi->pelanggan->nama}}</td>
+                      <td>{{ $transaksi->pelanggan?->user?->name ?? 'Tidak ada' }}</td>
                       <td>{{ $transaksi->layanan->nama_layanan}} - {{ $transaksi->layanan->jenis_layanan}}</td>
                       <td>{{ intval($transaksi->berat) == $transaksi->berat ? intval($transaksi->berat) : $transaksi->berat }} kg</td>
                       <td>Rp {{ number_format($transaksi->harga_total, 0, ',', '.') }}</td>
                       <td>
-                        <form action="{{-- {{ route('transaksi.status') }} --}}" method="POST" style="display:inline-block;">
+                        <form action=" {{ route('admin.transaksi.status', $transaksi->id) }} " method="POST" style="display:inline-block;">
                             @csrf
                             @method('PUT')
-                            <button type="button" class="btn btn-info btn-status">
-                                {{ $transaksi->status}}
-                            </button>
+                            @if($transaksi->status === 'proses')
+                                <button type="button" class="btn btn-info btn-status">
+                                    {{ $transaksi->status }}
+                                </button>
+                            @elseif ($transaksi->status === 'selesai')
+                                <button type="button" class="btn btn-success">
+                                    {{ $transaksi->status }}
+                                </button>
+                            @else
+                                <button type="button" class="btn btn-danger">
+                                    {{ $transaksi->status }}
+                                </button>
+                            @endif
+
+
                         </form>
-                        </td>
+                      </td>
                       <td>
-                        <a href="{{ route('transaksi.edit', $transaksi->id) }}" class="btn btn-primary">
+                        <a href="{{ route('admin.transaksi.edit', $transaksi->id) }}" class="btn btn-primary">
                             <i class="fas fa-edit"></i>
                         </a>
                         
-                        <form action="{{ route('transaksi.destroy', $transaksi->id) }}" method="POST" style="display:inline-block;">
+                        <form action="{{ route('admin.transaksi.destroy', $transaksi->id) }}" method="POST" style="display:inline-block;">
                           @csrf
                             @method('DELETE')
                             <button type="button" class="btn btn-danger btn-delete">
@@ -105,7 +117,7 @@
                               </button>
                         </form>
                             
-                        <a href="{{ route('transaksi.show', $transaksi->id) }}" class="btn btn-secondary">
+                        <a href="{{ route('admin.transaksi.show', $transaksi->id) }}" class="btn btn-secondary">
                             <i class="fas fa-file-invoice"></i>
                         </a>
                       </td>

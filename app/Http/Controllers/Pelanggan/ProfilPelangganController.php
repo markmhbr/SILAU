@@ -1,22 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Pelanggan;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class LoginController extends Controller
+class ProfilPelangganController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-
-    public function formLogin()
-    {
-        return view('layouts.login');
-    }
-
     public function index()
     {
+        //
     }
 
     /**

@@ -43,7 +43,7 @@ class LayananController extends Controller
                 'harga_perkilo' => $request->harga_perkilo,
             ]);
 
-            return redirect()->route('layanan.index')->with('success', 'Layanan berhasil ditambahkan.');
+            return redirect()->route('admin.layanan.index')->with('success', 'Layanan berhasil ditambahkan.');
         } catch (\Throwable $th) {
             //throw $th;
         }
@@ -84,7 +84,7 @@ class LayananController extends Controller
             'harga_perkilo' => $request->harga_perkilo,
         ]);
 
-        return redirect()->route('layanan.index')->with('success', 'Layanan berhasil diperbarui.');
+        return redirect()->route('admin.layanan.index')->with('success', 'Layanan berhasil diperbarui.');
     }
 
     /**
@@ -95,6 +95,6 @@ class LayananController extends Controller
         $layanan = Layanan::findOrFail($id);
         $layanan->delete();
 
-        return redirect()->route('layanan.index')->with('success', 'Layanan berhasil dihapus.');
+        return redirect()->route('admin.layanan.index')->with('success', 'Layanan berhasil dihapus.');
     }
 }

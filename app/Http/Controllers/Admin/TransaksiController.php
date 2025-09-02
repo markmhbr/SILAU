@@ -16,7 +16,11 @@ class TransaksiController extends Controller
      */
     public function index()
     {
-        $transaksis = Transaksi::with(['pelanggan', 'layanan'])->get();
+        $transaksis = Transaksi::with(['pelanggan.user', 'layanan'])->get();
+//         foreach ($transaksis as $t) {
+//     dd($t->pelanggan?->user?->toArray());
+// }
+
         return view('content.admin.transaksi.index', compact('transaksis'));
     }
 
@@ -62,7 +66,7 @@ class TransaksiController extends Controller
                 'status' => 'proses', // default status
             ]);
 
-            return redirect()->route('transaksi.index')->with('success', 'Data transaksi berhasil ditambahkan.');
+            return redirect()->route('layanan.index')->with('success', 'Data transaksi berhasil ditambahkan.');
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -83,7 +87,7 @@ class TransaksiController extends Controller
     public function edit(string $id)
     {
         $transaksi = Transaksi::findOrFail($id); // ambil data pelanggan berdasarkan ID
-        $pelanggan = Pelanggan::all();
+        $pelanggan = $transaksi->pelanggan;  
         $layanan = Layanan::all();
         
         return view('content.admin.transaksi.form', compact('transaksi', 'pelanggan', 'layanan'));
@@ -128,7 +132,7 @@ class TransaksiController extends Controller
                 // status jangan diubah kalau memang cuma update data lain
             ]);
 
-            return redirect()->route('transaksi.index')->with('success', 'Data transaksi berhasil diperbarui.');
+            return redirect()->route('admin.transaksi.index')->with('success', 'Data transaksi berhasil diperbarui.');
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -146,4 +150,23 @@ class TransaksiController extends Controller
 
         return redirect()->route('transaksi.index')->with('success', 'Data berhasil dihapus!');
     }
+
+    public function updateStatus($id, $status = 'selesai')
+    {
+        $transaksi = Transaksi::findOrFail($id);
+    
+        if ($status === 'selesai') {
+            $transaksi->status = 'selesai';
+            $transaksi->tanggal_selesai = now();
+        } elseif ($status === 'dibatalkan') {
+            $transaksi->status = 'dibatalkan';
+            $transaksi->tanggal_selesai = null;
+        }
+    
+        $transaksi->save();
+    
+        return redirect()->back()->with('success', 'Status transaksi berhasil diupdate!');
+    }
+    
+
 }

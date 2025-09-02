@@ -30,12 +30,12 @@
                   <div class="card">
                     <div class="card-header d-flex align-items-center">
                     <h3 class="card-title mb-0">Tambah Transaksi</h3>
-                    <a href="{{ route('transaksi.index') }}" class="btn btn-primary btn-sm ml-auto">Kembali</a>
+                    <a href="{{ route('pelanggan.layanan.index') }}" class="btn btn-primary btn-sm ml-auto">Kembali</a>
                     </div>
                 
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <form action="{{ isset($transaksi) ? route('transaksi.update', $transaksi->id) : route('transaksi.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ isset($transaksi) ? route('pelanggan.layanan.update', $transaksi->id) : route('pelanggan.layanan.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
                             @if(isset($transaksi))
@@ -47,12 +47,8 @@
                                 {{-- Pilih Pelanggan --}}
                                 <div class="form-group col-md-4">
                                     <label for="pelanggan_id">Pelanggan</label>
-                                    <select name="pelanggan_id" class="select2bs4" data-dropdown-css-class="select2-primary" style="width: 100%;">
-                                      <option disabled selected>- Pilih Pelanggan -</option>
-                                      @foreach($pelanggan as $p)
-                                          <option value="{{ $p->id }}" {{ isset($transaksi) && $transaksi->pelanggan_id == $p->id ? 'selected' : '' }}>{{ $p->nama }}</option>
-                                      @endforeach
-                                    </select>
+                                    <input type="text" class="form-control" value="{{ Auth::user()->name }}" readonly>
+                                    <input type="hidden" name="pelanggan_id" value="{{ $pelanggan->id }}">
                                 </div>
 
                                 {{-- Pilih Layanan --}}

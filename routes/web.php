@@ -12,12 +12,14 @@ Route::middleware(['auth','role:admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return view('content.admin.dashboard');
     })->name('dashboard');
-    Route::resource('admin/pelanggan', PelangganController::class);
-    Route::resource('admin/layanan', LayananController::class);
-    Route::resource('admin/transaksi', TransaksiController::class);
+    Route::resource('admin/pelanggan', PelangganController::class)->names('admin.pelanggan');
+    Route::resource('admin/layanan', LayananController::class)->names('admin.layanan');
+    Route::resource('admin/transaksi', TransaksiController::class)->names('admin.transaksi');
+    Route::put('/admin/transaksi/{id}/status/{status?}', [TransaksiController::class, 'updateStatus'])->name('admin.transaksi.status');
 });
 Route::middleware(['auth','role:pelanggan'])->group(function () {
-    Route::resource('layanan', LayananPelangganController::class);
+    Route::resource('pelanggan/profil', ProfilPelangganController::class)->names('pelanggan.profil');
+    Route::resource('pelanggan/layanan', LayananPelangganController::class)->names('pelanggan.layanan');
 });
 
 Route::controller(LoginController::class)->group(function () {

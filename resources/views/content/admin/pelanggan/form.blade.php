@@ -30,12 +30,12 @@
                   <div class="card">
                     <div class="card-header d-flex align-items-center">
                     <h3 class="card-title mb-0">Tambah Pelanggan</h3>
-                    <a href="{{ route('pelanggan.index') }}" class="btn btn-primary btn-sm ml-auto">Kembali</a>
+                    <a href="{{ route('admin.pelanggan.index') }}" class="btn btn-primary btn-sm ml-auto">Kembali</a>
                     </div>
                 
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <form action="{{ isset($pelanggan) ? route('pelanggan.update', $pelanggan->id) : route('pelanggan.store') }}" method="POST">
+                        <form action="{{ isset($pelanggan) ? route('admin.pelanggan.update', $pelanggan->id) : route('admin.pelanggan.store') }}" method="POST">
                             @csrf
 
                             @if(isset($pelanggan))
