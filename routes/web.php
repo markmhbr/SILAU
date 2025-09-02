@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\LayananController;
 use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Pelanggan\LayananPelangganController;
+use App\Http\Controllers\Pelanggan\ProfilPelangganController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 

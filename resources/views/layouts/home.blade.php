@@ -108,7 +108,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('admin.pelanggan.index') }}" class="nav-link {{ request()->is('pelanggan*') ? 'active' : '' }}">
+            <a href="{{ route('admin.pelanggan.index') }}" class="nav-link {{ request()->is('admin/pelanggan*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-users"></i>
               <p>
                 Pelanggan
@@ -116,7 +116,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('admin.layanan.index') }}" class="nav-link {{ request()->is('layanan*') ? 'active' : '' }}">
+            <a href="{{ route('admin.layanan.index') }}" class="nav-link {{ request()->is('admin/layanan*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-user"></i>
               <p>
                 Layanan
@@ -124,7 +124,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('admin.transaksi.index') }}" class="nav-link {{ request()->is('transaksi*') ? 'active' : '' }}">
+            <a href="{{ route('admin.transaksi.index') }}" class="nav-link {{ request()->is('admin/transaksi*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-columns"></i>
               <p>
                 Transaksi
@@ -132,7 +132,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{-- {{ route('laporan.index')}} --}}" class="nav-link {{ request()->is('laporan*') ? 'active' : '' }}">
+            <a href="{{-- {{ route('laporan.index')}} --}}" class="nav-link {{ request()->is('admin/laporan*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-book"></i>
               <p>
                 Laporan
@@ -141,7 +141,7 @@
           </li>
           @else
           <li class="nav-item">
-            <a href="{{ route('pelanggan.profil.index') }}" class="nav-link {{ request()->is('pelanggan-profil*') ? 'active' : '' }}">
+            <a href="{{ route('pelanggan.profil.index') }}" class="nav-link {{ request()->routeIs('pelanggan/profil') ?'active' : '' }}}">
               <i class="nav-icon fas fa-address-card"></i>
               <p>
                 Profil
@@ -149,7 +149,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('pelanggan.layanan.index') }}" class="nav-link {{ request()->is('pelanggan-layanan*') ? 'active' : '' }}">
+            <a href="{{ route('pelanggan.layanan.index') }}" class="nav-link {{ request()->is('pelanggan/layanan*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-users"></i>
               <p>
                 Layanan

@@ -29,7 +29,7 @@ class LoginController extends Controller
             if (Auth::user()->role === 'admin') {
                 return redirect()->intended('/admin/dashboard')->with('success', 'Selamat Anda Berhasil Login');
             } else if (Auth::user()->role === 'pelanggan') {
-                return redirect()->intended('pelanggan/layanan')->with('success', 'Selamat Anda Berhasil Login');
+                return redirect()->intended('pelanggan/profile')->with('success', 'Selamat Anda Berhasil Login');
             } else{
                 return redirect()->intended('/login')->with('error', 'Username atau Password anda salah');
             }
