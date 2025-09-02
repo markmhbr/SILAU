@@ -32,18 +32,16 @@ class PelangganController extends Controller
     {
         try {
             $request->validate([
-                'nama' => 'required|string|max:255',
                 'alamat' => 'required|string',
                 'no_hp' => 'required|string|max:15',
             ]);
 
             Pelanggan::create([
-                'nama' => $request->nama,
                 'alamat' => $request->alamat,
                 'no_hp' => $request->no_hp,
             ]);
 
-            return redirect()->route('pelanggan.index')->with('success', 'Data pelanggan berhasil ditambahkan.');
+            return redirect()->route('admin.pelanggan.index')->with('success', 'Data pelanggan berhasil ditambahkan.');
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -72,19 +70,17 @@ class PelangganController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
             'no_hp' => 'required|string|max:15',
             'alamat' => 'required|string',
         ]);
 
         $pelanggan = Pelanggan::findOrFail($id);
         $pelanggan->update([
-            'nama' => $request->nama,
             'no_hp' => $request->no_hp,
             'alamat' => $request->alamat,
         ]);
 
-        return redirect()->route('pelanggan.index')->with('success', 'Data pelanggan berhasil diupdate!');
+        return redirect()->route('admin.pelanggan.index')->with('success', 'Data pelanggan berhasil diupdate!');
     }
 
     /**

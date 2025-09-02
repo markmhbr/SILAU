@@ -45,7 +45,7 @@
                             <div class="form row">
                                 <div class="form-group col-md-4">
                                     <label for="nama">Nama</label>
-                                    <input type="text" class="form-control" id="nama" name="nama" placeholder="Masukkan Nama" value="{{ $pelanggan->nama ?? '' }}" required>
+                                    <input type="text" class="form-control" id="nama" name="nama" placeholder="Masukkan Nama" value="{{ $transaksi->pelanggan->user->name ?? $pelanggan->user->name }}" readonly>
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="no_hp">No HP</label>
