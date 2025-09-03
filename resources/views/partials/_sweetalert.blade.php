@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonText: "Ya, selesai!",
                 denyButtonText: "Dibatalkan",
                 cancelButtonText: "Batal",
-                confirmButtonColor: "#28a745", // hijau untuk selesai
+                confirmButtonColor: "#28a745", 
                 denyButtonColor: "#dc3545", // merah untuk dibatalkan
                 cancelButtonColor: "#6c757d" // abu-abu untuk batal
             }).then((result) => {

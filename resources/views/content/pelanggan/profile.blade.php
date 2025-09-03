@@ -49,7 +49,7 @@
                                                 <input type="text" class="form-control" id="nama" placeholder="Masukkan Nama Lengkap">
                                             </div>
                                             <div class="mb-3">
-                                                <label for="nomor_hp" class="form-label">Nomor HP</label>
+                                                <label for="nomor_hp" class="form-label">Nomor Telepon</label>
                                                 <input type="tel" class="form-control" id="nomor_hp" placeholder="Masukkan Nomor HP">
                                             </div>
                                             <div class="mb-3">

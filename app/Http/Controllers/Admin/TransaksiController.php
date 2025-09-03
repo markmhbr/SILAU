@@ -110,8 +110,7 @@ class TransaksiController extends Controller
             ]);
 
             $transaksi = Transaksi::findOrFail($id);
-
-            // kalau upload file baru, hapus file lama dulu biar ga numpuk
+            
             if ($request->hasFile('bukti_bayar')) {
                 if ($transaksi->bukti_bayar && \Storage::disk('public')->exists($transaksi->bukti_bayar)) {
                     \Storage::disk('public')->delete($transaksi->bukti_bayar);
