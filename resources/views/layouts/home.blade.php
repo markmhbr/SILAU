@@ -18,12 +18,11 @@
   <link rel="stylesheet" href="{{ asset ('plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset ('dist/css/adminlte.min.css') }}">
-  <link rel="stylesheet" href="{{ asset ('css/custom.css') }}">
   <!-- Select2 -->
   <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
   <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 </head>
-<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<body class="hold-transition light-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 <div class="wrapper">
 
   <!-- Preloader -->
@@ -39,7 +38,7 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ route('dashboard')}}" class="nav-link">Home</a>
+        <a href="{{ route('admin.dashboard')}}" class="nav-link">Home</a>
       </li>
     </ul>
 
@@ -70,7 +69,7 @@
   <!-- /.navbar -->
 
   <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-ligth-primary elevation-4">
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="/" class="brand-link">
       <img src="{{ asset('img/Logo_SILAU.png')}}" width="20%" height="10%" alt="">
@@ -100,7 +99,7 @@
                with font-awesome or any other icon font library -->
           @if (Auth::user()->role == 'admin')
           <li class="nav-item menu-open">
-            <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ?'active' : '' }}">
+            <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ?'active' : '' }}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Dashboard
@@ -141,7 +140,7 @@
           </li>
           @else
           <li class="nav-item">
-            <a href="{{ route('pelanggan.profil.index') }}" class="nav-link {{ request()->routeIs('pelanggan/profil') ?'active' : '' }}}">
+            <a href="{{ route('pelanggan.profil.index') }}" class="nav-link {{ request()->routeIs('pelanggan.profil.*') ?'active' : '' }}">
               <i class="nav-icon fas fa-address-card"></i>
               <p>
                 Profil

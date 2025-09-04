@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\LayananController;
 use App\Http\Controllers\Admin\TransaksiController;
@@ -10,13 +11,12 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
 Route::get('/', function () {
-    return view('layouts.login');
+    return view('layouts.interface');
 });
 
 Route::middleware(['auth','role:admin'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('content.admin.dashboard');
-    })->name('dashboard');
+    Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])
+    ->name('admin.dashboard');
     Route::resource('admin/pelanggan', PelangganController::class)->names('admin.pelanggan');
     Route::resource('admin/layanan', LayananController::class)->names('admin.layanan');
     Route::resource('admin/transaksi', TransaksiController::class)->names('admin.transaksi');

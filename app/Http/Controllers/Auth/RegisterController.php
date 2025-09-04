@@ -38,14 +38,14 @@ class RegisterController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ], [
-    'email.unique' => 'Email sudah terdaftar, silahkan gunakan email lain!',
-]);
+                'email.unique' => 'Email sudah terdaftar, silahkan gunakan email lain!',
+            ]);
 
             Pelanggan::create([
             'user_id' => $user->id,
-            'foto'    => '-',
-            'no_hp'   => '-',
-            'alamat'  => '-',
+            'foto'    => '',
+            'no_hp'   => '',
+            'alamat'  => '',
             ]);
 
             // Redirect to the login page with a success message

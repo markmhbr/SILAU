@@ -147,7 +147,7 @@ class TransaksiController extends Controller
         $transaksi = Transaksi::findOrFail($id);
         $transaksi->delete();
 
-        return redirect()->route('transaksi.index')->with('success', 'Data berhasil dihapus!');
+        return redirect()->route('admin.transaksi.index')->with('success', 'Data berhasil dihapus!');
     }
 
     public function updateStatus($id, $status = 'selesai')
