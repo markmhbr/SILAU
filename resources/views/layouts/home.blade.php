@@ -131,6 +131,14 @@
             </a>
           </li>
           <li class="nav-item">
+            <a href="{{ route('admin.diskon.index') }}" class="nav-link {{ request()->is('admin/diskon*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-columns"></i>
+              <p>
+                Diskon
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
             <a href="{{-- {{ route('laporan.index')}} --}}" class="nav-link {{ request()->is('admin/laporan*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-book"></i>
               <p>
@@ -214,6 +222,11 @@
 
 <!-- Select2 -->
 <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+
 <script>
   $(function () {
     //Initialize Select2 Elements

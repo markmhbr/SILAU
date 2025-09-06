@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\LayananController;
 use App\Http\Controllers\Admin\TransaksiController;
+use App\Http\Controllers\Admin\DiskonController;
 use App\Http\Controllers\Pelanggan\LayananPelangganController;
 use App\Http\Controllers\Pelanggan\ProfilPelangganController;
 use App\Http\Controllers\Auth\LoginController;
@@ -21,10 +22,14 @@ Route::middleware(['auth','role:admin'])->group(function () {
     Route::resource('admin/layanan', LayananController::class)->names('admin.layanan');
     Route::resource('admin/transaksi', TransaksiController::class)->names('admin.transaksi');
     Route::put('/admin/transaksi/{id}/status/{status?}', [TransaksiController::class, 'updateStatus'])->name('admin.transaksi.status');
+    Route::resource('admin/diskon', DiskonController::class)->names('admin.diskon');
+
 });
 Route::middleware(['auth','role:pelanggan'])->group(function () {
     Route::resource('pelanggan/profil', ProfilPelangganController::class)->names('pelanggan.profil');
     Route::resource('pelanggan/layanan', LayananPelangganController::class)->names('pelanggan.layanan');
+    Route::get('pelanggan/layanan/{id}/detail', [LayananPelangganController::class, 'detail'])->name('pelanggan.layanan.detail');
+    Route::post('pelanggan/layanan/{id}/bayar', [LayananPelangganController::class, 'bayar'])->name('pelanggan.layanan.bayar');
 });
 
 Route::controller(LoginController::class)->group(function () {

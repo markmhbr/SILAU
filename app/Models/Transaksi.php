@@ -10,6 +10,7 @@ class Transaksi extends Model
     protected $table = 'transaksi';
 
     protected $fillable = [
+        'diskon_id',
         'pelanggan_id',
         'layanan_id',
         'tanggal_masuk',
@@ -33,4 +34,23 @@ class Transaksi extends Model
     {
         return $this->belongsTo(Layanan::class);
     }
+
+    // Relasi ke diskon (opsional)
+    public function diskon()
+    {
+        return $this->belongsTo(Diskon::class);
+    }
+
+    public function hargaSetelahDiskon()
+    {
+        if ($this->diskon) {
+            if ($this->diskon->tipe === 'persen') {
+                return $this->harga_total - ($this->harga_total * $this->diskon->nilai / 100);
+            } elseif ($this->diskon->tipe === 'nominal') {
+                return max(0, $this->harga_total - $this->diskon->nilai);
+            }
+        }
+        return $this->harga_total;
+    }
+
 }

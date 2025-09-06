@@ -22,9 +22,11 @@ class RegisterController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string',
+            'password' => 'required|string|min:6',
+        ], [
+            'email.unique' => 'Email sudah terdaftar, silahkan gunakan email lain!',
+            'password.min' => 'Password harus terdiri dari minimal 6 karakter.',
         ]);
-        
         // Baris dd($request->all()); telah dihapus karena menghentikan eksekusi kode.
         // Anda bisa menggunakannya lagi jika perlu untuk debugging.
 
@@ -37,8 +39,6 @@ class RegisterController extends Controller
                 'role' => 'pelanggan', // Default role
                 'created_at' => now(),
                 'updated_at' => now(),
-            ], [
-                'email.unique' => 'Email sudah terdaftar, silahkan gunakan email lain!',
             ]);
 
             Pelanggan::create([
@@ -51,7 +51,6 @@ class RegisterController extends Controller
             // Redirect to the login page with a success message
             return redirect()->route('login')->with('success', 'Akun berhasil didaftarkan. Silahkan masuk!');
         } catch (\Throwable $th) {
-    dd($th->getMessage()); 
             // If something goes wrong, redirect back with an error
             throw ValidationException::withMessages([
                 'email' => ['Pendaftaran gagal. Silahkan coba lagi.'],
