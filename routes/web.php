@@ -12,7 +12,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
 Route::get('/', function () {
-    return view('layouts.html');
+    return view('layouts.interface');
 });
 
 Route::middleware(['auth','role:admin'])->group(function () {
