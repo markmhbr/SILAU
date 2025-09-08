@@ -71,9 +71,17 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="/" class="brand-link">
-      <img src="{{ asset('img/Logo_SILAU.png')}}" width="20%" height="10%" alt="">
-      {{-- <img src="dist/img/logo_SILAU.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> --}}
+    <a href="/" class="brand-link d-flex align-items-center" style="gap:8px;">
+        <img src="{{ asset('assets/img/profil/mesin.png') }}" 
+             alt="Icon" 
+             style="width:30px; height:30px; margin-left: 20px; margin-right: 2px;">
+
+        <div class="d-flex flex-column ml-2">
+            <span class="font-weight-bold" style="line-height:1;">SILAU</span>
+            <small style="font-size:12px; color:#ccc; line-height:1;">
+                Sistem Informasi Laundry
+            </small>
+        </div>
     </a>
 
     <!-- Sidebar -->

@@ -83,25 +83,32 @@
                             <td>{{ (float)$d->nilai }}{{ $d->tipe === 'persentase' ? '%' : ' Rp' }}</td>
                             <td>{{ (float)$d->minimal_transaksi }} Rp</td>
 
-                            <td class="d-flex align-items-center">
-                                <form action="{{ route('admin.diskon.toggle', $d->id) }}" method="POST" class="d-inline mr-1" onsubmit="return confirm('Yakin ingin mengubah status diskon ini?')">
+                            <td>
+                                {{-- Tombol toggle aktif/nonaktif --}}
+                                <form action="{{ route('admin.diskon.toggle', $d->id) }}" method="POST" class="d-inline mr-1">
                                     @csrf
                                     @method('PATCH')
-                                    <button type="submit" style="border:none; background:none; padding:0; cursor:pointer;">
+                                    <button type="submit" class="btn btn-sm {{ (int)$d->aktif === 0 ? 'btn-success' : 'btn-secondary' }}">
                                         @if((int)$d->aktif === 0)
-                                            <ion-icon name="checkmark-circle-outline" style="color: green; font-size: 20px;" title="Aktif"></ion-icon>
+                                            <i class="fas fa-check-circle"></i>
                                         @else
-                                            <ion-icon name="close-circle-outline" style="color: gray; font-size: 20px;" title="Nonaktif"></ion-icon>
+                                            <i class="fas fa-times-circle"></i>
                                         @endif
                                     </button>
                                 </form>
                               
-                                <a href="{{ route('admin.diskon.edit', $d->id) }}" class="btn btn-sm btn-warning mx-1">Edit</a>
+                                {{-- Tombol edit --}}
+                                <a href="{{ route('admin.diskon.edit', $d->id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
                               
-                                <form action="{{ route('admin.diskon.destroy', $d->id) }}" method="POST" class="d-inline ml-1" onsubmit="return confirm('Yakin ingin hapus diskon ini?')">
+                                {{-- Tombol hapus --}}
+                                <form action="{{ route('admin.diskon.destroy', $d->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-sm btn-danger">Hapus</button>
+                                    <button type="button" class="btn btn-sm btn-danger btn-delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </form>
                             </td>
 

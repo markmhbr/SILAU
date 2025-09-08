@@ -18,6 +18,7 @@ class Transaksi extends Model
         'status',
         'berat',
         'harga_total',
+        'harga_setelah_diskon',
         'metode_pembayaran',
         'bukti_bayar',
         'catatan'

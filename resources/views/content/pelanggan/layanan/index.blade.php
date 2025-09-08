@@ -70,6 +70,7 @@
                     <th>Pelanggan</th>
                     <th>Layanan</th>
                     <th>Berat (kg)</th>
+                    <th>Diskon</th>
                     <th>Harga</th>
                     <th>Status</th>
                     <th>Aksi</th>
@@ -82,7 +83,20 @@
                       <td>{{ $transaksi->pelanggan->user->name }}</td>
                       <td>{{ $transaksi->layanan->nama_layanan}} - {{ $transaksi->layanan->jenis_layanan}}</td>
                       <td>{{ intval($transaksi->berat) == $transaksi->berat ? intval($transaksi->berat) : $transaksi->berat }} kg</td>
-                      <td>Rp {{ number_format($transaksi->harga_total, 0, ',', '.') }}</td>
+                      <td>
+                        @php
+                            $diskonNominal = 0;
+                            if($transaksi->diskon){
+                                if($transaksi->diskon->tipe === 'persentase'){
+                                    $diskonNominal = ($transaksi->layanan->harga_perkilo * $transaksi->berat) * $transaksi->diskon->nilai / 100;
+                                } else {
+                                    $diskonNominal = $transaksi->diskon->nilai;
+                                }
+                            }
+                        @endphp
+                        Rp {{ number_format($diskonNominal,0,',','.') }}
+                      </td>
+                      <td>Rp {{ number_format($transaksi->harga_setelah_diskon, 0, ',', '.') }}</td>
                       <td>
                           @if($transaksi->status === 'proses')
                                 <button type="button" class="btn btn-info">

@@ -53,27 +53,41 @@ class LayananPelangganController extends Controller
             'metode_pembayaran' => 'nullable|string|in:tunai,qris',
             'catatan' => 'nullable|string',
         ]);
-
-        $layanan = Layanan::findOrFail($request->layanan_id); // ambil data layanan
-        $hargaTotal = $layanan->harga_perkilo * $request->berat;
-
-
+    
+        $layanan = Layanan::findOrFail($request->layanan_id);
+        $hargaLayanan = $layanan->harga_perkilo * $request->berat;
+    
+        $diskon = 0;
+        if ($request->diskon_id) {
+            $diskonModel = Diskon::find($request->diskon_id);
+            if ($diskonModel) {
+                if ($diskonModel->tipe === 'persentase') {
+                    $diskon = ($hargaLayanan * $diskonModel->nilai) / 100;
+                } else {
+                    $diskon = $diskonModel->nilai;
+                }
+            }
+        }
+    
+        $hargaFinal = $hargaLayanan - $diskon;
+    
         $transaksi = Transaksi::create([
             'pelanggan_id' => $request->pelanggan_id,
             'layanan_id' => $request->layanan_id,
-            'diskon_id' => $request->diskon_id, // optional
+            'diskon_id' => $request->diskon_id,
             'tanggal_masuk' => now(),
             'berat' => $request->berat,
             'metode_pembayaran' => $request->metode_pembayaran,
             'status' => 'proses',
             'catatan' => $request->catatan,
-            'harga_total' => $hargaTotal,
+            'harga_total' => $hargaLayanan,
+            'harga_setelah_diskon' => $hargaFinal, // ⬅️ simpan langsung
         ]);
-
-        // redirect ke halaman Detail Pesanan
+    
         return redirect()->route('pelanggan.layanan.detail', $transaksi->id)
                          ->with('success', 'Transaksi berhasil dibuat. Silakan lanjut ke detail untuk pembayaran.');
     }
+
 
 
     public function detail($id)
