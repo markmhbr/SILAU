@@ -5,7 +5,7 @@
 @section('content')
 <style>
   .alert-custom {
-  background-color: #8BBAC4;   /* warna custom */
+  background-color: #effafd;   /* warna custom */
   color: #000;                 /* teks hitam */
   border-radius: 8px;          /* rounded */
   border: 1px solid #000;      /* biar mirip contoh */

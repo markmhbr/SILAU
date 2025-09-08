@@ -132,7 +132,7 @@
           </li>
           <li class="nav-item">
             <a href="{{ route('admin.diskon.index') }}" class="nav-link {{ request()->is('admin/diskon*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-columns"></i>
+              <i class="fas fa-tags mx-1"></i>
               <p>
                 Diskon
               </p>

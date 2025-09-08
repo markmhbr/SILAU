@@ -66,8 +66,8 @@ class ProfilPelangganController extends Controller
         // Validasi input
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'no_hp' => 'required|string|max:20',
-            'alamat' => 'required|string',
+            'no_hp' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string',
         ]);
 
         // Update user (nama)
@@ -77,8 +77,8 @@ class ProfilPelangganController extends Controller
 
         // Update pelanggan (no_hp dan alamat)
         $pelanggan->update([
-            'no_hp' => $validated['no_hp'],
-            'alamat' => $validated['alamat'],
+            'no_hp' => $validated['no_hp'] ?? "",
+            'alamat' => $validated['alamat'] ?? "",
         ]);
 
         if ($request->hasFile('foto')) {
@@ -90,7 +90,7 @@ class ProfilPelangganController extends Controller
                 Storage::disk('public')->delete($pelanggan->foto);
             }
         
-            $pelanggan->foto = $path;
+            $pelanggan->foto = $path ?? "";
             $pelanggan->save();
         }
 

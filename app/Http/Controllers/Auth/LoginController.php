@@ -16,25 +16,47 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required','email'],
+            'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-
+    
         $remember = $request->has('remember');
-
+    
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-
+            
+            // Return JSON response untuk AJAX
+            if ($request->ajax()) {
+                $redirectUrl = '/login';
+                if (Auth::user()->role === 'admin') {
+                    $redirectUrl = '/admin/dashboard';
+                } else if (Auth::user()->role === 'pelanggan') {
+                    $redirectUrl = '/pelanggan/profil';
+                }
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Selamat Anda Berhasil Login',
+                    'redirect' => $redirectUrl
+                ]);
+            }
+            
             // Redirect berdasarkan role
             if (Auth::user()->role === 'admin') {
-                return redirect()->intended('/admin/dashboard')->with('success', 'Selamat Anda Berhasil Login');
+                return redirect()->intended('/admin/dashboard');
             } else if (Auth::user()->role === 'pelanggan') {
-                return redirect()->intended('pelanggan/profil')->with('success', 'Selamat Anda Berhasil Login');
-            } else{
-                return redirect()->intended('/login')->with('error', 'Username atau Password anda salah');
+                return redirect()->intended('pelanggan/profil');
             }
         }
-
+        
+        // Return JSON error untuk AJAX
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email atau password salah!'
+            ]);
+        }
+        
         return back()->withErrors([
             'email' => 'Email atau password salah!',
         ]);

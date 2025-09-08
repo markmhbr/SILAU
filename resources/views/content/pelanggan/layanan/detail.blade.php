@@ -28,18 +28,51 @@
         
             <div class="card mb-3">
                 <div class="card-body">
-                    <p><strong>Pelanggan:</strong> {{ $transaksi->pelanggan->user->name }}</p>
-                    <p><strong>Layanan:</strong> {{ $transaksi->layanan->nama_layanan }} ({{ $transaksi->layanan->jenis_layanan }})</p>
-                    <p><strong>Berat:</strong> {{ (float)$transaksi->berat }} kg</p>
-                    <p><strong>Harga Layanan:</strong> Rp {{ number_format($hargaLayanan,0,',','.') }}</p>
-                    <p><strong>Diskon:</strong> Rp {{ number_format($diskon,0,',','.') }}</p>
-                    <p><strong>Total Bayar:</strong> Rp {{ number_format($hargaFinal,0,',','.') }}</p>
-                    <p><strong>Metode Pembayaran:</strong> {{ ucfirst($transaksi->metode_pembayaran) }}</p>
-                    <p><strong>Status:</strong> {{ ucfirst($transaksi->status) }}</p>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="mb-0">Detail Transaksi</h5>
+                        <a href="{{ route('pelanggan.layanan.index') }}" class="btn btn-secondary btn-sm">Kembali</a>
+                    </div>
+                    <table id="example1" class="table table-bordered table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Pelanggan</th>
+                                <td>{{ $transaksi->pelanggan->user->name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Layanan</th>
+                                <td>{{ $transaksi->layanan->nama_layanan }} ({{ $transaksi->layanan->jenis_layanan }})</td>
+                            </tr>
+                            <tr>
+                                <th>Berat</th>
+                                <td>{{ (float)$transaksi->berat }} kg</td>
+                            </tr>
+                            <tr>
+                                <th>Harga Layanan</th>
+                                <td>Rp {{ number_format($hargaLayanan,0,',','.') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Diskon</th>
+                                <td>Rp {{ number_format($diskon,0,',','.') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Total Bayar</th>
+                                <td>Rp {{ number_format($hargaFinal,0,',','.') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Metode Pembayaran</th>
+                                <td>{{ ucfirst($transaksi->metode_pembayaran) }}</td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td>{{ ucfirst($transaksi->status) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+
         
-            @if($transaksi->metode_pembayaran == 'qris' && $transaksi->status == 'proses bayar')
+            @if($transaksi->metode_pembayaran == 'qris' && $transaksi->status == 'proses')
             <div class="card">
                 <div class="card-body text-center">
                     <h5>Scan QRIS untuk bayar</h5>

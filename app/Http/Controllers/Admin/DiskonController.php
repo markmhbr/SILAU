@@ -58,4 +58,17 @@ class DiskonController extends Controller
         $diskon->delete();
         return redirect()->route('admin.diskon.index')->with('success', 'Diskon berhasil dihapus.');
     }
+
+    public function toggleStatus($id)
+{
+    $diskon = Diskon::findOrFail($id);
+
+    // Cast ke integer supaya aman
+    $diskon->aktif = (int)$diskon->aktif === 0 ? 1 : 0;
+    $diskon->save();
+
+    return redirect()->back()->with('success', 'Status diskon berhasil diubah!');
+}
+
+
 }

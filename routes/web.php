@@ -12,7 +12,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 
 Route::get('/', function () {
-    return view('layouts.interface');
+    return view('layouts.html');
 });
 
 Route::middleware(['auth','role:admin'])->group(function () {
@@ -23,6 +23,7 @@ Route::middleware(['auth','role:admin'])->group(function () {
     Route::resource('admin/transaksi', TransaksiController::class)->names('admin.transaksi');
     Route::put('/admin/transaksi/{id}/status/{status?}', [TransaksiController::class, 'updateStatus'])->name('admin.transaksi.status');
     Route::resource('admin/diskon', DiskonController::class)->names('admin.diskon');
+    Route::patch('admin/diskon/{id}/toggle', [DiskonController::class, 'toggleStatus'])->name('admin.diskon.toggle');
 
 });
 Route::middleware(['auth','role:pelanggan'])->group(function () {

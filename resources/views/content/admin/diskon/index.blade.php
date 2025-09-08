@@ -5,7 +5,7 @@
 @section('content')
 <style>
   .alert-custom {
-  background-color: #8BBAC4;   /* warna custom */
+  background-color: #effafd;   /* warna custom */
   color: #000;                 /* teks hitam */
   border-radius: 8px;          /* rounded */
   border: 1px solid #000;      /* biar mirip contoh */
@@ -71,7 +71,6 @@
                             <th>Tipe</th>
                             <th>Nilai</th>
                             <th>Minimal Transaksi</th>
-                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -83,27 +82,29 @@
                             <td>{{ ucfirst($d->tipe) }}</td>
                             <td>{{ (float)$d->nilai }}{{ $d->tipe === 'persentase' ? '%' : ' Rp' }}</td>
                             <td>{{ (float)$d->minimal_transaksi }} Rp</td>
-                            <td>
-                                @if((int)$d->status === 0)
-                                  <p style="color: green">Aktif</p>
-                                @else
-                                  <p>Nonaktif</p>
-                                @endif
-                            </td>
 
-                            <td>
-                                @if((int)$d->status === 0)
-                                    <ion-icon name="checkmark-circle-outline" style="color: green; font-size: 20px;" title="Aktif"></ion-icon>
-                                @else
-                                    <ion-icon name="close-circle-outline" style="color: gray; font-size: 20px;" title="Nonaktif"></ion-icon>
-                                @endif
-                                <a href="{{ route('admin.diskon.edit', $d->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                <form action="{{ route('admin.diskon.destroy', $d->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin hapus diskon ini?')">
+                            <td class="d-flex align-items-center">
+                                <form action="{{ route('admin.diskon.toggle', $d->id) }}" method="POST" class="d-inline mr-1" onsubmit="return confirm('Yakin ingin mengubah status diskon ini?')">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" style="border:none; background:none; padding:0; cursor:pointer;">
+                                        @if((int)$d->aktif === 0)
+                                            <ion-icon name="checkmark-circle-outline" style="color: green; font-size: 20px;" title="Aktif"></ion-icon>
+                                        @else
+                                            <ion-icon name="close-circle-outline" style="color: gray; font-size: 20px;" title="Nonaktif"></ion-icon>
+                                        @endif
+                                    </button>
+                                </form>
+                              
+                                <a href="{{ route('admin.diskon.edit', $d->id) }}" class="btn btn-sm btn-warning mx-1">Edit</a>
+                              
+                                <form action="{{ route('admin.diskon.destroy', $d->id) }}" method="POST" class="d-inline ml-1" onsubmit="return confirm('Yakin ingin hapus diskon ini?')">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-sm btn-danger">Hapus</button>
                                 </form>
                             </td>
+
                         </tr>
                         @endforeach
                     </tbody>

@@ -69,21 +69,24 @@
 
                 {{-- Diskon --}}
                 <div class="form-group col-md-4">
-                  <label>Diskon</label>
-                  <select name="diskon_id" class="form-control">
-                    <option value="">- Pilih Diskon -</option>
-                    @foreach($diskon as $d)
-                      <option value="
-                      {{ $d->id }}">{{ $d->nama_diskon }} -  
-                      @if($d->tipe == 'persentase')
-                          {{ (float)$d->nilai }}%
-                      @else
-                          Rp {{ number_format($d->nilai, 0, ',', '.') }}
-                      @endif
-                      </option>
-                    @endforeach
-                  </select>
+                    <label>Diskon</label>
+                    <select name="diskon_id" class="form-control">
+                        <option value="">- Pilih Diskon -</option>
+                        @foreach($diskon as $d)
+                            @if((int)$d->aktif === 0) {{-- Hanya tampilkan yang aktif --}}
+                                <option value="{{ $d->id }}">
+                                    {{ $d->nama_diskon }} -  
+                                    @if($d->tipe == 'persentase')
+                                        {{ (float)$d->nilai }}%
+                                    @else
+                                        Rp {{ number_format($d->nilai, 0, ',', '.') }}
+                                    @endif
+                                </option>
+                            @endif
+                        @endforeach
+                    </select>
                 </div>
+
 
                 {{-- Metode Pembayaran --}}
                 <div class="form-group col-md-4">

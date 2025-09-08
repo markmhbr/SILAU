@@ -65,7 +65,7 @@ class LayananPelangganController extends Controller
             'tanggal_masuk' => now(),
             'berat' => $request->berat,
             'metode_pembayaran' => $request->metode_pembayaran,
-            'status' => 'proses bayar',
+            'status' => 'proses',
             'catatan' => $request->catatan,
             'harga_total' => $hargaTotal,
         ]);
