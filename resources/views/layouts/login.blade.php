@@ -543,6 +543,8 @@
                     spinner.style.display = 'none';
                     loginBtn.disabled = false;
                 }
+
+                
             } catch (error) {
                 showMessage('Terjadi kesalahan. Silakan coba lagi.', 'error');
                 

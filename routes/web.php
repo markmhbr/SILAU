@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\LayananController;
 use App\Http\Controllers\Admin\TransaksiController;
@@ -10,27 +10,32 @@ use App\Http\Controllers\Pelanggan\LayananPelangganController;
 use App\Http\Controllers\Pelanggan\ProfilPelangganController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\InterfaceController;
 
-Route::get('/', function () {
-    return view('layouts.interface');
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/', [InterfaceController::class, 'beranda'])->name('beranda');
+
+Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])
+    ->name('dashboard');
+    Route::resource('/pelanggan', PelangganController::class)->names('pelanggan');
+    Route::resource('/layanan', LayananController::class)->names('layanan');
+    Route::resource('/transaksi', TransaksiController::class)->names('transaksi');
+    Route::put('/transaksi/{id}/status/{status?}', [TransaksiController::class, 'updateStatus'])->name('transaksi.status');
+    Route::resource('/diskon', DiskonController::class)->names('diskon');
+    Route::patch('/diskon/{id}/toggle', [DiskonController::class, 'toggleStatus'])->name('diskon.toggle');
+
 });
-
-Route::middleware(['auth','role:admin'])->group(function () {
-    Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])
-    ->name('admin.dashboard');
-    Route::resource('admin/pelanggan', PelangganController::class)->names('admin.pelanggan');
-    Route::resource('admin/layanan', LayananController::class)->names('admin.layanan');
-    Route::resource('admin/transaksi', TransaksiController::class)->names('admin.transaksi');
-    Route::put('/admin/transaksi/{id}/status/{status?}', [TransaksiController::class, 'updateStatus'])->name('admin.transaksi.status');
-    Route::resource('admin/diskon', DiskonController::class)->names('admin.diskon');
-    Route::patch('admin/diskon/{id}/toggle', [DiskonController::class, 'toggleStatus'])->name('admin.diskon.toggle');
-
-});
-Route::middleware(['auth','role:pelanggan'])->group(function () {
-    Route::resource('pelanggan/profil', ProfilPelangganController::class)->names('pelanggan.profil');
-    Route::resource('pelanggan/layanan', LayananPelangganController::class)->names('pelanggan.layanan');
-    Route::get('pelanggan/layanan/{id}/detail', [LayananPelangganController::class, 'detail'])->name('pelanggan.layanan.detail');
-    Route::post('pelanggan/layanan/{id}/bayar', [LayananPelangganController::class, 'bayar'])->name('pelanggan.layanan.bayar');
+Route::middleware(['auth','role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
+    Route::resource('/profil', ProfilPelangganController::class)->names('profil');
+    Route::resource('/layanan', LayananPelangganController::class)->names('layanan');
+    Route::get('/layanan/{id}/detail', [LayananPelangganController::class, 'detail'])->name('layanan.detail');
+    Route::post('/layanan/{id}/bayar', [LayananPelangganController::class, 'bayar'])->name('layanan.bayar');
 });
 
 Route::controller(LoginController::class)->group(function () {

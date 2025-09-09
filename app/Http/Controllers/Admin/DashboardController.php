@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pelanggan;
 use App\Models\Layanan;
@@ -9,7 +10,7 @@ use App\Models\Transaksi;
 
 class DashboardController extends Controller
 {
-    public function adminDashboard() {
+    public function dashboard() {
         
         $jumlahPelanggan = Pelanggan::count();
 
