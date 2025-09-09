@@ -12,12 +12,23 @@ class LaporanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // $transaksi = Transaksi::whereBetween('tanggal', [$request->dari, $request->sampai])->get();
+        $dari = $request->query('dari_tanggal');    
+        $sampai = $request->query('sampai_tanggal');
 
-        return view('content.admin.laporan.index');
+        $transaksi = collect();
+
+        if ($dari && $sampai) {
+           $transaksi = Transaksi::whereBetween('tanggal_masuk', [$dari, $sampai])
+            ->orderBy('tanggal_masuk', 'asc')
+            ->get();
+                
+        }
+
+        return view('content.admin.laporan.index', compact('transaksi', 'dari', 'sampai'));
     }
+
 
     /**
      * Show the form for creating a new resource.

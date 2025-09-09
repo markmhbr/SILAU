@@ -50,46 +50,40 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header d-flex align-items-center">
-            <h3 class="card-title mb-0">{{ isset($diskon) ? 'Edit Diskon' : 'Tambah Diskon' }}</h3>
-            <a href="{{ route('admin.diskon.index') }}" class="btn btn-primary btn-sm ml-auto">Kembali</a>
+            <h3 class="card-title mb-0">Laporan Transaksi</h3>
           </div>
           <div class="card-body">
-            <form action="{{ isset($diskon) ? route('admin.diskon.update', $diskon->id) : route('admin.diskon.store') }}" method="POST">
-              @csrf
-              @if(isset($diskon))
-                  @method('PUT')
-              @endif
-
+            <form action="{{ route('admin.laporan.index') }}" method="GET">
               <div class="form row">
                 <div class="form-group col-md-6">
                   <label for="dari_tanggal">Dari Tanggal</label>
-                  <input type="date" class="form-control" id="dari_tanggal" name="dari_tanggal" placeholder="Masukkan Nama Diskon" value="{{ $diskon->nama_diskon ?? '' }}" required>
+                  <input type="date" class="form-control" id="dari_tanggal" 
+                         name="dari_tanggal" value="{{ request('dari_tanggal') }}" required>
                 </div>
                 <div class="form-group col-md-6">
                   <label for="sampai_tanggal">Sampai Tanggal</label>
-                  <input type="date" class="form-control" id="sampai_tanggal" name="sampai_tanggal" placeholder="Masukkan Nama Diskon" value="{{ $diskon->nama_diskon ?? '' }}" required>
+                  <input type="date" class="form-control" id="sampai_tanggal" 
+                         name="sampai_tanggal" value="{{ request('sampai_tanggal') }}" required>
                 </div>
               </div>
-
-              <button type="submit" class="btn btn-primary">
-                {{ isset($diskon) ? 'Update' : 'Simpan' }}
-              </button>
+              <button type="submit" class="btn btn-primary">Tampilkan</button>
             </form>
+
           </div>
         </div>
       </div>
     </div>
 
     <!-- Card 2: Tabel Transaksi -->
-    @if(request('dari') && request('sampai'))
+    @if($dari && $sampai)
     <div class="row">
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title mb-0">Transaksi dari {{ request('dari') }} sampai {{ request('sampai') }}</h3>
+            <h3 class="card-title mb-0">Transaksi dari {{ $dari }} sampai {{ $sampai }}</h3>
           </div>
           <div class="card-body">
-            <table class="table table-bordered table-striped">
+            <table id="example1" class="table table-bordered table-striped">
               <thead>
                 <tr>
                   <th>No</th>
@@ -101,24 +95,28 @@
                 </tr>
               </thead>
               <tbody>
-                @foreach($transaksi as $key => $t)
+                @forelse($transaksi as $key => $t)
                 <tr>
-                  {{-- <td>{{ $key + 1 }}</td>
+                  <td>{{ $key + 1 }}</td>
                   <td>{{ $t->id }}</td>
-                  <td>{{ $t->nama_pelanggan }}</td>
-                  <td>{{ $t->jumlah_item }}</td>
-                  <td>{{ number_format($t->total_bayar, 0, ',', '.') }} Rp</td>
-                  <td>{{ $t->tanggal }}</td> --}}
+                  <td>{{ $t->pelanggan->user->name }}</td>
+                  <td>{{ $t->layanan->nama_layanan}} - {{ $t->layanan->jenis_layanan}}</td>
+                  <td>{{ number_format($t->harga_setelah_diskon, 0, ',', '.') }} Rp</td>
+                  <td>{{ $t->tanggal_masuk }}</td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                  <td colspan="6" class="text-center">Tidak ada transaksi pada rentang tanggal ini</td>
+                </tr>
+                @endforelse
               </tbody>
             </table>
-            {{-- Tambahkan paginasi jika perlu --}}
           </div>
         </div>
       </div>
     </div>
     @endif
+
 
   </div>
 </section>
