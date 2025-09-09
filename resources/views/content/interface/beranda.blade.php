@@ -1,4 +1,4 @@
-@extends('layouts.hehe')
+@extends('layouts.interface')
 
 @section('title', 'Beranda')
 
@@ -14,8 +14,8 @@
             </h1>
             <p class="hero-subtitle">Pakaian bersih, wangi, dan rapi dalam sekejap</p>
             <div class="hero-buttons">
-                <button class="btn-primary">Mulai Sekarang</button>
-                <button class="btn-secondary">Pelajari Lebih Lanjut</button>
+                <button class="btn-primary" type="button" onclick="window.location='{{ route('login') }}'">Mulai Sekarang</button>
+                <button class="btn-secondary" type="button" onclick="window.location='{{ route('testimonial-form') }}'">Testimoni form</button>
             </div>
         </div>
         <div class="hero-animation">
@@ -54,7 +54,7 @@
                 </div>
                 <div class="service-card">
                     <div class="service-icon">
-                        <i class="fas fa-iron"></i>
+                        <i class="fas fa-spray-can"></i>
                     </div>
                     <h3>Setrika Saja</h3>
                     <p>Setrika rapi dan profesional untuk pakaian Anda</p>

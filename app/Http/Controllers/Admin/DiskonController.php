@@ -28,7 +28,7 @@ class DiskonController extends Controller
             'minimal_transaksi' => 'required|numeric|min:0',
         ]);
 
-        $validated['status'] = 0;
+        $validated['aktif'] = 0;
 
         // dd($request);
         Diskon::create($validated);

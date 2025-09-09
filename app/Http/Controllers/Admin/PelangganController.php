@@ -91,6 +91,6 @@ class PelangganController extends Controller
         $pelanggan = Pelanggan::findOrFail($id);
         $pelanggan->delete();
 
-        return redirect()->route('pelanggan.index')->with('success', 'Data berhasil dihapus!');
+        return redirect()->route('admin.pelanggan.index')->with('success', 'Data berhasil dihapus!');
     }
 }

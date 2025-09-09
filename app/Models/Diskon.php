@@ -13,6 +13,7 @@ class Diskon extends Model
         'tipe',
         'nilai',
         'minimal_transaksi',
+        'aktif',
     ];
 
     public function transaksi()

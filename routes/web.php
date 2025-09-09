@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\LayananController;
 use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\DiskonController;
+use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Pelanggan\LayananPelangganController;
 use App\Http\Controllers\Pelanggan\ProfilPelangganController;
 use App\Http\Controllers\Auth\LoginController;
@@ -19,6 +20,9 @@ use App\Http\Controllers\InterfaceController;
 */
 
 Route::get('/', [InterfaceController::class, 'beranda'])->name('beranda');
+Route::get('/profil', [InterfaceController::class, 'profil'])->name('profil');
+Route::get('/kontak', [InterfaceController::class, 'kontak'])->name('kontak');
+Route::get('/testimonial-form', [InterfaceController::class, 'testimonial_form'])->name('testimonial-form');
 
 Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])
@@ -29,6 +33,7 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
     Route::put('/transaksi/{id}/status/{status?}', [TransaksiController::class, 'updateStatus'])->name('transaksi.status');
     Route::resource('/diskon', DiskonController::class)->names('diskon');
     Route::patch('/diskon/{id}/toggle', [DiskonController::class, 'toggleStatus'])->name('diskon.toggle');
+    Route::get('/laporan', [LaporanController::class, 'laporan'])->name('laporan');
 
 });
 Route::middleware(['auth','role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
