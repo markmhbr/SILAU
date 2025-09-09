@@ -34,6 +34,7 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
     Route::resource('/diskon', DiskonController::class)->names('diskon');
     Route::patch('/diskon/{id}/toggle', [DiskonController::class, 'toggleStatus'])->name('diskon.toggle');
     Route::resource('/laporan', LaporanController::class)->names('laporan');
+    Route::get('/struk/{id}', [TransaksiController::class, 'cetakStruk']);
 
 });
 Route::middleware(['auth','role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {

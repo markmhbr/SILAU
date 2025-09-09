@@ -106,6 +106,9 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           @if (Auth::user()->role == 'admin')
+          
+          {{-- Dashboard --}}
+          <li class="nav-header">DASHBOARD</li>
           <li class="nav-item menu-open">
             <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ?'active' : '' }}">
               <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -114,6 +117,20 @@
               </p>
             </a>
           </li>
+
+          {{-- Profil --}}
+          <li class="nav-header">PROFIL PERUSAHAAN</li>
+          <li class="nav-item">
+            <a href="" class="nav-link {{ request()->is('admin/pelanggan*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-building"></i>
+              <p>
+                Profil Perusahaan
+              </p>
+            </a>
+          </li>
+
+          {{-- Master Data --}}
+          <li class="nav-header">MANAJEMEN DATA</li>
           <li class="nav-item">
             <a href="{{ route('admin.pelanggan.index') }}" class="nav-link {{ request()->is('admin/pelanggan*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-users"></i>
@@ -131,18 +148,21 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('admin.transaksi.index') }}" class="nav-link {{ request()->is('admin/transaksi*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-columns"></i>
-              <p>
-                Transaksi
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
             <a href="{{ route('admin.diskon.index') }}" class="nav-link {{ request()->is('admin/diskon*') ? 'active' : '' }}">
               <i class="fas fa-tags mx-1"></i>
               <p>
                 Diskon
+              </p>
+            </a>
+          </li>
+
+          {{-- Transaksi & Laporan --}}
+          <li class="nav-header">TRANSAKSI & LAPORAN</li>
+          <li class="nav-item">
+            <a href="{{ route('admin.transaksi.index') }}" class="nav-link {{ request()->is('admin/transaksi*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-columns"></i>
+              <p>
+                Transaksi
               </p>
             </a>
           </li>
@@ -154,7 +174,10 @@
               </p>
             </a>
           </li>
-          @else
+          @elseif (Auth::user()->role == 'pelanggan')
+
+          {{-- Menu untuk Pelanggan --}}
+          <li class="nav-header">MENU PELANGGAN</li>
           <li class="nav-item">
             <a href="{{ route('pelanggan.profil.index') }}" class="nav-link {{ request()->routeIs('pelanggan.profil.*') ?'active' : '' }}">
               <i class="nav-icon fas fa-address-card"></i>

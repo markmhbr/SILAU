@@ -61,13 +61,17 @@ class LayananPelangganController extends Controller
         if ($request->diskon_id) {
             $diskonModel = Diskon::find($request->diskon_id);
             if ($diskonModel) {
-                if ($diskonModel->tipe === 'persentase') {
-                    $diskon = ($hargaLayanan * $diskonModel->nilai) / 100;
-                } else {
-                    $diskon = $diskonModel->nilai;
+                // cek minimal transaksi dulu
+                if ($hargaLayanan >= $diskonModel->minimal_transaksi) {
+                    if ($diskonModel->tipe === 'persentase') {
+                        $diskon = ($hargaLayanan * $diskonModel->nilai) / 100;
+                    } else {
+                        $diskon = $diskonModel->nilai;
+                    }
                 }
             }
         }
+
     
         $hargaFinal = $hargaLayanan - $diskon;
     
@@ -98,12 +102,16 @@ class LayananPelangganController extends Controller
     
         $diskon = 0;
         if ($transaksi->diskon) {
-            if ($transaksi->diskon->tipe === 'persentase') {
-                $diskon = ($hargaLayanan * $transaksi->diskon->nilai) / 100;
-            } else {
-                $diskon = $transaksi->diskon->nilai;
+            // cek minimal transaksi dulu
+            if ($hargaLayanan >= $transaksi->diskon->minimal_transaksi) {
+                if ($transaksi->diskon->tipe === 'persentase') {
+                    $diskon = ($hargaLayanan * $transaksi->diskon->nilai) / 100;
+                } else {
+                    $diskon = $transaksi->diskon->nilai;
+                }
             }
         }
+
     
         $hargaFinal = $hargaLayanan - $diskon;
     

@@ -111,9 +111,10 @@
                                     {{ $transaksi->status }}
                                 </button>
                             @endif
+                      </td>
                       <td>
-                        <a href="{{ route('pelanggan.layanan.edit', $transaksi->id) }}" class="btn btn-primary">
-                            <i class="fas fa-edit"></i>
+                        <a href="{{ route('pelanggan.layanan.detail', $transaksi->id) }}" class="btn btn-info">
+                            <i class="fas fa-eye"></i>
                         </a>
                       </td>
                     </tr>

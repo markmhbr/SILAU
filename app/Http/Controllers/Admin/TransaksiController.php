@@ -167,5 +167,12 @@ class TransaksiController extends Controller
         return redirect()->back()->with('success', 'Status transaksi berhasil diupdate!');
     }
     
+    public function cetakStruk($id)
+    {
+        $transaksi = Transaksi::findOrFail($id);
+        
+        return view('struk.thermal', compact('transaksi'));
+    }
+
 
 }
