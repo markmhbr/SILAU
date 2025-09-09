@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Transaksi;
+
 
 class LaporanController extends Controller
 {
@@ -12,6 +14,8 @@ class LaporanController extends Controller
      */
     public function index()
     {
+        // $transaksi = Transaksi::whereBetween('tanggal', [$request->dari, $request->sampai])->get();
+
         return view('content.admin.laporan.index');
     }
 

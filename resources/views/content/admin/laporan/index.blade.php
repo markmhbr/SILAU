@@ -49,20 +49,31 @@
     <div class="row">
       <div class="col-12">
         <div class="card">
-          <div class="card-header">
-            <h3 class="card-title mb-0">Filter Tanggal</h3>
+          <div class="card-header d-flex align-items-center">
+            <h3 class="card-title mb-0">{{ isset($diskon) ? 'Edit Diskon' : 'Tambah Diskon' }}</h3>
+            <a href="{{ route('admin.diskon.index') }}" class="btn btn-primary btn-sm ml-auto">Kembali</a>
           </div>
           <div class="card-body">
-            <form action="{{ route('admin.transaksi.laporan') }}" method="GET" class="form-inline">
-              <div class="form-group mr-2">
-                <label for="dari" class="mr-2">Dari</label>
-                <input type="date" name="dari" id="dari" class="form-control" value="{{ request('dari') }}">
+            <form action="{{ isset($diskon) ? route('admin.diskon.update', $diskon->id) : route('admin.diskon.store') }}" method="POST">
+              @csrf
+              @if(isset($diskon))
+                  @method('PUT')
+              @endif
+
+              <div class="form row">
+                <div class="form-group col-md-6">
+                  <label for="dari_tanggal">Dari Tanggal</label>
+                  <input type="date" class="form-control" id="dari_tanggal" name="dari_tanggal" placeholder="Masukkan Nama Diskon" value="{{ $diskon->nama_diskon ?? '' }}" required>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="sampai_tanggal">Sampai Tanggal</label>
+                  <input type="date" class="form-control" id="sampai_tanggal" name="sampai_tanggal" placeholder="Masukkan Nama Diskon" value="{{ $diskon->nama_diskon ?? '' }}" required>
+                </div>
               </div>
-              <div class="form-group mr-2">
-                <label for="sampai" class="mr-2">Sampai</label>
-                <input type="date" name="sampai" id="sampai" class="form-control" value="{{ request('sampai') }}">
-              </div>
-              <button type="submit" class="btn btn-primary">Tampilkan</button>
+
+              <button type="submit" class="btn btn-primary">
+                {{ isset($diskon) ? 'Update' : 'Simpan' }}
+              </button>
             </form>
           </div>
         </div>
@@ -92,12 +103,12 @@
               <tbody>
                 @foreach($transaksi as $key => $t)
                 <tr>
-                  <td>{{ $key + 1 }}</td>
+                  {{-- <td>{{ $key + 1 }}</td>
                   <td>{{ $t->id }}</td>
                   <td>{{ $t->nama_pelanggan }}</td>
                   <td>{{ $t->jumlah_item }}</td>
                   <td>{{ number_format($t->total_bayar, 0, ',', '.') }} Rp</td>
-                  <td>{{ $t->tanggal }}</td>
+                  <td>{{ $t->tanggal }}</td> --}}
                 </tr>
                 @endforeach
               </tbody>

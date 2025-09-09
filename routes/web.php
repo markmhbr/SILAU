@@ -33,7 +33,7 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
     Route::put('/transaksi/{id}/status/{status?}', [TransaksiController::class, 'updateStatus'])->name('transaksi.status');
     Route::resource('/diskon', DiskonController::class)->names('diskon');
     Route::patch('/diskon/{id}/toggle', [DiskonController::class, 'toggleStatus'])->name('diskon.toggle');
-    Route::get('/laporan', [LaporanController::class, 'laporan'])->name('laporan');
+    Route::resource('/laporan', LaporanController::class)->names('laporan');
 
 });
 Route::middleware(['auth','role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {

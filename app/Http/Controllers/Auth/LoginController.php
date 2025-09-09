@@ -10,7 +10,7 @@ class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        return view('layouts.login'); // buat file login.blade.php
+        return view('auth.login'); // buat file login.blade.php
     }
 
     public function login(Request $request)

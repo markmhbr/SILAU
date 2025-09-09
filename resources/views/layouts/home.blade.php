@@ -147,7 +147,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{-- {{ route('laporan.index')}} --}}" class="nav-link {{ request()->is('admin/laporan*') ? 'active' : '' }}">
+            <a href="{{ route('admin.laporan.index')}}" class="nav-link {{ request()->is('admin/laporan*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-book"></i>
               <p>
                 Laporan
