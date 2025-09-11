@@ -1,16 +1,25 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
+// Controllers Admin
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProfilPerusahaanController;
 use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\LayananController;
 use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\DiskonController;
 use App\Http\Controllers\Admin\LaporanController;
+
+// Controllers Pelanggan
 use App\Http\Controllers\Pelanggan\LayananPelangganController;
 use App\Http\Controllers\Pelanggan\ProfilPelangganController;
+
+// Controllers Auth
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+
+// Controllers Interface
 use App\Http\Controllers\InterfaceController;
 
 /*
@@ -27,6 +36,7 @@ Route::get('/testimonial-form', [InterfaceController::class, 'testimonial_form']
 Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])
     ->name('dashboard');
+    Route::resource('/profil-perusahaan', ProfilPerusahaanController::class)->names('profil-perusahaan');
     Route::resource('/pelanggan', PelangganController::class)->names('pelanggan');
     Route::resource('/layanan', LayananController::class)->names('layanan');
     Route::resource('/transaksi', TransaksiController::class)->names('transaksi');

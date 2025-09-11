@@ -72,7 +72,7 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="/" class="brand-link d-flex align-items-center" style="gap:8px;">
-        <img src="{{ asset('assets/img/profil/mesin.png') }}" 
+        <img src="{{ asset('as') }}" 
              alt="Icon" 
              style="width:30px; height:30px; margin-left: 20px; margin-right: 2px;">
 
@@ -121,7 +121,7 @@
           {{-- Profil --}}
           <li class="nav-header">PROFIL PERUSAHAAN</li>
           <li class="nav-item">
-            <a href="" class="nav-link {{ request()->is('admin/pelanggan*') ? 'active' : '' }}">
+            <a href="{{ route('admin.profil-perusahaan.index') }}" class="nav-link {{ request()->is('admin/profil-perusahaan*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-building"></i>
               <p>
                 Profil Perusahaan
