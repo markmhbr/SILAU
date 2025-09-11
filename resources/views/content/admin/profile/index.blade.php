@@ -49,7 +49,7 @@
                                 <div class="file-upload-wrapper text-center">
                                     <div class="logo-container mb-3" style="height: 200px; display: flex; align-items: center; justify-content: center;">
                                         <img id="logo-preview" 
-                                             src="{{ $profil->logo ? asset('storage/' . $profil->logo) : 'https://via.placeholder.com/400x400.png?text=Pilih+Logo' }}" 
+                                             src="{{ $profil->logo ? asset('logo/' . $profil->logo) : 'https://via.placeholder.com/400x400.png?text=Pilih+Logo' }}" 
                                              alt="Logo preview" class="img-fluid rounded" style="max-height: 100%; max-width: 100%; object-fit: contain;">
                                     </div>
                                     <input type="file" name="logo" id="logo-input" class="d-none" onchange="previewLogo(event)">

@@ -41,11 +41,18 @@ class ProfilPerusahaanController extends Controller
 
         // 2. Logika upload logo (tetap sama, sudah bagus)
         if ($request->hasFile('logo')) {
+            // Hapus logo lama
+            if ($profil->logo && file_exists(public_path('logo/' . $profil->logo))) {
+                unlink(public_path('logo/' . $profil->logo));
+            }
+        
+            // Upload baru
             $file = $request->file('logo');
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('logo'), $filename);
             $validatedData['logo'] = $filename;
         }
+
 
 
         // 3. Menggunakan Mass Assignment (lebih bersih dan efisien)
