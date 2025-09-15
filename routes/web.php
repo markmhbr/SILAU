@@ -28,10 +28,24 @@ use App\Http\Controllers\InterfaceController;
 |--------------------------------------------------------------------------
 */
 
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes untuk bagian interface
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/', [InterfaceController::class, 'beranda'])->name('beranda');
 Route::get('/profil', [InterfaceController::class, 'profil'])->name('profil');
 Route::get('/kontak', [InterfaceController::class, 'kontak'])->name('kontak');
 Route::get('/testimonial-form', [InterfaceController::class, 'testimonial_form'])->name('testimonial-form');
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes untuk bagian role admin
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])
@@ -45,8 +59,15 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
     Route::patch('/diskon/{id}/toggle', [DiskonController::class, 'toggleStatus'])->name('diskon.toggle');
     Route::resource('/laporan', LaporanController::class)->names('laporan');
     Route::get('/struk/{id}', [TransaksiController::class, 'cetakStruk']);
-
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes untuk bagian role pelanggan
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware(['auth','role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
     Route::resource('/profil', ProfilPelangganController::class)->names('profil');
     Route::resource('/layanan', LayananPelangganController::class)->names('layanan');
@@ -54,11 +75,25 @@ Route::middleware(['auth','role:pelanggan'])->prefix('pelanggan')->name('pelangg
     Route::post('/layanan/{id}/bayar', [LayananPelangganController::class, 'bayar'])->name('layanan.bayar');
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes untuk bagian Login Dan Logout
+|--------------------------------------------------------------------------
+*/
+
 Route::controller(LoginController::class)->group(function () {
 Route::get('/login', 'showLoginForm')->name('login');
 Route::post('/login', 'login');
 Route::post('/logout', 'logout')->name('logout');
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes untuk bagian Register
+|--------------------------------------------------------------------------
+*/
 
 Route::controller(RegisterController::class)->group(function () {
 Route::get('/register', 'showRegistrationForm')->name('register');
