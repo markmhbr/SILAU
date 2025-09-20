@@ -1,0 +1,380 @@
+/* auth.css - gabungan untuk Login & Register (shared + khusus) */
+
+/* =======================
+   Global Styles (dipakai bareng)
+   ======================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Animated Background */
+.bg-animation {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+@keyframes move {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+    }
+    100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+    }
+}
+
+/* Shared animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Form Group (input, icon, toggle) */
+.form-group {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 15px 20px 15px 50px;
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 50px;
+    color: #333;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.form-group input::placeholder {
+    color: #999;
+}
+
+.form-group input:focus {
+    background: #fff;
+    border-color: #999;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.form-group i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus + i {
+    color: #333;
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Password Toggle */
+.password-toggle {
+    position: absolute;
+    right: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.password-toggle:hover {
+    color: #333;
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Spinner (shared) */
+.spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Message (Error/Success) */
+.message {
+    padding: 12px 20px;
+    border-radius: 50px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 500;
+    animation: slideInMessage 0.3s ease-out;
+    display: none;
+    font-size: 14px;
+}
+@keyframes slideInMessage {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.message.error {
+    background: rgba(255, 59, 48, 0.2);
+    border: 1px solid rgba(255, 59, 48, 0.5);
+    color: #ff3b30;
+}
+.message.success {
+    background: rgba(52, 199, 89, 0.2);
+    border: 1px solid rgba(52, 199, 89, 0.5);
+    color: #34c759;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login-container,
+    .register-container {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+
+    .login-header h1,
+    .register-header h1 {
+        font-size: 2em;
+    }
+}
+
+/* =======================
+   Login Styles (preserved dari codingan kamu)
+   ======================= */
+.login-container {
+    background: #ffffff;
+    color: #333;
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid #eee;
+    position: relative;
+    z-index: 2;
+    animation: slideIn 0.5s ease-out;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: #222;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.login-header p {
+    color: #666;
+    font-size: 1.1em;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* Remember / Forgot / Options specific to login */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    color: #444;
+    font-size: 14px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.remember-me input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.forgot-password {
+    color: #666;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+/* Login Button */
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #0a0f2a 0%, #1c1f2b 50%, #2a2f3b 100%);
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.login-btn:hover::before { left: 100%; }
+.login-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+.login-btn:active { transform: translateY(0); }
+
+/* Sign Up Link (di bawah login) */
+.signup-link {
+    text-align: center;
+    margin-top: 30px;
+    color: #666;
+}
+
+.signup-link a {
+    color: #333;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+    transform: scale(1.05);
+    display: inline-block;
+}
+
+/* =======================
+   Register Styles (khusus)
+   ======================= */
+.register-container {
+    background: #ffffff;
+    color: #333;
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px; /* samain dengan login */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid #eee;
+    position: relative;
+    z-index: 2;
+    animation: slideIn 0.5s ease-out;
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.register-header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: #222;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.register-header p {
+    color: #666;
+    font-size: 1.1em;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* Register Button */
+.register-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #0a0f2a 0%, #1c1f2b 50%, #2a2f3b 100%);
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.register-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.register-btn:hover::before { left: 100%; }
+.register-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+.register-btn:active { transform: translateY(0); }
+
+/* Login Link (di bawah register) */
+.login-link {
+    text-align: center;
+    margin-top: 30px;
+    color: #666;
+}
+
+.login-link a {
+    color: #333;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+    transform: scale(1.05);
+    display: inline-block;
+}
