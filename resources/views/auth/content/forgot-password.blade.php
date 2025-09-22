@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lupa Password - SILAU</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
-</head>
-<body>
+@extends('auth.auth')
+
+@section('title', 'Lupa Password')
+
+@section('content')
+
     <div class="login-container">
         <div class="login-header">
             <h1><i class="fas fa-key"></i></h1>
@@ -56,5 +52,5 @@
             setTimeout(() => { messageEl.style.display = 'none'; }, 3000);
         }
     </script>
-</body>
-</html>
+
+@endsection
