@@ -23,7 +23,7 @@ class LayananPelangganController extends Controller
         $transaksis = Transaksi::with('layanan')
                         ->where('pelanggan_id', $pelanggan->id)
                         ->get();
-        return view('content.pelanggan.layanan.index', compact('transaksis'));
+        return view('content.backend.pelanggan.layanan.index', compact('transaksis'));
     }
 
     /**
@@ -37,7 +37,7 @@ class LayananPelangganController extends Controller
         $layanan = Layanan::all();
         $diskon = Diskon::all();
         $transaksi = null;
-        return view('content.pelanggan.layanan.form', compact('pelanggan', 'layanan','transaksi','diskon'));
+        return view('content.backend.pelanggan.layanan.form', compact('pelanggan', 'layanan','transaksi','diskon'));
     }
 
     /**
@@ -72,6 +72,8 @@ class LayananPelangganController extends Controller
             }
         }
 
+        // Tentukan status awal berdasarkan metode pembayaran
+        $statusTransaksi = ($request->metode_pembayaran === 'tunai') ? 'proses' : 'pending';
     
         $hargaFinal = $hargaLayanan - $diskon;
     
@@ -82,7 +84,7 @@ class LayananPelangganController extends Controller
             'tanggal_masuk' => now(),
             'berat' => $request->berat,
             'metode_pembayaran' => $request->metode_pembayaran,
-            'status' => 'proses',
+            'status' => $statusTransaksi,
             'catatan' => $request->catatan,
             'harga_total' => $hargaLayanan,
             'harga_setelah_diskon' => $hargaFinal, // ⬅️ simpan langsung
@@ -115,7 +117,7 @@ class LayananPelangganController extends Controller
     
         $hargaFinal = $hargaLayanan - $diskon;
     
-        return view('content.pelanggan.layanan.detail', compact(
+        return view('content.backend.pelanggan.layanan.detail', compact(
             'transaksi', 'hargaLayanan', 'diskon', 'hargaFinal'
         ));
     }

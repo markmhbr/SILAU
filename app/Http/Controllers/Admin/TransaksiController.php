@@ -21,7 +21,7 @@ class TransaksiController extends Controller
 //     dd($t->pelanggan?->user?->toArray());
 // }
 
-        return view('content.admin.transaksi.index', compact('transaksis'));
+        return view('content.backend.admin.transaksi.index', compact('transaksis'));
     }
 
     /**
@@ -34,7 +34,7 @@ class TransaksiController extends Controller
     // dd($pelanggan->toArray());
     $layanan = Layanan::all();
     $transaksi = null;
-    return view('content.admin.transaksi.form', compact('pelanggan', 'layanan','transaksi'));
+    return view('content.backend.admin.transaksi.form', compact('pelanggan', 'layanan','transaksi'));
     }
 
     /**
@@ -90,7 +90,7 @@ class TransaksiController extends Controller
         $pelanggan = $transaksi->pelanggan;  
         $layanan = Layanan::all();
         
-        return view('content.admin.transaksi.form', compact('transaksi', 'pelanggan', 'layanan'));
+        return view('content.backend.admin.transaksi.form', compact('transaksi', 'pelanggan', 'layanan'));
     }
 
     /**

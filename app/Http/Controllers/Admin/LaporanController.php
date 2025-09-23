@@ -26,7 +26,7 @@ class LaporanController extends Controller
                 
         }
 
-        return view('content.admin.laporan.index', compact('transaksi', 'dari', 'sampai'));
+        return view('content.backend.admin.laporan.index', compact('transaksi', 'dari', 'sampai'));
     }
 
 

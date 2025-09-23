@@ -11,12 +11,12 @@ class DiskonController extends Controller
     public function index()
     {
         $diskon = Diskon::all();
-        return view('content.admin.diskon.index', compact('diskon'));
+        return view('content.backend.admin.diskon.index', compact('diskon'));
     }
 
     public function create()
     {
-        return view('content.admin.diskon.form');
+        return view('content.backend.admin.diskon.form');
     }
 
     public function store(Request $request)
@@ -37,7 +37,7 @@ class DiskonController extends Controller
 
     public function edit(Diskon $diskon)
     {
-        return view('content.admin.diskon.form', compact('diskon'));
+        return view('content.backend.admin.diskon.form', compact('diskon'));
     }
 
     public function update(Request $request, Diskon $diskon)

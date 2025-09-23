@@ -13,7 +13,7 @@ class ProfilPerusahaanController extends Controller
     {
         
         $profil = ProfilPerusahaan::first() ?? new ProfilPerusahaan;
-        return view('content.admin.profile.index', compact('profil'));
+        return view('content.backend.admin.profile.index', compact('profil'));
     }
 
      public function update(Request $request)

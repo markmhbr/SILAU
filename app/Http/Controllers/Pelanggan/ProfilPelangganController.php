@@ -19,7 +19,7 @@ class ProfilPelangganController extends Controller
         // Ambil pelanggan yang login
         $pelanggan = Pelanggan::where('user_id', auth()->id())->first();
         
-        return view('content.pelanggan.profile', compact('pelanggan'));
+        return view('content.backend.pelanggan.profile', compact('pelanggan'));
     }
 
     /**

@@ -14,7 +14,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Dashboard v2</li>
+              <li class="breadcrumb-item active">Detail layanan</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -72,11 +72,11 @@
             </div>
 
         
-            @if($transaksi->metode_pembayaran == 'qris' && $transaksi->status == 'proses')
+            @if($transaksi->metode_pembayaran == 'qris' && $transaksi->status == 'pending')
             <div class="card">
                 <div class="card-body text-center">
                     <h5>Scan QRIS untuk bayar</h5>
-                    <img src="{{ asset('img/QR.svg') }}" alt="QRIS" style="max-width:200px;">
+                    <img src="{{ asset('assets/img/Capture.PNG') }}" alt="QRIS" style="max-width:200px;">
                     <form action="{{ route('pelanggan.layanan.bayar', $transaksi->id) }}" method="POST" enctype="multipart/form-data" class="mt-3">
                         @csrf
                         <div class="d-flex justify-content-center">
