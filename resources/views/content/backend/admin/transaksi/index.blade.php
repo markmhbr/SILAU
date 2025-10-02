@@ -95,6 +95,10 @@
                                 <button type="button" class="btn btn-success">
                                     {{ $transaksi->status }}
                                 </button>
+                            @elseif ($transaksi->status === 'pending')
+                                <button type="button" class="btn btn-secondary btn-pending">
+                                    {{ $transaksi->status }}
+                                </button>
                             @else
                                 <button type="button" class="btn btn-danger">
                                     {{ $transaksi->status }}

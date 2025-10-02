@@ -48,13 +48,8 @@
                                     <input type="text" class="form-control" id="nama_layanan" name="nama_layanan" placeholder="Masukkan Nama Layanan" value="{{ $layanan->nama_layanan ?? '' }}" required>
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <label for="jenis_layanan">Jenis Layanan</label>
-                                    <select class="form-control" id="jenis_layanan" name="jenis_layanan" required>
-                                      <option value="">- Pilih Jenis Layanan -</option>
-                                      <option value="reguler" {{ (isset($layanan) && $layanan->jenis_layanan == 'reguler') ? 'selected' : '' }}>Reguler</option>
-                                      <option value="express" {{ (isset($layanan) && $layanan->jenis_layanan == 'express') ? 'selected' : '' }}>Express / Kilat</option>
-                                      <option value="khusus" {{ (isset($layanan) && $layanan->jenis_layanan == 'khusus') ? 'selected' : '' }}>Khusus</option>
-                                    </select>
+                                    <label for="deskripsi">Deskripsi</label>
+                                    <input type="text" class="form-control" id="deskripsi" name="deskripsi" placeholder="Masukkan Harga Perkilo" value="{{ $layanan->deskripsi ?? '' }}" required>
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="harga_perkilo">Harga Perkilo</label>

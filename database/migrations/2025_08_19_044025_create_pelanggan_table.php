@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('foto');
-            $table->text('alamat')->default('-');
-            $table->string('no_hp',15)->default('-');
+            $table->text('alamat')->nullable();
+            $table->string('no_hp',15)->nullable();
             $table->timestamps();
         });
     }

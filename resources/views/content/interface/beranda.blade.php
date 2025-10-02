@@ -36,38 +36,23 @@
         <div class="container">
             <h2 class="section-title">Layanan Kami</h2>
             <div class="services-grid">
+            @foreach ($layanans as $item)
                 <div class="service-card">
                     <div class="service-icon">
-                        <i class="fas fa-tshirt"></i>
+                        <i class="
+                            @if ($item->nama_layanan == 'Cuci Biasa') fas fa-gem 
+                            @elseif ($item->nama_layanan == 'Cuci Regular') fas fa-tshirt 
+                            @elseif ($item->nama_layanan == 'Cuci Express') fas fa-star 
+                            @elseif ($item->nama_layanan == 'Setrikas Saja') fas fa-spray-can 
+                            @endif
+                        "></i>
                     </div>
-                    <h3>Cuci Reguler</h3>
-                    <p>Cuci bersih dengan deterjen premium dan pengeringan sempurna</p>
-                    <div class="price">Rp 7.000/kg</div>
+                    <h3>{{ $item->nama_layanan }}</h3>
+                    <p>{{ $item->deskripsi }}</p>
+                    <div class="price">Rp {{ number_format($item->harga_perkilo, 0, ',', '.') }}/kg</div>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h3>Cuci Express</h3>
-                    <p>Selesai dalam 6 jam dengan prioritas khusus</p>
-                    <div class="price">Rp 12.000/kg</div>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-spray-can"></i>
-                    </div>
-                    <h3>Setrika Saja</h3>
-                    <p>Setrika rapi dan profesional untuk pakaian Anda</p>
-                    <div class="price">Rp 5.000/kg</div>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-gem"></i>
-                    </div>
-                    <h3>Premium Care</h3>
-                    <p>Perawatan khusus untuk pakaian berharga dan delicate</p>
-                    <div class="price">Rp 15.000/kg</div>
-                </div>
+            @endforeach
+
             </div>
         </div>
     </section>
@@ -81,10 +66,10 @@
                     <div class="form-group">
                         <label for="service-type">Jenis Layanan</label>
                         <select id="service-type">
-                            <option value="7000">Cuci Reguler - Rp 7.000/kg</option>
-                            <option value="12000">Cuci Express - Rp 12.000/kg</option>
-                            <option value="5000">Setrika Saja - Rp 5.000/kg</option>
-                            <option value="15000">Premium Care - Rp 15.000/kg</option>
+                            @foreach ( $layanans as $items)
+                                
+                            <option value="{{ $items ->harga_perkilo }}">{{ $items -> nama_layanan }} - Rp {{ number_format($items->harga_perkilo, 0, ',', '.') }}/kg</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="form-group">
@@ -93,19 +78,29 @@
                     </div>
                     <div class="form-group">
                         <label for="discount">Kode Promo (opsional)</label>
-                        <input type="text" id="discount" placeholder="Masukkan kode promo">
+                        <select id="discount">
+                            <option value="">-- Pilih Promo --</option>
+                            @foreach ($diskons as $diskon)
+                                <option value="{{ $diskon->id }}" 
+                                    data-tipe="{{ $diskon->tipe }}" 
+                                    data-nilai="{{ $diskon->nilai }}">
+                                    {{ $diskon->kode }} 
+                                    ({{ $diskon->tipe == 'persentase' ? $diskon->nilai . '%' : 'Rp ' . number_format($diskon->nilai, 0, ',', '.') }})
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
+
                     <button class="btn-calculate" onclick="calculatePrice()">Hitung Harga</button>
                 </div>
                 <div class="calculator-result">
                     <h3>Total Harga</h3>
-                    <div class="total-price" id="total-price">Rp 7.000</div>
+                    <div class="total-price" id="total-price">Rp 0</div>
                     <div class="price-breakdown" id="price-breakdown">
-                        <p>Cuci Reguler: 1 kg × Rp 7.000</p>
-                        <p>Diskon: Rp 0</p>
-                        <p class="total">Total: <span>Rp 7.000</span></p>
+                        <!-- Akan diisi JS -->
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -175,5 +170,40 @@
             </div>
         </div>
     </section>
+
+<script>
+function calculatePrice() {
+    let hargaPerKilo = parseInt(document.getElementById("service-type").value);
+    let berat = parseInt(document.getElementById("weight").value);
+    let subtotal = hargaPerKilo * berat;
+
+    // Ambil diskon dari select
+    let discountSelect = document.getElementById("discount");
+    let selectedOption = discountSelect.options[discountSelect.selectedIndex];
+    let tipe = selectedOption ? selectedOption.getAttribute("data-tipe") : null;
+    let nilai = selectedOption ? parseInt(selectedOption.getAttribute("data-nilai")) || 0 : 0;
+
+    let diskon = 0;
+    if (tipe === "persentase") {
+        diskon = subtotal * (nilai / 100);
+    } else if (tipe === "nominal") {
+        diskon = nilai;
+    }
+
+    let total = subtotal - diskon;
+    if (total < 0) total = 0; // jangan sampai minus
+
+    // Update tampilan total
+    document.getElementById("total-price").innerText =
+        "Rp " + total.toLocaleString("id-ID");
+
+    // Update breakdown
+    document.getElementById("price-breakdown").innerHTML = `
+        <p>Harga: ${berat} kg × Rp ${hargaPerKilo.toLocaleString("id-ID")}</p>
+        <p>Diskon: Rp ${diskon.toLocaleString("id-ID")}</p>
+        <p class="total">Total: <span>Rp ${total.toLocaleString("id-ID")}</span></p>
+    `;
+}
+</script>
 
 @endsection

@@ -58,7 +58,6 @@
             <div class="card">
               <div class="card-header d-flex align-items-center">
               <h3 class="card-title mb-0">Data Layanan</h3>
-              <a href="{{ route('admin.layanan.create') }}" class="btn btn-primary btn-sm ml-auto">Tambah</a>
               </div>
 
               <!-- /.card-header -->
@@ -68,7 +67,7 @@
                   <tr>
                     <th>No</th>
                     <th>Nama Layanan</th>
-                    <th>Jenis Layanan</th>
+                    <th>Deskripsi</th>
                     <th>Harga Perkilo</th>
                     <th>Aksi</th>
                   </tr>
@@ -78,7 +77,7 @@
                     <tr>
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $layanan->nama_layanan}}</td>
-                      <td>{{ $layanan->jenis_layanan}}</td>
+                      <td>{{ $layanan->deskripsi}}</td>
                       <td>Rp {{ number_format($layanan->harga_perkilo, 0, ',', '.') }}</td>
                       {{-- <td>p</td>
                       <td>p</td>

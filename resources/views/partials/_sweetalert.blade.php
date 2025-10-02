@@ -91,6 +91,44 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+<!-- Konfirmasi Status -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const statusButtons = document.querySelectorAll('.btn-pending');
+
+    statusButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const form = this.closest('form');
+
+            Swal.fire({
+                title: "Ubah status transaksi?",
+                text: "Pilih tindakan yang ingin dilakukan!",
+                icon: "warning",
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: "Ya, proses",
+                denyButtonText: "Dibatalkan",
+                cancelButtonText: "Batal",
+                confirmButtonColor: "#28a745", 
+                denyButtonColor: "#dc3545", // merah untuk dibatalkan
+                cancelButtonColor: "#6c757d" // abu-abu untuk batal
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // tombol "Proses"
+                    form.action = form.action + '/proses'; // optional, atau handle di backend
+                    form.submit();
+                } else if (result.isDenied) {
+                    // tombol "Dibatalkan"
+                    form.action = form.action + '/dibatalkan'; // optional, atau handle di backend
+                    form.submit();
+                }
+                // cancel tidak perlu action
+            });
+        });
+    });
+});
+</script>
+
 
 <!-- Konfirmasi LogOut -->
 <script>

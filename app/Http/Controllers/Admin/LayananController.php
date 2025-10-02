@@ -30,23 +30,7 @@ class LayananController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'nama_layanan' => 'required|string|max:255',
-                'jenis_layanan' => 'required|string|in:reguler,express,khusus',
-                'harga_perkilo' => 'required|numeric',
-            ]);
 
-            Layanan::create([
-                'nama_layanan' => $request->nama_layanan,
-                'jenis_layanan' => $request->jenis_layanan,
-                'harga_perkilo' => $request->harga_perkilo,
-            ]);
-
-            return redirect()->route('admin.layanan.index')->with('success', 'Layanan berhasil ditambahkan.');
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
     }
 
     /**
@@ -73,14 +57,12 @@ class LayananController extends Controller
     {
         $request->validate([
             'nama_layanan' => 'required|string|max:255',
-            'jenis_layanan' => 'required|string|in:reguler,express,khusus',
             'harga_perkilo' => 'required|numeric',
         ]);
 
         $layanan = Layanan::findOrFail($id);
         $layanan->update([
             'nama_layanan' => $request->nama_layanan,
-            'jenis_layanan' => $request->jenis_layanan,
             'harga_perkilo' => $request->harga_perkilo,
         ]);
 

@@ -55,7 +55,7 @@
                     @foreach($layanan as $l)
                       <option value="{{ $l->id }}" data-harga="{{ $l->harga_perkilo }}"
                         {{ isset($transaksi) && $transaksi->layanan_id == $l->id ? 'selected' : '' }}>
-                        {{ $l->nama_layanan }} - {{ $l->jenis_layanan }}
+                        {{ $l->nama_layanan }}
                       </option>
                     @endforeach
                   </select>

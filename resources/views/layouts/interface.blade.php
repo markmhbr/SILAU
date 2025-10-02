@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LaundryKu - Layanan Laundry Premium</title>
+    <title>{{ env('APP_NAME')}} - Layanan Laundry Premium</title>
     <!-- Favicon -->
     <link rel="icon" href="{{ $profil->logo ? asset('logo/' . $profil->logo) : 'https://via.placeholder.com/400x400.png?text=Pilih+Logo' }}" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -145,7 +145,7 @@
         <div class="nav-container">
             <div class="nav-logo">
                 <i class="fas fa-tshirt"></i>
-                <span>LaundryKu</span>
+                <span>{{ $profil -> nama_perusahaan }}</span>
             </div>
             <ul class="nav-menu">
                 <li><a href="/#home">Beranda</a></li>
@@ -186,9 +186,9 @@
                     <h4>Layanan</h4>
                     <ul>
                         <li><a href="#">Cuci Reguler</a></li>
+                        <li><a href="#">Premium Care</a></li>
                         <li><a href="#">Cuci Express</a></li>
                         <li><a href="#">Setrika Saja</a></li>
-                        <li><a href="#">Premium Care</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">

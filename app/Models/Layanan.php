@@ -10,7 +10,12 @@ class Layanan extends Model
 
     protected $fillable = [
         'nama_layanan',
-        'jenis_layanan',
+        'deskripsi',
         'harga_perkilo'
     ];
+
+    public function transaksi()
+    {
+        return $this->hasMany(Transaksi::class, 'layanan_id');
+    }
 }

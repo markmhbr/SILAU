@@ -155,10 +155,13 @@ class TransaksiController extends Controller
         $transaksi = Transaksi::findOrFail($id);
     
         if ($status === 'selesai') {
-            $transaksi->status = 'selesai';
-            $transaksi->tanggal_selesai = now();
+        $transaksi->status = 'selesai';
+        $transaksi->tanggal_selesai = now();
         } elseif ($status === 'dibatalkan') {
             $transaksi->status = 'dibatalkan';
+            $transaksi->tanggal_selesai = null;
+        } elseif ($status === 'proses') {
+            $transaksi->status = 'proses';
             $transaksi->tanggal_selesai = null;
         }
     

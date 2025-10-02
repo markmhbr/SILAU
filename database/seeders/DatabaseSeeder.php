@@ -21,5 +21,10 @@ class DatabaseSeeder extends Seeder
             ProfilPerusahaanSeeder::class,
         ]);
 
+        $this->call([
+            LayananSeeder::class,
+        ]);
+
+
     }
 }
