@@ -1,150 +1,155 @@
 @extends('layouts.home')
+
 @section('title', 'Profil Usaha')
+
 @section('content')
-<!-- Content Header (Page header) -->
-<div class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1 class="m-0">Profil Usaha</h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">Profil Usaha</li>
-        </ol>
-      </div>
+<div class="space-y-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Profil Usaha</h2>
+            <p class="text-sm text-slate-500">Kelola identitas dan informasi kontak bisnis Anda</p>
+        </div>
+        <nav class="flex text-sm text-slate-500 space-x-2">
+            <a href="#" class="hover:text-primary-600">Home</a>
+            <span>/</span>
+            <span class="text-slate-900 dark:text-slate-200 font-medium">Profil Usaha</span>
+        </nav>
     </div>
-  </div>
-</div>
-<!-- Main content -->
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-              <div class="card">
-                <div class="card-header d-flex align-items-center">
-                  <h3 class="card-title mb-0">Pengaturan Profil Usaha</h3>
+
+    <form action="{{ route('admin.profil-perusahaan.update', $profil->id) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <div class="lg:col-span-8 space-y-6">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-primary-500"></i> Informasi Umum
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Nama Usaha</label>
+                            <input type="text" name="nama_perusahaan" value="{{ old('nama_perusahaan', $profil->nama_perusahaan) }}" 
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Deskripsi Singkat</label>
+                            <textarea name="deskripsi" rows="3" 
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition">{{ old('deskripsi', $profil->deskripsi) }}</textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Tentang Kami</label>
+                            <textarea name="tentang_kami" rows="4" 
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition">{{ old('tentang_kami', $profil->tentang_kami) }}</textarea>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('admin.profil-perusahaan.update', $profil->id) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        <div class="form row">
-                            <!-- Kiri: Nama, Deskripsi, Tentang Kami -->
-                            <div class="form-group col-md-7">
-                                <label for="nama_perusahaan">Nama Usaha</label>
-                                <input type="text" class="form-control mb-3" id="nama_perusahaan" name="nama_perusahaan" value="{{ old('nama_perusahaan', $profil->nama_perusahaan) }}" required>
-                            
-                                <label for="deskripsi">Deskripsi</label>
-                                <textarea class="form-control mb-3" id="deskripsi" name="deskripsi" rows="3">{{ old('deskripsi', $profil->deskripsi) }}</textarea>
-                            
-                                <label for="tentang_kami">Tentang Kami</label>
-                                <textarea class="form-control" id="tentang_kami" name="tentang_kami" rows="4">{{ old('tentang_kami', $profil->tentang_kami) }}</textarea>
+
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-map-marker-alt text-rose-500"></i> Lokasi & Operasional
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Alamat Lengkap</label>
+                            <textarea id="alamat" name="alamat" rows="2" oninput="updateMapPreview()"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition">{{ old('alamat', $profil->alamat) }}</textarea>
+                        </div>
+
+                        <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-600 h-64 bg-slate-100 dark:bg-slate-900">
+                            <iframe id="mapPreview" width="100%" height="100%" style="border:0;" loading="lazy"
+                                src="https://maps.google.com/maps?q={{ urlencode($profil->alamat) }}&t=&z=15&ie=UTF8&iwloc=&output=embed">
+                            </iframe>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Jam Layanan</label>
+                                <input type="text" name="service_hours" value="{{ old('service_hours', $profil->service_hours) }}" 
+                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition">
                             </div>
-                        
-                            <!-- Kanan: Logo -->
-                            <div class="form-group col-md-5">
-                                <label class="form-label fw-bold">Logo Usaha</label>
-                                <div class="file-upload-wrapper text-center">
-                                    <div class="logo-container mb-3" style="height: 200px; display: flex; align-items: center; justify-content: center;">
-                                        <img id="logo-preview" 
-                                             src="{{ $profil->logo ? asset('logo/' . $profil->logo) : 'https://via.placeholder.com/400x400.png?text=Pilih+Logo' }}" 
-                                             alt="Logo preview" class="img-fluid rounded" style="max-height: 100%; max-width: 100%; object-fit: contain;">
-                                    </div>
-                                    <input type="file" name="logo" id="logo-input" class="d-none" onchange="previewLogo(event)">
-                                    <label for="logo-input" class="btn btn-outline-primary w-100">
-                                        <i class="fas fa-upload me-2"></i>Pilih File Logo
-                                    </label>
-                                    <div class="form-text mt-2">Gunakan gambar rasio 1:1 (persegi).</div>
-                                </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-300">Fast Response</label>
+                                <input type="text" name="fast_response" value="{{ old('fast_response', $profil->fast_response) }}" 
+                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition">
                             </div>
                         </div>
-                        
-                        <div class="form-group mt-3">
-                            <label for="alamat">Alamat Lengkap</label>
-                            <textarea id="alamat" name="alamat" class="form-control" rows="3" oninput="updateMapPreview()">{{ old('alamat', $profil->alamat) }}</textarea>
-                        </div>
-                        <div class="form-group mt-2">
-                            <label>Preview Peta</label>
-                            <div class="border rounded" style="height: 300px; background-color: #f8f9fa;">
-                                <iframe id="mapPreview" width="100%" height="100%" style="border:0;" loading="lazy"
-                                        src="https://maps.google.com/maps?q={{ urlencode($profil->alamat) }}&t=&z=15&ie=UTF8&iwloc=&output=embed">
-                                </iframe>
-                            </div>
-                        </div>
-                        <div class="form row mt-3">
-                            <div class="form-group col-md-6">
-                                <label for="service_hours">Jam Layanan</label>
-                                <input type="text" name="service_hours" id="service_hours" class="form-control" value="{{ old('service_hours', $profil->service_hours) }}">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="fast_response">Fast Response</label>
-                                <input type="text" name="fast_response" id="fast_response" class="form-control" value="{{ old('fast_response', $profil->fast_response) }}">
-                            </div>
-                        </div>
-                        <h5 class="mt-4">Kontak & Sosial Media</h5>
-                        <div class="form row mt-2">
-                            <div class="form-group col-md-4">
-                                <label for="no_wa">No. WhatsApp</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fab fa-whatsapp"></i></span>
-                                    <input type="text" class="form-control" id="no_wa" name="no_wa" value="{{ old('no_wa', $profil->no_wa) }}">
-                                </div>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="email">Email</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $profil->email) }}">
-                                </div>
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="instagram">Instagram</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fab fa-instagram"></i></span>
-                                    <input type="text" class="form-control" id="instagram" name="instagram" value="{{ old('instagram', $profil->instagram) }}">
-                                </div>
-                            </div>
-                            <div class="form-group col-md-4 mt-2">
-                                <label for="facebook">Facebook</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fab fa-facebook-f"></i></span>
-                                    <input type="text" class="form-control" id="facebook" name="facebook" value="{{ old('facebook', $profil->facebook) }}">
-                                </div>
-                            </div>
-                            <div class="form-group col-md-4 mt-2">
-                                <label for="tiktok">TikTok</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fab fa-tiktok"></i></span>
-                                    <input type="text" class="form-control" id="tiktok" name="tiktok" value="{{ old('tiktok', $profil->tiktok) }}">
-                                </div>
-                            </div>
-                            <div class="form-group col-md-4 mt-2">
-                                <label for="youtube">YouTube</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fab fa-youtube"></i></span>
-                                    <input type="url" class="form-control" id="youtube" name="youtube" value="{{ old('youtube', $profil->youtube) }}">
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary mt-3">
-                            Simpan Perubahan
-                        </button>
-                    </form>
+                    </div>
                 </div>
-              </div>
+            </div>
+
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6">
+                    <h3 class="text-lg font-bold mb-4">Logo Usaha</h3>
+                    <div class="group relative flex flex-col items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-600 rounded-2xl p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                        <div class="w-full aspect-square flex items-center justify-center overflow-hidden mb-4 bg-slate-100 dark:bg-slate-900 rounded-xl">
+                            <img id="logo-preview" 
+                                 src="{{ $profil->logo ? asset('logo/' . $profil->logo) : 'https://via.placeholder.com/400x400.png?text=Logo' }}" 
+                                 alt="Logo preview" class="max-h-full max-w-full object-contain">
+                        </div>
+                        <input type="file" name="logo" id="logo-input" class="hidden" onchange="previewLogo(event)">
+                        <label for="logo-input" class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-center rounded-xl cursor-pointer font-medium transition shadow-sm">
+                            <i class="fas fa-camera mr-2"></i> Ganti Logo
+                        </label>
+                        <p class="text-[10px] text-slate-500 mt-3">Gunakan rasio 1:1, Maks 2MB</p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6">
+                    <h3 class="text-lg font-bold mb-4">Kontak & Sosial</h3>
+                    <div class="space-y-4">
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                                <i class="fab fa-whatsapp text-lg"></i>
+                            </span>
+                            <input type="text" name="no_wa" value="{{ old('no_wa', $profil->no_wa) }}" placeholder="WhatsApp"
+                                class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-primary-500 outline-none text-sm transition">
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                                <i class="fas fa-envelope text-sm"></i>
+                            </span>
+                            <input type="email" name="email" value="{{ old('email', $profil->email) }}" placeholder="Email"
+                                class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-primary-500 outline-none text-sm transition">
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                                <i class="fab fa-instagram text-lg"></i>
+                            </span>
+                            <input type="text" name="instagram" value="{{ old('instagram', $profil->instagram) }}" placeholder="Instagram"
+                                class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-primary-500 outline-none text-sm transition">
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                                <i class="fab fa-tiktok text-sm"></i>
+                            </span>
+                            <input type="text" name="tiktok" value="{{ old('tiktok', $profil->tiktok) }}" placeholder="TikTok"
+                                class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 focus:ring-2 focus:ring-primary-500 outline-none text-sm transition">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-bold shadow-lg shadow-primary-500/30 transition-all hover:scale-[1.02] active:scale-95">
+                    <i class="fas fa-save mr-2"></i> Simpan Perubahan
+                </button>
             </div>
         </div>
-    </div>
-</section>
-{{-- SCRIPT --}}
+    </form>
+</div>
+
 <script>
     function updateMapPreview() {
         const addressInput = document.getElementById('alamat');
         const mapPreview = document.getElementById('mapPreview');
-        mapPreview.src = `https://maps.google.com/maps?q=${encodeURIComponent(addressInput.value)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+        const encodedAddress = encodeURIComponent(addressInput.value);
+        mapPreview.src = `https://maps.google.com/maps?q=${encodedAddress}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
     }
+
     function previewLogo(event) {
         const reader = new FileReader();
         reader.onload = function(){
@@ -153,21 +158,4 @@
         reader.readAsDataURL(event.target.files[0]);
     }
 </script>
-{{-- STYLE --}}
-<style>
-.file-upload-wrapper {
-    border: 2px dashed #E5E7EB;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
-    background-color: #F9FAFB;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    transition: background-color 0.2s;
-}
-.file-upload-wrapper:hover { background-color: #F3F4F6; }
-.logo-container {
-    overflow: hidden;
-}
-</style>
 @endsection

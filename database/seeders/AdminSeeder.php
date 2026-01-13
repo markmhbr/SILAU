@@ -18,5 +18,14 @@ class AdminSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        User::create([
+            'name' => 'Owner',
+            'email' => 'owner@gmail.com',
+            'password' => Hash::make('owner'),
+            'role' => 'owner',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }

@@ -1,281 +1,187 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ env('APP_NAME') }} | @yield('title')</title>
-  <!-- Favicon -->
-  <link rel="icon" href="{{ $profil->logo ? asset('logo/' . $profil->logo) : 'https://via.placeholder.com/400x400.png?text=Pilih+Logo' }}" type="image/png">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ env('APP_NAME') }} | @yield('title')</title>
+    
+    <link rel="icon" href="{{ $profil->logo ? asset('logo/' . $profil->logo) : 'https://via.placeholder.com/400x400.png?text=Pilih+Logo' }}" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- Google Font: Source Sans Pro -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="{{ asset ('plugins/fontawesome-free/css/all.min.css') }}">
-  <!-- overlayScrollbars -->
-  <link rel="stylesheet" href="{{ asset ('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
-  
-  <!-- DataTables -->
-  <link rel="stylesheet" href="{{ asset ('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
-  <link rel="stylesheet" href="{{ asset ('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
-  <link rel="stylesheet" href="{{ asset ('plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="{{ asset ('dist/css/adminlte.min.css') }}">
-  <!-- Select2 -->
-  <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: { "50": "#eff6ff", "100": "#dbeafe", "200": "#bfdbfe", "300": "#93c5fd", "400": "#60a5fa", "500": "#3b82f6", "600": "#2563eb", "700": "#1d4ed8", "800": "#1e40af", "900": "#1e3a8a" }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+    </style>
 </head>
-<body class="hold-transition light-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
-<div class="wrapper">
 
-  <!-- Preloader -->
-  {{-- <div class="preloader flex-column justify-content-center align-items-center">
-    <img class="animation__wobble" src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTELogo" height="60" width="60">
-  </div> --}}
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-300">
 
-  <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-light ">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ route('admin.dashboard')}}" class="nav-link">Home</a>
-      </li>
-    </ul>
+    <div class="flex h-screen overflow-hidden">
+        
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transition-transform duration-300 transform -translate-x-full lg:translate-x-0">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center gap-3 px-6 py-5 border-b border-slate-100 dark:border-slate-700">
+                    <img src="{{ $profil->logo ? asset('logo/' . $profil->logo) : 'https://via.placeholder.com/400x400.png?text=Pilih+Logo' }}" class="w-9 h-9 rounded-lg object-cover">
+                    <div class="leading-tight">
+                        <h1 class="font-bold text-lg tracking-tight text-primary-600 dark:text-primary-400">SILAU</h1>
+                        <p class="text-[10px] font-medium uppercase tracking-wider text-slate-400">Laundry System</p>
+                    </div>
+                </div>
 
-    <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
-      <li class="nav-item">
-        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-          <i class="fas fa-expand-arrows-alt"></i>
-        </a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-          {{ Auth::user()->name }}
-        </a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="#">Pengaturan</a>
-          <div class="dropdown-divider"></div>
-          <form action="{{ route('logout') }}" method="POST">
-          @csrf
-          <button type="button" class="btn logout">
-              <p>Logout</p>
-          </button>
-          </form>
+                <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+                    @if (Auth::user()->role == 'admin')
+                        <div class="text-[11px] font-bold text-slate-400 uppercase px-3 py-2">Dashboard</div>
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all {{ request()->routeIs('admin.dashboard') ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                            <i class="fas fa-tachometer-alt w-5"></i> Dashboard
+                        </a>
+
+                        <div class="text-[11px] font-bold text-slate-400 uppercase px-3 py-2 mt-4">Profil Perusahaan</div>
+                        <a href="{{ route('admin.profil-perusahaan.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all {{ request()->is('admin/profil-perusahaan*') ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                            <i class="fas fa-building w-5"></i> Profil Perusahaan
+                        </a>
+
+                        <div class="text-[11px] font-bold text-slate-400 uppercase px-3 py-2 mt-4">Manajemen Data</div>
+                        <a href="{{ route('admin.pelanggan.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all {{ request()->is('admin/pelanggan*') ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                            <i class="fas fa-users w-5"></i> Pelanggan
+                        </a>
+                        <a href="{{ route('admin.layanan.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all {{ request()->is('admin/layanan*') ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                            <i class="fas fa-concierge-bell w-5"></i> Layanan
+                        </a>
+                        <a href="{{ route('admin.diskon.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all {{ request()->is('admin/diskon*') ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                            <i class="fas fa-tags w-5"></i> Diskon
+                        </a>
+
+                        <div class="text-[11px] font-bold text-slate-400 uppercase px-3 py-2 mt-4">Transaksi & Laporan</div>
+                        <a href="{{ route('admin.transaksi.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all {{ request()->is('admin/transaksi*') ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                            <i class="fas fa-exchange-alt w-5"></i> Transaksi
+                        </a>
+                        <a href="{{ route('admin.laporan.index')}}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all {{ request()->is('admin/laporan*') ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                            <i class="fas fa-book w-5"></i> Laporan
+                        </a>
+                    @else
+                        <div class="text-[11px] font-bold text-slate-400 uppercase px-3 py-2 mt-2">Menu Pelanggan</div>
+                        <a href="{{ route('pelanggan.profil.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all {{ request()->routeIs('pelanggan.profil.*') ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                            <i class="fas fa-address-card w-5"></i> Profil Saya
+                        </a>
+                        <a href="{{ route('pelanggan.layanan.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all {{ request()->is('pelanggan/layanan*') ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                            <i class="fas fa-concierge-bell w-5"></i> Daftar Layanan
+                        </a>
+                    @endif
+                </nav>
+
+                <div class="p-4 border-t border-slate-200 dark:border-slate-700">
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="flex items-center gap-3 w-full px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition">
+                            <i class="fas fa-power-off"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <header class="h-16 flex items-center justify-between px-4 lg:px-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 sticky top-0 z-40">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="hidden md:block">
+                        <h2 class="text-sm font-medium text-slate-500">Welcome back, <span class="text-slate-900 dark:text-white font-bold">{{ Auth::user()->name }}</span></h2>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 px-4 border-r border-slate-200 dark:border-slate-700 mr-2">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-semibold text-slate-900 dark:text-white leading-none">{{ Auth::user()->name }}</p>
+                            <p class="text-[10px] text-slate-500 uppercase tracking-tighter mt-1">{{ Auth::user()->role }}</p>
+                        </div>
+                        <div class="w-9 h-9 rounded-full bg-primary-600 flex items-center justify-center text-white font-bold shadow-md border-2 border-white dark:border-slate-700">
+                            {{ substr(Auth::user()->name, 0, 1) }}
+                        </div>
+                    </div>
+
+                    <button onclick="toggleFullscreen()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 transition-all group" title="Fullscreen">
+                        <i class="fas fa-expand-arrows-alt text-lg group-hover:scale-110 transition-transform"></i>
+                    </button>
+
+                    <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 transition-all group" title="Toggle Theme">
+                        <i id="theme-icon" class="fas fa-moon text-lg group-hover:rotate-12 transition-transform"></i>
+                    </button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 lg:p-8">
+                <div class="max-w-7xl mx-auto">
+                    @yield('content')
+                </div>
+            </main>
         </div>
-      </li>
-    </ul>
-  </nav>
-  <!-- /.navbar -->
-
-  <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
-    <a href="/" class="brand-link d-flex align-items-center" style="gap:8px;">
-        <img src="{{ $profil->logo ? asset('logo/' . $profil->logo) : 'https://via.placeholder.com/400x400.png?text=Pilih+Logo' }}" 
-             alt="Icon" 
-             style="width:30px; height:30px; margin-left: 20px; margin-right: 2px;">
-
-        <div class="d-flex flex-column ml-2">
-            <span class="font-weight-bold" style="line-height:1;">SILAU</span>
-            <small style="font-size:12px; color:#ccc; line-height:1;">
-                Sistem Informasi Laundry
-            </small>
-        </div>
-    </a>
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <!-- Sidebar user panel (optional) -->
-
-      <!-- SidebarSearch Form -->
-      <div class="form-inline mt-3">
-        <div class="input-group" data-widget="sidebar-search">
-          <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-          <div class="input-group-append">
-            <button class="btn btn-sidebar">
-              <i class="fas fa-search fa-fw"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
-          @if (Auth::user()->role == 'admin')
-          
-          {{-- Dashboard --}}
-          <li class="nav-header">DASHBOARD</li>
-          <li class="nav-item menu-open">
-            <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ?'active' : '' }}">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Dashboard
-              </p>
-            </a>
-          </li>
-
-          {{-- Profil --}}
-          <li class="nav-header">PROFIL PERUSAHAAN</li>
-          <li class="nav-item">
-            <a href="{{ route('admin.profil-perusahaan.index') }}" class="nav-link {{ request()->is('admin/profil-perusahaan*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-building"></i>
-              <p>
-                Profil Perusahaan
-              </p>
-            </a>
-          </li>
-
-          {{-- Master Data --}}
-          <li class="nav-header">MANAJEMEN DATA</li>
-          <li class="nav-item">
-            <a href="{{ route('admin.pelanggan.index') }}" class="nav-link {{ request()->is('admin/pelanggan*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-users"></i>
-              <p>
-                Pelanggan
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('admin.layanan.index') }}" class="nav-link {{ request()->is('admin/layanan*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-user"></i>
-              <p>
-                Layanan
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('admin.diskon.index') }}" class="nav-link {{ request()->is('admin/diskon*') ? 'active' : '' }}">
-              <i class="fas fa-tags mx-1"></i>
-              <p>
-                Diskon
-              </p>
-            </a>
-          </li>
-
-          {{-- Transaksi & Laporan --}}
-          <li class="nav-header">TRANSAKSI & LAPORAN</li>
-          <li class="nav-item">
-            <a href="{{ route('admin.transaksi.index') }}" class="nav-link {{ request()->is('admin/transaksi*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-columns"></i>
-              <p>
-                Transaksi
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('admin.laporan.index')}}" class="nav-link {{ request()->is('admin/laporan*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-book"></i>
-              <p>
-                Laporan
-              </p>
-            </a>
-          </li>
-          @elseif (Auth::user()->role == 'pelanggan')
-
-          {{-- Menu untuk Pelanggan --}}
-          <li class="nav-header">MENU PELANGGAN</li>
-          <li class="nav-item">
-            <a href="{{ route('pelanggan.profil.index') }}" class="nav-link {{ request()->routeIs('pelanggan.profil.*') ?'active' : '' }}">
-              <i class="nav-icon fas fa-address-card"></i>
-              <p>
-                Profil
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('pelanggan.layanan.index') }}" class="nav-link {{ request()->is('pelanggan/layanan*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-users"></i>
-              <p>
-                Layanan
-              </p>
-            </a>
-          </li>
-          @endif
-        </ul>
-      </nav>
-      <!-- /.sidebar-menu -->
     </div>
-    <!-- /.sidebar -->
-  </aside>
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-40 hidden lg:hidden backdrop-blur-sm"></div>
 
-    @yield('content')
-  </div>
-  <!-- /.content-wrapper -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // --- Fullscreen Logic ---
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
 
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-  </aside>
-  <!-- /.control-sidebar -->
+        // --- Dark Mode Logic ---
+        const html = document.documentElement;
+        const themeIcon = document.getElementById('theme-icon');
 
-  <!-- Main Footer -->
-  <footer class="main-footer">
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
-    All rights reserved.
-    <div class="float-right d-none d-sm-inline-block">
-      <b>Version</b> 3.2.0
-    </div>
-  </footer>
-</div>
-<!-- ./wrapper -->
+        function toggleDarkMode() {
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                themeIcon.className = 'fas fa-moon text-lg';
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                themeIcon.className = 'fas fa-sun text-lg';
+            }
+        }
 
-<!-- REQUIRED SCRIPTS -->
-<!-- jQuery -->
-<script src="{{ asset ('plugins/jquery/jquery.min.js') }}"></script>
-<!-- Bootstrap -->
-<script src="{{ asset ('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-<!-- overlayScrollbars -->
-<script src="{{ asset ('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
-<!-- AdminLTE App -->
-<script src="{{ asset ('dist/js/adminlte.js') }}"></script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            themeIcon.className = 'fas fa-sun text-lg';
+        }
 
-<!-- PAGE PLUGINS -->
-<!-- jQuery Mapael -->
-<script src="{{ asset ('plugins/jquery-mousewheel/jquery.mousewheel.js') }}"></script>
-<script src="{{ asset ('plugins/raphael/raphael.min.js') }}"></script>
-<script src="{{ asset ('plugins/jquery-mapael/jquery.mapael.min.js') }}"></script>
-<script src="{{ asset ('plugins/jquery-mapael/maps/usa_states.min.js') }}"></script>
-<!-- ChartJS -->
-<script src="{{ asset ('plugins/chart.js/Chart.min.js') }}"></script>
-
-<!-- AdminLTE for demo purposes -->
-{{-- <script src="{{ asset ('dist/js/demo.js') }}"></script> --}}
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="{{ asset ('dist/js/pages/dashboard2.js') }}"></script>
-
-
-<!-- Select2 -->
-<script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
-
-<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
-
-<script>
-  $(function () {
-    //Initialize Select2 Elements
-    $('.select2').select2()
-
-    //Initialize Select2 Elements
-    $('.select2bs4').select2({
-      theme: 'bootstrap4'
-    })
-  });
-</script>
-
-<!-- DataTables  & Plugins -->
-@include('partials.dataTables')
-<!-- SweetAlert2 -->
-@include('partials._sweetalert')
-
+        // --- Sidebar Logic ---
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('sidebar-overlay').classList.toggle('hidden');
+        }
+    </script>
+    
+    @include('partials.dataTables')
+    @include('partials._sweetalert')
 </body>
 </html>
