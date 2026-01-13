@@ -31,7 +31,7 @@ class LoginController extends Controller
                 if (Auth::user()->role === 'admin') {
                     $redirectUrl = '/admin/dashboard';
                 } else if (Auth::user()->role === 'pelanggan') {
-                    $redirectUrl = '/pelanggan/profil';
+                    $redirectUrl = '/pelanggan/dashboard';
                 }
                 
                 return response()->json([
@@ -45,7 +45,7 @@ class LoginController extends Controller
             if (Auth::user()->role === 'admin') {
                 return redirect()->intended(route('admin.dashboard'));
             } else if (Auth::user()->role === 'pelanggan') {
-                return redirect()->intended('pelanggan/profil');
+                return redirect()->intended(route('pelanggan.dashboard'));
             }
         }
         

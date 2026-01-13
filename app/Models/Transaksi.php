@@ -24,6 +24,12 @@ class Transaksi extends Model
         'catatan'
     ];
 
+    // Tambahkan ini agar tanggal bisa di-format
+    protected $casts = [
+        'tanggal_masuk' => 'datetime',
+        'tanggal_selesai' => 'datetime',
+    ];
+
     // Relasi ke pelanggan
     public function pelanggan()
     {

@@ -21,8 +21,8 @@ class LayananPelangganController extends Controller
 
         // Ambil semua transaksi milik pelanggan itu saja, sekaligus eager load layanan
         $transaksis = Transaksi::with('layanan')
-                        ->where('pelanggan_id', $pelanggan->id)
-                        ->get();
+            ->where('pelanggan_id', $pelanggan->id)
+            ->get();
         return view('content.backend.pelanggan.layanan.index', compact('transaksis'));
     }
 
@@ -31,13 +31,19 @@ class LayananPelangganController extends Controller
      */
     public function create()
     {
-        
         $pelanggan = Pelanggan::where('user_id', auth()->id())->first();
-        // dd($pelanggan->toArray());
+
+        // CEK KONDISI: Jika koordinat atau alamat belum diisi
+        if (!$pelanggan->latitude || !$pelanggan->alamat_lengkap) {
+            return redirect()->route('pelanggan.alamat')
+                ->with('error', 'Silahkan lengkapi alamat penjemputan Anda terlebih dahulu sebelum membuat pesanan.');
+        }
+
         $layanan = Layanan::all();
         $diskon = Diskon::all();
         $transaksi = null;
-        return view('content.backend.pelanggan.layanan.form', compact('pelanggan', 'layanan','transaksi','diskon'));
+
+        return view('content.backend.pelanggan.layanan.form', compact('pelanggan', 'layanan', 'transaksi', 'diskon'));
     }
 
     /**
@@ -53,10 +59,10 @@ class LayananPelangganController extends Controller
             'metode_pembayaran' => 'nullable|string|in:tunai,qris',
             'catatan' => 'nullable|string',
         ]);
-    
+
         $layanan = Layanan::findOrFail($request->layanan_id);
         $hargaLayanan = $layanan->harga_perkilo * $request->berat;
-    
+
         $diskon = 0;
         if ($request->diskon_id) {
             $diskonModel = Diskon::find($request->diskon_id);
@@ -74,9 +80,9 @@ class LayananPelangganController extends Controller
 
         // Tentukan status awal berdasarkan metode pembayaran
         $statusTransaksi = ($request->metode_pembayaran === 'tunai') ? 'proses' : 'pending';
-    
+
         $hargaFinal = $hargaLayanan - $diskon;
-    
+
         $transaksi = Transaksi::create([
             'pelanggan_id' => $request->pelanggan_id,
             'layanan_id' => $request->layanan_id,
@@ -89,9 +95,9 @@ class LayananPelangganController extends Controller
             'harga_total' => $hargaLayanan,
             'harga_setelah_diskon' => $hargaFinal, // ⬅️ simpan langsung
         ]);
-    
+
         return redirect()->route('pelanggan.layanan.detail', $transaksi->id)
-                         ->with('success', 'Transaksi berhasil dibuat. Silakan lanjut ke detail untuk pembayaran.');
+            ->with('success', 'Transaksi berhasil dibuat. Silakan lanjut ke detail untuk pembayaran.');
     }
 
 
@@ -99,9 +105,9 @@ class LayananPelangganController extends Controller
     public function detail($id)
     {
         $transaksi = Transaksi::with(['pelanggan', 'layanan'])->findOrFail($id);
-    
+
         $hargaLayanan = $transaksi->layanan->harga_perkilo * $transaksi->berat;
-    
+
         $diskon = 0;
         if ($transaksi->diskon) {
             // cek minimal transaksi dulu
@@ -114,11 +120,14 @@ class LayananPelangganController extends Controller
             }
         }
 
-    
+
         $hargaFinal = $hargaLayanan - $diskon;
-    
+
         return view('content.backend.pelanggan.layanan.detail', compact(
-            'transaksi', 'hargaLayanan', 'diskon', 'hargaFinal'
+            'transaksi',
+            'hargaLayanan',
+            'diskon',
+            'hargaFinal'
         ));
     }
 
@@ -142,6 +151,17 @@ class LayananPelangganController extends Controller
             ->with('success', 'Bukti pembayaran berhasil diupload, menunggu konfirmasi admin.');
     }
 
+    public function pesanan()
+    {
+        // Ambil pelanggan yang login
+        $pelanggan = Pelanggan::where('user_id', auth()->id())->first();
+
+        // Ambil semua transaksi milik pelanggan itu saja, sekaligus eager load layanan
+        $transaksis = Transaksi::with('layanan')
+            ->where('pelanggan_id', $pelanggan->id)
+            ->get();
+        return view('content.backend.pelanggan.layanan.pesanan', compact('transaksis'));
+    }
 
 
     /**

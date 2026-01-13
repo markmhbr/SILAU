@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\DiskonController;
 use App\Http\Controllers\Admin\LaporanController;
 
 // Controllers Pelanggan
+use App\Http\Controllers\Pelanggan\DashboardController as PelangganDashboardController;
 use App\Http\Controllers\Pelanggan\LayananPelangganController;
 use App\Http\Controllers\Pelanggan\ProfilPelangganController;
 
@@ -72,7 +73,13 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
 */
 
 Route::middleware(['auth','role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
+    Route::get('/dashboard', [PelangganDashboardController::class, 'dashboard'])
+    ->name('dashboard');
+    Route::get('/alamat', [ProfilPelangganController::class, 'alamat'])->name('alamat');
+    Route::put('/alamat', [ProfilPelangganController::class, 'updateAlamat'])
+        ->name('alamat.update');
     Route::resource('/profil', ProfilPelangganController::class)->names('profil');
+    Route::get('/pesanan', [LayananPelangganController::class, 'pesanan'])->name('pesanan');
     Route::resource('/layanan', LayananPelangganController::class)->names('layanan');
     Route::get('/layanan/{id}/detail', [LayananPelangganController::class, 'detail'])->name('layanan.detail');
     Route::post('/layanan/{id}/bayar', [LayananPelangganController::class, 'bayar'])->name('layanan.bayar');

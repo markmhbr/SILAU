@@ -9,10 +9,25 @@ class Pelanggan extends Model
     protected $table = 'pelanggan';
 
     protected $fillable = [
-        'user_id', 
-        'foto', 
-        'alamat', 
-        'no_hp'
+        'user_id',
+        'foto',
+        'no_hp',
+
+        // Wilayah
+        'provinsi',
+        'kota',
+        'kecamatan',
+        'desa',
+
+        // Alamat detail
+        'alamat_lengkap',
+        'no_rumah',
+        'kode_pos',
+        'patokan',
+
+        // Koordinat
+        'latitude',
+        'longitude',
     ];
 
     public function user()
@@ -24,5 +39,4 @@ class Pelanggan extends Model
     {
         return $this->hasMany(Transaksi::class, 'pelanggan_id');
     }
-    
 }

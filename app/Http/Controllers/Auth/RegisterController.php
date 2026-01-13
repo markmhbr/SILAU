@@ -41,9 +41,6 @@ class RegisterController extends Controller
             
             Pelanggan::create([
                 'user_id' => $user->id,
-                'foto'    => '',
-                'no_hp'   => '',
-                'alamat'  => '',
             ]);
             
             // If AJAX request
