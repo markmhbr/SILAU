@@ -78,7 +78,7 @@ class TransaksiController extends Controller
     public function show(string $id)
     {
         $transaksi = Transaksi::with(['pelanggan', 'layanan'])->get();
-        return view('content.transaksi.invoice',compact('transaksi'));
+        return view('content.backend.admin.transaksi.invoice',compact('transaksi'));
     }
 
     /**

@@ -1,157 +1,136 @@
-<!-- Load SweetAlert2 CDN -->
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- Alert Success/Error -->
-@if(session('success'))
 <script>
-Swal.fire({
-    icon: 'success',
-    title: 'Berhasil!',
-    text: "{{ session('success') }}",
-    timer: 2000,
-    showConfirmButton: false
-});
-</script>
-@endif
+    // Konfigurasi global Toast (Notifikasi kecil di pojok)
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
 
-@if(session('error'))
-<script>
-Swal.fire({
-    icon: 'error',
-    title: 'Gagal!',
-    text: "{{ session('error') }}",
-    timer: 2500,
-    showConfirmButton: false
-});
-</script>
-@endif
+    // Alert Success
+    @if(session('success'))
+        Toast.fire({
+            icon: 'success',
+            title: "{{ session('success') }}"
+        });
+    @endif
 
-<!-- Konfirmasi Hapus -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const deleteButtons = document.querySelectorAll('.btn-delete');
+    // Alert Error
+    @if(session('error'))
+        Toast.fire({
+            icon: 'error',
+            title: "{{ session('error') }}"
+        });
+    @endif
 
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const form = this.closest('form');
-
-            Swal.fire({
-                title: "Apakah kamu yakin?",
-                text: "Data ini akan dihapus permanen!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Ya, hapus!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
+    document.addEventListener('DOMContentLoaded', function () {
+        
+        // 1. Konfirmasi Hapus (Universal)
+        const deleteButtons = document.querySelectorAll('.btn-delete');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                Swal.fire({
+                    title: "Hapus data ini?",
+                    text: "Tindakan ini tidak dapat dibatalkan!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#e11d48", // Rose 600 (Tailwind)
+                    cancelButtonColor: "#64748b",  // Slate 500
+                    confirmButtonText: "Ya, Hapus!",
+                    cancelButtonText: "Batal",
+                    borderRadius: '15px'
+                }).then((result) => {
+                    if (result.isConfirmed) form.submit();
+                });
             });
         });
-    });
-});
-</script>
 
-<!-- Konfirmasi Status -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const statusButtons = document.querySelectorAll('.btn-status');
+        // 2. Konfirmasi Status (Universal untuk 'btn-status' dan 'btn-pending')
+        const statusButtons = document.querySelectorAll('.btn-status, .btn-pending');
+        statusButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                const isPending = this.classList.contains('btn-pending');
+                
+                // Dinamis pesan berdasarkan class
+                const confirmText = isPending ? "Ya, Proses!" : "Ya, Selesai!";
+                const targetStatus = isPending ? "proses" : "selesai";
 
-    statusButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const form = this.closest('form');
-
-            Swal.fire({
-                title: "Ubah status transaksi?",
-                text: "Pilih tindakan yang ingin dilakukan!",
-                icon: "warning",
-                showDenyButton: true,
-                showCancelButton: true,
-                confirmButtonText: "Ya, selesai!",
-                denyButtonText: "Dibatalkan",
-                cancelButtonText: "Batal",
-                confirmButtonColor: "#28a745", 
-                denyButtonColor: "#dc3545", // merah untuk dibatalkan
-                cancelButtonColor: "#6c757d" // abu-abu untuk batal
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // tombol "Selesai"
-                    form.action = form.action + '/selesai'; // optional, atau handle di backend
-                    form.submit();
-                } else if (result.isDenied) {
-                    // tombol "Dibatalkan"
-                    form.action = form.action + '/dibatalkan'; // optional, atau handle di backend
-                    form.submit();
-                }
-                // cancel tidak perlu action
+                Swal.fire({
+                    title: "Update Status?",
+                    text: `Ubah transaksi menjadi status ${targetStatus}?`,
+                    icon: "question",
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: confirmText,
+                    denyButtonText: "Batalkan Pesanan",
+                    cancelButtonText: "Kembali",
+                    confirmButtonColor: "#2563eb", // Blue 600
+                    denyButtonColor: "#e11d48",    // Rose 600
+                    cancelButtonColor: "#64748b"   // Slate 500
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.action = `${form.action}/${targetStatus}`;
+                        form.submit();
+                    } else if (result.isDenied) {
+                        form.action = `${form.action}/dibatalkan`;
+                        form.submit();
+                    }
+                });
             });
         });
-    });
-});
-</script>
 
-<!-- Konfirmasi Status -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const statusButtons = document.querySelectorAll('.btn-pending');
-
-    statusButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const form = this.closest('form');
-
-            Swal.fire({
-                title: "Ubah status transaksi?",
-                text: "Pilih tindakan yang ingin dilakukan!",
-                icon: "warning",
-                showDenyButton: true,
-                showCancelButton: true,
-                confirmButtonText: "Ya, proses",
-                denyButtonText: "Dibatalkan",
-                cancelButtonText: "Batal",
-                confirmButtonColor: "#28a745", 
-                denyButtonColor: "#dc3545", // merah untuk dibatalkan
-                cancelButtonColor: "#6c757d" // abu-abu untuk batal
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // tombol "Proses"
-                    form.action = form.action + '/proses'; // optional, atau handle di backend
-                    form.submit();
-                } else if (result.isDenied) {
-                    // tombol "Dibatalkan"
-                    form.action = form.action + '/dibatalkan'; // optional, atau handle di backend
-                    form.submit();
-                }
-                // cancel tidak perlu action
+        // 3. Konfirmasi Logout
+        const logoutButtons = document.querySelectorAll('.logout');
+        logoutButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                Swal.fire({
+                    title: "Ingin keluar?",
+                    text: "Sesi Anda akan berakhir di sini.",
+                    icon: "info",
+                    showCancelButton: true,
+                    confirmButtonColor: "#e11d48",
+                    cancelButtonColor: "#64748b",
+                    confirmButtonText: "Logout sekarang",
+                    cancelButtonText: "Tetap di sini"
+                }).then((result) => {
+                    if (result.isConfirmed) form.submit();
+                });
             });
         });
+
     });
-});
 </script>
 
-
-<!-- Konfirmasi LogOut -->
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const deleteButtons = document.querySelectorAll('.logout');
-
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const form = this.closest('form');
-
-            Swal.fire({
-                title: "Apakah kamu yakin ingin keluar?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Ya, Logout!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
-        });
-    });
-});
-</script>
+<style>
+    /* Agar UI SweetAlert selaras dengan Tailwind */
+    .swal2-popup {
+        border-radius: 1.5rem !important;
+        font-family: inherit !important;
+        padding: 2rem !important;
+    }
+    .swal2-title {
+        font-weight: 800 !important;
+        color: #1e293b !important;
+    }
+    .swal2-html-container {
+        color: #64748b !important;
+    }
+    .swal2-confirm, .swal2-cancel, .swal2-deny {
+        border-radius: 0.75rem !important;
+        font-weight: 700 !important;
+        padding: 0.75rem 1.5rem !important;
+    }
+</style>
