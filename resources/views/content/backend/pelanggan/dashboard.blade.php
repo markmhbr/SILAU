@@ -13,18 +13,19 @@
                 </p>
             </div>
 
-            <div
-                class="bg-gradient-to-br from-slate-900 to-slate-800 dark:from-brand dark:to-indigo-600 p-6 rounded-[2rem] flex justify-between items-center shadow-xl shadow-slate-200 dark:shadow-brand/20 relative overflow-hidden group">
-                <div class="relative z-10">
-                    <p class="text-[10px] font-bold text-slate-400 dark:text-brand-50 uppercase tracking-[0.2em]">Poin
-                        Pelanggan</p>
-                    <p class="text-2xl font-black mt-1 text-white">1.250 pts</p>
-                </div>
-                <button
-                    class="relative z-10 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 text-xs font-bold px-5 py-2.5 rounded-2xl transition-all active:scale-90">
-                    Detail
-                </button>
-            </div>
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 dark:from-brand dark:to-indigo-600 p-6 rounded-[2rem] flex justify-between items-center shadow-xl shadow-slate-200 dark:shadow-brand/20 relative overflow-hidden group">
+    <div class="relative z-10">
+        <p class="text-[10px] font-bold text-slate-400 dark:text-brand-50 uppercase tracking-[0.2em]">
+            Poin Pelanggan
+        </p>
+        <p class="text-2xl font-black mt-1 text-white">
+            {{ number_format($pelanggan->poin ?? 0, 0, ',', '.') }} pts
+        </p>
+    </div>
+    <button class="relative z-10 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 text-xs font-bold px-5 py-2.5 rounded-2xl transition-all active:scale-90">
+        Detail
+    </button>
+</div>
         </div>
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-10">
