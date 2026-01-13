@@ -75,15 +75,6 @@
                                    title="Edit Layanan">
                                     <i class="fas fa-edit text-sm"></i>
                                 </a>
-
-                                <form action="{{ route('admin.layanan.destroy', $layanan->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="btn-delete w-9 h-9 flex items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 hover:bg-rose-600 hover:text-white transition-all"
-                                            title="Hapus Layanan">
-                                        <i class="fas fa-trash text-sm"></i>
-                                    </button>
-                                </form>
                             </div>
                         </td>
                     </tr>

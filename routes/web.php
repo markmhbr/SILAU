@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 // Controllers Admin
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProfilPerusahaanController;
+use App\Http\Controllers\Admin\KaryawanController;
 use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\LayananController;
 use App\Http\Controllers\Admin\TransaksiController;
@@ -55,6 +56,7 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])
     ->name('dashboard');
     Route::resource('/profil-perusahaan', ProfilPerusahaanController::class)->names('profil-perusahaan');
+    Route::resource('/karyawan', KaryawanController::class)->names('karyawan');
     Route::resource('/pelanggan', PelangganController::class)->names('pelanggan');
     Route::resource('/layanan', LayananController::class)->names('layanan');
     Route::resource('/transaksi', TransaksiController::class)->names('transaksi');

@@ -77,7 +77,7 @@
                     </div>
                     <span
                         class="text-xl md:text-2xl font-black tracking-tighter bg-gradient-to-r from-brand to-indigo-500 bg-clip-text text-transparent">
-                        CLEANFLOW.
+                        SILAU
                     </span>
                 </div>
 
@@ -105,6 +105,12 @@
                     <div class="hidden md:block h-6 w-[1px] bg-slate-200 dark:bg-slate-800 mx-2"></div>
 
                     <div class="flex gap-1">
+                        <button @click="if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); isFull = true; } else { document.exitFullscreen(); isFull = false; }"
+                            class="p-2 md:p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition">
+                            <span x-show="!isFull">🔲</span>
+                            <span x-show="isFull" x-cloak>🔳</span>
+                        </button>
+
                         <button @click="darkMode = !darkMode"
                             class="p-2 md:p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition">
                             <span x-show="!darkMode">🌙</span>
@@ -161,44 +167,39 @@
             </div>
         </div>
 
-        </nav>
+    </nav>
 
-<div class="relative">
-    <div x-show="mobileMenu" 
-        x-cloak
-        @click.away="mobileMenu = false"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 -translate-y-4"
-        x-transition:enter-end="opacity-100 translate-y-0"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 translate-y-0"
-        x-transition:leave-end="opacity-0 -translate-y-4"
-        class="md:hidden absolute top-0 left-0 right-0 z-[100] bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 p-4 shadow-2xl space-y-2">
-        
-        <div class="flex flex-col gap-2">
-            <a href="{{ route('pelanggan.dashboard') }}"
-                class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.dashboard') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
-                <span class="text-xl">🏠</span>
-                <span class="font-bold">Dashboard</span>
-            </a>
-            <a href="{{ route('pelanggan.pesanan') }}"
-                class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.pesanan*') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
-                <span class="text-xl">📦</span>
-                <span class="font-bold">Pesanan Saya</span>
-            </a>
-            <a href="{{ route('pelanggan.layanan.index') }}"
-                class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.layanan.index*') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
-                <span class="text-xl">👔</span>
-                <span class="font-bold">Layanan</span>
-            </a>
-            <a href="{{ route('pelanggan.alamat') }}"
-                class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.alamat*') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
-                <span class="text-xl">📍</span>
-                <span class="font-bold">Alamat Saya</span>
-            </a>
+    <div class="relative">
+        <div x-show="mobileMenu" x-cloak @click.away="mobileMenu = false"
+            x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4"
+            x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4"
+            class="md:hidden absolute top-0 left-0 right-0 z-[100] bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 p-4 shadow-2xl space-y-2">
+
+            <div class="flex flex-col gap-2">
+                <a href="{{ route('pelanggan.dashboard') }}"
+                    class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.dashboard') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
+                    <span class="text-xl">🏠</span>
+                    <span class="font-bold">Dashboard</span>
+                </a>
+                <a href="{{ route('pelanggan.pesanan') }}"
+                    class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.pesanan*') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
+                    <span class="text-xl">📦</span>
+                    <span class="font-bold">Pesanan Saya</span>
+                </a>
+                <a href="{{ route('pelanggan.layanan.index') }}"
+                    class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.layanan.index*') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
+                    <span class="text-xl">👔</span>
+                    <span class="font-bold">Layanan</span>
+                </a>
+                <a href="{{ route('pelanggan.alamat') }}"
+                    class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.alamat*') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
+                    <span class="text-xl">📍</span>
+                    <span class="font-bold">Alamat Saya</span>
+                </a>
+            </div>
         </div>
     </div>
-</div>
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 animate-page">
@@ -254,6 +255,16 @@
         </div>
     </div>
 
+    <script>
+        document.addEventListener('fullscreenchange', () => {
+            // Mengupdate Alpine.js variable isFull ketika status fullscreen berubah (termasuk via ESC)
+            const alpineData = document.querySelector('[x-data]').__x.$data;
+            alpineData.isFull = !!document.fullscreenElement;
+        });
+    </script>
+
+    @include('partials.dataTables')
+    @include('partials._sweetalert')
 </body>
 
 </html>

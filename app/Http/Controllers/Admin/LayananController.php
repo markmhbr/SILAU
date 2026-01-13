@@ -56,17 +56,20 @@ class LayananController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'nama_layanan' => 'required|string|max:255',
-            'harga_perkilo' => 'required|numeric',
+            'nama_layanan'  => 'required|string|max:255',
+            'deskripsi'     => 'required|string',
+            'harga_perkilo' => 'required|numeric|min:0',
         ]);
 
         $layanan = Layanan::findOrFail($id);
         $layanan->update([
-            'nama_layanan' => $request->nama_layanan,
+            'nama_layanan'  => $request->nama_layanan,
+            'deskripsi'     => $request->deskripsi,
             'harga_perkilo' => $request->harga_perkilo,
         ]);
 
-        return redirect()->route('admin.layanan.index')->with('success', 'Layanan berhasil diperbarui.');
+        return redirect()->route('admin.layanan.index')
+            ->with('success', 'Data layanan berhasil diperbarui.');
     }
 
     /**

@@ -94,26 +94,11 @@
                         </td>
                         <td class="px-4 py-4">
                             <div class="flex items-center justify-center gap-1.5">
-                                {{-- Edit --}}
-                                <a href="{{ route('admin.transaksi.edit', $transaksi->id) }}" 
-                                   class="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white dark:bg-blue-900/30 transition-all" title="Edit">
-                                    <i class="fas fa-edit text-xs"></i>
-                                </a>
-                                
                                 {{-- Invoice --}}
                                 <a href="{{ route('admin.transaksi.show', $transaksi->id) }}" 
                                    class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-600 hover:text-white dark:bg-slate-700 dark:text-slate-300 transition-all" title="Nota">
                                     <i class="fas fa-file-invoice text-xs"></i>
                                 </a>
-
-                                {{-- Delete --}}
-                                <form action="{{ route('admin.transaksi.destroy', $transaksi->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="btn-delete w-8 h-8 flex items-center justify-center rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white dark:bg-rose-900/30 transition-all" title="Hapus">
-                                        <i class="fas fa-trash text-xs"></i>
-                                    </button>
-                                </form>
                             </div>
                         </td>
                     </tr>

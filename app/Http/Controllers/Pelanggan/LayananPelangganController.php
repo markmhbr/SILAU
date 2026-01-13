@@ -67,7 +67,6 @@ class LayananPelangganController extends Controller
         if ($request->diskon_id) {
             $diskonModel = Diskon::find($request->diskon_id);
             if ($diskonModel) {
-                // cek minimal transaksi dulu
                 if ($hargaLayanan >= $diskonModel->minimal_transaksi) {
                     if ($diskonModel->tipe === 'persentase') {
                         $diskon = ($hargaLayanan * $diskonModel->nilai) / 100;
@@ -78,10 +77,12 @@ class LayananPelangganController extends Controller
             }
         }
 
-        // Tentukan status awal berdasarkan metode pembayaran
         $statusTransaksi = ($request->metode_pembayaran === 'tunai') ? 'proses' : 'pending';
-
         $hargaFinal = $hargaLayanan - $diskon;
+
+        // --- LOGIKA PENAMBAHAN POIN ---
+        // Menghitung poin: harga final dibagi 10 (10.000 -> 1.000)
+        $poinDapat = $hargaFinal / 10;
 
         $transaksi = Transaksi::create([
             'pelanggan_id' => $request->pelanggan_id,
@@ -93,11 +94,16 @@ class LayananPelangganController extends Controller
             'status' => $statusTransaksi,
             'catatan' => $request->catatan,
             'harga_total' => $hargaLayanan,
-            'harga_setelah_diskon' => $hargaFinal, // ⬅️ simpan langsung
+            'harga_setelah_diskon' => $hargaFinal,
         ]);
 
+        // Update poin di tabel pelanggan
+        $pelanggan = Pelanggan::find($request->pelanggan_id);
+        $pelanggan->poin += $poinDapat;
+        $pelanggan->save();
+
         return redirect()->route('pelanggan.layanan.detail', $transaksi->id)
-            ->with('success', 'Transaksi berhasil dibuat. Silakan lanjut ke detail untuk pembayaran.');
+            ->with('success', 'Transaksi berhasil dibuat. Anda mendapatkan ' . number_format($poinDapat) . ' poin!');
     }
 
 

@@ -42,12 +42,10 @@
             .sidebar-is-mini #sidebar { width: 80px !important; }
             .sidebar-is-mini #sidebar .sidebar-content-text { display: none !important; }
             
-            /* Tetap tampilkan Search Container tapi buat jadi minimalis */
             .sidebar-is-mini #sidebar .search-container { 
                 padding-left: 0.5rem !important; 
                 padding-right: 0.5rem !important; 
             }
-            /* Sembunyikan Input Text saat mini, tampilkan hanya Icon Search */
             .sidebar-is-mini #sidebar #menuSearch { 
                 padding-left: 2.25rem !important;
                 cursor: pointer;
@@ -101,6 +99,7 @@
                         $menus = [
                             ['role' => 'admin', 'label' => 'Dashboard', 'route' => 'admin.dashboard', 'icon' => 'fas fa-tachometer-alt', 'cat' => 'Dashboard'],
                             ['role' => 'admin', 'label' => 'Profil Perusahaan', 'route' => 'admin.profil-perusahaan.index', 'icon' => 'fas fa-building', 'cat' => 'Profil Perusahaan'],
+                            ['role' => 'admin', 'label' => 'Karyawan', 'route' => 'admin.karyawan.index', 'icon' => 'fas fa-users', 'cat' => 'Manajemen Data'],
                             ['role' => 'admin', 'label' => 'Pelanggan', 'route' => 'admin.pelanggan.index', 'icon' => 'fas fa-users', 'cat' => 'Manajemen Data'],
                             ['role' => 'admin', 'label' => 'Layanan', 'route' => 'admin.layanan.index', 'icon' => 'fas fa-concierge-bell', 'cat' => 'Manajemen Data'],
                             ['role' => 'admin', 'label' => 'Diskon', 'route' => 'admin.diskon.index', 'icon' => 'fas fa-tags', 'cat' => 'Manajemen Data'],
@@ -146,6 +145,9 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
+                    <button onclick="toggleFullScreen()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300">
+        <i id="fullscreen-icon" class="fas fa-expand text-lg"></i>
+    </button>
                     <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300">
                         <i id="theme-icon" class="fas fa-moon text-lg"></i>
                     </button>
@@ -161,6 +163,8 @@
     <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-40 hidden lg:hidden backdrop-blur-sm"></div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    @include('partials.dataTables')
+    @include('partials._sweetalert')
 
     <script>
         const html = document.documentElement;
@@ -170,7 +174,28 @@
             setTimeout(() => html.classList.add('ready-transition'), 100);
         });
 
-        // Jika user klik search saat mini, buka sidebar otomatis
+        // --- FULLSCREEN LOGIC ---
+        function toggleFullScreen() {
+            const icon = document.getElementById('fullscreen-icon');
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                icon.classList.replace('fa-expand', 'fa-compress');
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    icon.classList.replace('fa-compress', 'fa-expand');
+                }
+            }
+        }
+
+        // Listener jika user menekan tombol 'Esc' untuk keluar fullscreen
+        document.addEventListener('fullscreenchange', () => {
+            const icon = document.getElementById('fullscreen-icon');
+            if (!document.fullscreenElement) {
+                icon.classList.replace('fa-compress', 'fa-expand');
+            }
+        });
+
         function expandIfMini() {
             if (html.classList.contains('sidebar-is-mini')) {
                 toggleSidebar();
@@ -188,7 +213,6 @@
             }
         }
 
-        // --- SEARCH LOGIC (DIPERBAIKI) ---
         document.getElementById('menuSearch').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
             const resultsDiv = document.getElementById('searchResults');
@@ -221,7 +245,6 @@
             }
         });
 
-        // Klik luar tutup hasil search
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.search-container')) document.getElementById('searchResults').classList.add('hidden');
         });

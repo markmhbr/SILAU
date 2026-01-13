@@ -22,7 +22,7 @@ class DashboardController extends Controller
                             ->get();
 
         // total omzet = jumlah semua harga_total
-        $omzet = Transaksi::sum('harga_total');
+        $omzet = Transaksi::sum('harga_setelah_diskon');
 
         return view('content.backend.admin.dashboard', compact(
             'jumlahPelanggan',

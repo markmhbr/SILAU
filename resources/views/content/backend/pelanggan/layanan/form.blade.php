@@ -206,6 +206,11 @@
                             <span class="text-white/60 font-medium">Potongan Diskon</span>
                             <span id="label-diskon" class="text-emerald-400 font-bold">Rp 0</span>
                         </div>
+                        {{-- TAMBAHAN: INFO POIN --}}
+                        <div class="flex justify-between text-sm pt-2 border-t border-white/5">
+                            <span class="text-white/60 font-medium">🪙 Estimasi Poin</span>
+                            <span id="label-poin" class="text-amber-400 font-bold">+ 0</span>
+                        </div>
                     </div>
 
                     <div class="flex flex-col relative z-10">
@@ -236,6 +241,7 @@
         const labelHarga = document.getElementById('label-harga');
         const labelBerat = document.getElementById('label-berat');
         const labelDiskon = document.getElementById('label-diskon');
+        const labelPoin = document.getElementById('label-poin'); // ID baru
         const labelTotal = document.getElementById('label-total');
 
         function calculateLive() {
@@ -259,10 +265,14 @@
             let total = subtotal - potongan;
             if (total < 0) total = 0;
 
+            // Logika Poin: Total / 10
+            let poin = Math.floor(total / 10);
+
             // Update Labels
             labelHarga.textContent = `Rp ${harga.toLocaleString('id-ID')} /kg`;
             labelBerat.textContent = `${berat} kg`;
             labelDiskon.textContent = `- Rp ${potongan.toLocaleString('id-ID')}`;
+            labelPoin.textContent = `+ ${poin.toLocaleString('id-ID')}`; // Update Poin
             labelTotal.textContent = `Rp ${total.toLocaleString('id-ID')}`;
         }
 
