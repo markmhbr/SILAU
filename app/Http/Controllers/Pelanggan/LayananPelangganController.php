@@ -8,9 +8,19 @@ use App\Models\Transaksi;
 use App\Models\Pelanggan;
 use App\Models\Layanan;
 use App\Models\Diskon;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class LayananPelangganController extends Controller
 {
+    public function __construct()
+    {
+        // Konfigurasi Midtrans
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production');
+        Config::$isSanitized = config('midtrans.is_sanitized');
+        Config::$is3ds = config('midtrans.is_3ds');
+    }
     /**
      * Display a listing of the resource.
      */
@@ -56,34 +66,28 @@ class LayananPelangganController extends Controller
             'layanan_id' => 'required|exists:layanan,id',
             'berat' => 'required|numeric|min:0.1',
             'diskon_id' => 'nullable|exists:diskon,id',
-            'metode_pembayaran' => 'nullable|string|in:tunai,qris',
+            'metode_pembayaran' => 'required|string|in:tunai,qris',
             'catatan' => 'nullable|string',
         ]);
 
         $layanan = Layanan::findOrFail($request->layanan_id);
         $hargaLayanan = $layanan->harga_perkilo * $request->berat;
 
+        // Hitung Diskon
         $diskon = 0;
         if ($request->diskon_id) {
             $diskonModel = Diskon::find($request->diskon_id);
-            if ($diskonModel) {
-                if ($hargaLayanan >= $diskonModel->minimal_transaksi) {
-                    if ($diskonModel->tipe === 'persentase') {
-                        $diskon = ($hargaLayanan * $diskonModel->nilai) / 100;
-                    } else {
-                        $diskon = $diskonModel->nilai;
-                    }
-                }
+            if ($diskonModel && $hargaLayanan >= $diskonModel->minimal_transaksi) {
+                $diskon = ($diskonModel->tipe === 'persentase') 
+                    ? ($hargaLayanan * $diskonModel->nilai) / 100 
+                    : $diskonModel->nilai;
             }
         }
 
-        $statusTransaksi = ($request->metode_pembayaran === 'tunai') ? 'proses' : 'pending';
         $hargaFinal = $hargaLayanan - $diskon;
+        $statusTransaksi = ($request->metode_pembayaran === 'tunai') ? 'proses' : 'pending';
 
-        // --- LOGIKA PENAMBAHAN POIN ---
-        // Menghitung poin: harga final dibagi 10 (10.000 -> 1.000)
-        $poinDapat = $hargaFinal / 10;
-
+        // Buat Transaksi di Database
         $transaksi = Transaksi::create([
             'pelanggan_id' => $request->pelanggan_id,
             'layanan_id' => $request->layanan_id,
@@ -97,15 +101,44 @@ class LayananPelangganController extends Controller
             'harga_setelah_diskon' => $hargaFinal,
         ]);
 
-        // Update poin di tabel pelanggan
+        // LOGIKA MIDTRANS (Hanya jika memilih QRIS/Online)
+        if ($request->metode_pembayaran === 'qris') {
+            $params = [
+                'transaction_details' => [
+                    'order_id' => 'TRX-' . $transaksi->id . '-' . time(),
+                    'gross_amount' => (int) $hargaFinal,
+                ],
+                'customer_details' => [
+                    'first_name' => auth()->user()->name,
+                    'email' => auth()->user()->email,
+                ],
+                'item_details' => [
+                    [
+                        'id' => $layanan->id,
+                        'price' => (int) ($hargaFinal / $request->berat), // Harga rata-rata per kg setelah diskon
+                        'quantity' => $request->berat,
+                        'name' => $layanan->nama_layanan,
+                    ]
+                ]
+            ];
+
+            try {
+                $snapToken = Snap::getSnapToken($params);
+                $transaksi->snap_token = $snapToken;
+                $transaksi->save();
+            } catch (\Exception $e) {
+                return back()->with('error', 'Gagal terhubung ke Midtrans: ' . $e->getMessage());
+            }
+        }
+
+        // Update poin pelanggan
         $pelanggan = Pelanggan::find($request->pelanggan_id);
-        $pelanggan->poin += $poinDapat;
+        $pelanggan->poin += ($hargaFinal / 10);
         $pelanggan->save();
 
         return redirect()->route('pelanggan.layanan.detail', $transaksi->id)
-            ->with('success', 'Transaksi berhasil dibuat. Anda mendapatkan ' . number_format($poinDapat) . ' poin!');
+            ->with('success', 'Pesanan berhasil dibuat!');
     }
-
 
 
     public function detail($id)

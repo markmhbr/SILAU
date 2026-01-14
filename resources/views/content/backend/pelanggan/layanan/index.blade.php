@@ -1,7 +1,7 @@
-@extends('layouts.pelanggan')
+@extends('layouts.backend')
 
 @section('title', 'Layanan')
-@section('pelanggan')
+@section('content')
 <div class="space-y-8 animate-fadeIn">
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>

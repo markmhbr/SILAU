@@ -6,7 +6,8 @@
             <div class="flex items-center gap-2">
                 <div
                     class="w-8 h-8 md:w-10 md:h-10 bg-brand rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-brand/30">
-                    <span class="text-white text-lg md:text-xl">✨</span>
+                    <img src="{{ $profil->logo ? asset('logo/' . $profil->logo) : 'https://via.placeholder.com/400x400.png?text=Pilih+Logo' }}"
+                        class="w-9 h-9 rounded-lg object-cover shrink-0">
                 </div>
                 <span
                     class="text-xl md:text-2xl font-black tracking-tighter bg-gradient-to-r from-brand to-indigo-500 bg-clip-text text-transparent">
@@ -15,25 +16,53 @@
             </div>
 
             <div class="hidden md:flex items-center space-x-8">
-                <a href="{{ route('pelanggan.dashboard') }}"
-                    class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('pelanggan.dashboard') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">
-                    Dashboard
-                </a>
-                <a href="{{ route('pelanggan.pesanan') }}"
-                    class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('pelanggan.pesanan*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">
-                    Pesanan Saya
-                </a>
-                <a href="{{ route('pelanggan.layanan.index') }}"
-                    class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('pelanggan.layanan.index*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">
-                    Layanan
-                </a>
+                @if (Auth::user()->role == 'pelanggan')
+                    {{-- Menu Pelanggan --}}
+                    <a href="{{ route('pelanggan.dashboard') }}"
+                        class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('pelanggan.dashboard') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Dashboard</a>
+                    <a href="{{ route('pelanggan.pesanan') }}"
+                        class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('pelanggan.pesanan*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Pesanan
+                        Saya</a>
+                    <a href="{{ route('pelanggan.layanan.index') }}"
+                        class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('pelanggan.layanan.index*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Layanan</a>
+                @elseif(Auth::user()->role == 'karyawan')
+                    @php $jabatan = Auth::user()->karyawan->jabatan->nama_jabatan ?? ''; @endphp
+
+                    <a href="{{ route('karyawan.dashboard') }}"
+                        class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.dashboard') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Dashboard</a>
+
+                    @if (str_contains(strtolower($jabatan), 'kasir'))
+                        {{-- Menu Khusus Kasir --}}
+                        <a href="{{-- {{ route('karyawan.transaksi.index') }} --}}"
+                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.transaksi*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Transaksi</a>
+                        <a href="{{-- {{ route('karyawan.pelanggan.index') }} --}}"
+                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.pelanggan*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Data
+                            Pelanggan</a>
+                    @endif
+
+                    @if (str_contains(strtolower($jabatan), 'driver'))
+                        {{-- Menu Khusus Driver --}}
+                        <a href="{{-- {{ route('karyawan.pickup.index') }} --}}"
+                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.pickup*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Penjemputan</a>
+                        <a href="{{-- {{ route('karyawan.delivery.index') }} --}}"
+                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.delivery*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Pengantaran</a>
+                    @endif
+                @endif
             </div>
 
             <div class="flex items-center gap-2 md:gap-3">
-                <a href="{{ route('pelanggan.layanan.create') }}"
-                    class="hidden lg:flex items-center gap-2 bg-brand hover:bg-brandDark text-white px-5 py-2.5 rounded-full font-bold shadow-lg shadow-brand/20 transition-all hover:scale-105 active:scale-95">
-                    <span>➕</span> Pesan Sekarang
-                </a>
+                @if (Auth::user()->role == 'pelanggan')
+                    <a href="{{ route('pelanggan.layanan.create') }}"
+                        class="hidden lg:flex items-center gap-2 bg-brand hover:bg-brandDark text-white px-5 py-2.5 rounded-full font-bold shadow-lg shadow-brand/20 transition-all hover:scale-105 active:scale-95">
+                        <span>➕</span> Pesan Sekarang
+                    </a>
+                @elseif(Auth::user()->role == 'karyawan' &&
+                        str_contains(strtolower(Auth::user()->karyawan->jabatan->nama_jabatan ?? ''), 'kasir'))
+                    <a href="{{-- {{ route('karyawan.transaksi.create') }} --}}"
+                        class="hidden lg:flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-full font-bold shadow-lg shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95">
+                        <span>📝</span> Transaksi Baru
+                    </a>
+                @endif
 
                 <div class="hidden md:block h-6 w-[1px] bg-slate-200 dark:bg-slate-800 mx-2"></div>
 
@@ -109,26 +138,48 @@
             class="md:hidden absolute top-0 left-0 right-0 z-[100] bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 p-4 shadow-2xl space-y-2">
 
             <div class="flex flex-col gap-2">
-                <a href="{{ route('pelanggan.dashboard') }}"
-                    class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.dashboard') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
-                    <span class="text-xl">🏠</span>
-                    <span class="font-bold">Dashboard</span>
-                </a>
-                <a href="{{ route('pelanggan.pesanan') }}"
-                    class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.pesanan*') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
-                    <span class="text-xl">📦</span>
-                    <span class="font-bold">Pesanan Saya</span>
-                </a>
-                <a href="{{ route('pelanggan.layanan.index') }}"
-                    class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.layanan.index*') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
-                    <span class="text-xl">👔</span>
-                    <span class="font-bold">Layanan</span>
-                </a>
-                <a href="{{ route('pelanggan.alamat') }}"
-                    class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.alamat*') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
-                    <span class="text-xl">📍</span>
-                    <span class="font-bold">Alamat Saya</span>
-                </a>
+                @if (Auth::user()->role == 'pelanggan')
+                    <a href="{{ route('pelanggan.dashboard') }}"
+                        class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.dashboard') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
+                        <span class="text-xl">🏠</span>
+                        <span class="font-bold">Dashboard</span>
+                    </a>
+                    <a href="{{ route('pelanggan.pesanan') }}"
+                        class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.pesanan*') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
+                        <span class="text-xl">📦</span>
+                        <span class="font-bold">Pesanan Saya</span>
+                    </a>
+                    <a href="{{ route('pelanggan.layanan.index') }}"
+                        class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.layanan.index*') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
+                        <span class="text-xl">👔</span>
+                        <span class="font-bold">Layanan</span>
+                    </a>
+                    <a href="{{ route('pelanggan.alamat') }}"
+                        class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.alamat*') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
+                        <span class="text-xl">📍</span>
+                        <span class="font-bold">Alamat Saya</span>
+                    </a>
+                @elseif(Auth::user()->role == 'karyawan')
+                    @php $jabatan = Auth::user()->karyawan->jabatan->nama_jabatan ?? ''; @endphp
+                    <a href="{{ route('karyawan.dashboard') }}"
+                        class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('karyawan.dashboard') ? 'bg-brand text-white' : '' }}">
+                        <span class="text-xl">📊</span> <span class="font-bold">Dashboard Karyawan</span>
+                    </a>
+
+                    @if (str_contains(strtolower($jabatan), 'kasir'))
+                        <a href="{{-- {{ route('karyawan.transaksi.index') }} --}}"
+                            class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('karyawan.transaksi*') ? 'bg-brand text-white' : '' }}">
+                            <span class="text-xl">💰</span> <span class="font-bold">Kasir / Transaksi</span>
+                        </a>
+                    @endif
+
+                    @if (str_contains(strtolower($jabatan), 'driver'))
+                        <a href="{{-- {{ route('karyawan.pickup.index') }} --}}"
+                            class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('karyawan.pickup*') ? 'bg-brand text-white' : '' }}">
+                            <span class="text-xl">🚚</span> <span class="font-bold">Tugas Kurir</span>
+                        </a>
+                    @endif
+                @endif
             </div>
         </div>
     </div>

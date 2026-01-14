@@ -1,8 +1,8 @@
-@extends('layouts.pelanggan')
+@extends('layouts.backend')
 
 @section('title', 'Detail Transaksi')
 
-@section('pelanggan')
+@section('content')
     <div class="max-w-5xl mx-auto space-y-8 animate-fadeIn">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
@@ -46,7 +46,8 @@
                                     ];
                                     $currentStyle = $statusStyle[$transaksi->status] ?? 'bg-amber-100 text-amber-600';
                                 @endphp
-                                <span class="inline-flex px-4 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wider {{ $currentStyle }}">
+                                <span
+                                    class="inline-flex px-4 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wider {{ $currentStyle }}">
                                     {{ $transaksi->status }}
                                 </span>
                             </div>
@@ -115,72 +116,98 @@
 
             <div class="lg:col-span-1">
                 @if ($transaksi->metode_pembayaran == 'qris' && $transaksi->status == 'pending')
-                    {{-- Form Upload QRIS (Tampilan yang sudah ada) --}}
-                    <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-brand/20 overflow-hidden sticky top-24">
+                    <div
+                        class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-brand/20 overflow-hidden sticky top-24">
                         <div class="bg-brand p-5 text-center">
-                            <h5 class="text-white font-black text-xs uppercase tracking-[0.2em]">Pembayaran QRIS</h5>
+                            <h5 class="text-white font-black text-xs uppercase tracking-[0.2em]">Pembayaran Online</h5>
                         </div>
                         <div class="p-8 text-center space-y-6">
-                            <div class="bg-white p-4 rounded-[2rem] border-2 border-slate-50 inline-block shadow-inner ring-8 ring-slate-50 dark:ring-slate-800/50">
-                                <img src="{{ asset('assets/img/Capture.PNG') }}" alt="QRIS" class="w-44 h-auto mx-auto group-hover:scale-105 transition-transform duration-500">
+                            <div
+                                class="bg-slate-50 dark:bg-slate-800 p-6 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700">
+                                <span class="text-4xl">💳</span>
+                                <p class="text-sm font-bold text-slate-700 dark:text-white mt-3">Midtrans Secure Payment</p>
+                                <p class="text-[10px] text-slate-500 mt-1">Gopay, ShopeePay, Virtual Account, & Lainnya</p>
                             </div>
-                            <p class="text-[11px] text-slate-500 leading-relaxed font-medium">Silakan scan QR di atas melalui aplikasi e-wallet Anda. Pastikan nominal sesuai dengan total bayar.</p>
 
-                            <form action="{{ route('pelanggan.layanan.bayar', $transaksi->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800">
-                                @csrf
-                                <div class="text-left">
-                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 text-center">Upload Bukti Transfer</label>
-                                    <label class="group relative flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-[2rem] cursor-pointer hover:border-brand hover:bg-brand/5 transition-all">
-                                        <div class="flex flex-col items-center justify-center transition-transform group-hover:-translate-y-1">
-                                            <span class="text-2xl mb-2">📸</span>
-                                            <p class="text-[10px] text-slate-400 font-bold group-hover:text-brand">KETUK UNTUK PILIH FILE</p>
-                                        </div>
-                                        <input type="file" name="bukti_bayar" class="hidden" required />
-                                    </label>
-                                </div>
-                                <button type="submit" class="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black shadow-lg shadow-emerald-500/20 transition-all active:scale-95 text-xs uppercase tracking-widest">
-                                    Konfirmasi Pembayaran
-                                </button>
-                            </form>
+                            <button id="pay-button"
+                                class="w-full py-4 bg-brand hover:bg-brandDark text-white rounded-2xl font-black shadow-lg shadow-brand/20 transition-all active:scale-95 text-xs uppercase tracking-widest">
+                                Bayar Sekarang
+                            </button>
+
+                            <p class="text-[10px] text-slate-400 font-medium italic">*Status akan otomatis berubah setelah
+                                pembayaran berhasil.</p>
                         </div>
                     </div>
 
+                    {{-- Script Snap Midtrans --}}
+                    <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+                    </script>
+                    <script>
+                        const payButton = document.getElementById('pay-button');
+                        payButton.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            window.snap.pay('{{ $transaksi->snap_token }}', {
+                                onSuccess: function(result) {
+                                    window.location.href = "{{ route('pelanggan.pesanan') }}";
+                                },
+                                onPending: function(result) {
+                                    alert("Selesaikan pembayaran Anda segera!");
+                                },
+                                onError: function(result) {
+                                    alert("Pembayaran gagal, silakan coba lagi.");
+                                }
+                            });
+                        });
+                    </script>
                 @elseif($transaksi->status == 'menunggu konfirmasi')
                     {{-- STATUS BARU: MENUNGGU KONFIRMASI --}}
-                    <div class="bg-blue-50 dark:bg-blue-500/5 border border-blue-100 dark:border-blue-500/20 p-8 rounded-[2.5rem] text-center space-y-4">
-                        <div class="w-20 h-20 bg-blue-500 text-white rounded-3xl flex items-center justify-center mx-auto shadow-xl shadow-blue-500/30">
+                    <div
+                        class="bg-blue-50 dark:bg-blue-500/5 border border-blue-100 dark:border-blue-500/20 p-8 rounded-[2.5rem] text-center space-y-4">
+                        <div
+                            class="w-20 h-20 bg-blue-500 text-white rounded-3xl flex items-center justify-center mx-auto shadow-xl shadow-blue-500/30">
                             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
                         <div class="space-y-1">
-                            <h4 class="font-black text-blue-800 dark:text-blue-400 text-xl tracking-tight">Sedang Diperiksa</h4>
-                            <p class="text-xs text-blue-600/70 dark:text-blue-500/60 font-medium">Bukti transfer Anda telah diterima. Mohon tunggu admin melakukan verifikasi pembayaran.</p>
+                            <h4 class="font-black text-blue-800 dark:text-blue-400 text-xl tracking-tight">Sedang Diperiksa
+                            </h4>
+                            <p class="text-xs text-blue-600/70 dark:text-blue-500/60 font-medium">Bukti transfer Anda telah
+                                diterima. Mohon tunggu admin melakukan verifikasi pembayaran.</p>
                         </div>
                     </div>
-
                 @elseif($transaksi->status == 'selesai')
-                    <div class="bg-emerald-50 dark:bg-emerald-500/5 border border-emerald-100 dark:border-emerald-500/20 p-8 rounded-[2.5rem] text-center space-y-4">
-                        <div class="w-20 h-20 bg-emerald-500 text-white rounded-3xl flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/30 transform -rotate-6">
+                    <div
+                        class="bg-emerald-50 dark:bg-emerald-500/5 border border-emerald-100 dark:border-emerald-500/20 p-8 rounded-[2.5rem] text-center space-y-4">
+                        <div
+                            class="w-20 h-20 bg-emerald-500 text-white rounded-3xl flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/30 transform -rotate-6">
                             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
+                                </path>
                             </svg>
                         </div>
                         <div class="space-y-1">
-                            <h4 class="font-black text-emerald-800 dark:text-emerald-400 text-xl tracking-tight">Cucian Selesai!</h4>
-                            <p class="text-xs text-emerald-600/70 dark:text-emerald-500/60 font-medium">Pakaian Anda sudah bersih, wangi, dan siap diambil.</p>
+                            <h4 class="font-black text-emerald-800 dark:text-emerald-400 text-xl tracking-tight">Cucian
+                                Selesai!</h4>
+                            <p class="text-xs text-emerald-600/70 dark:text-emerald-500/60 font-medium">Pakaian Anda sudah
+                                bersih, wangi, dan siap diambil.</p>
                         </div>
                     </div>
                 @else
-                    <div class="bg-brand/5 dark:bg-brand/10 border border-brand/10 dark:border-brand/20 p-8 rounded-[2.5rem] text-center space-y-4">
-                        <div class="w-20 h-20 bg-brand text-white rounded-3xl flex items-center justify-center mx-auto shadow-xl shadow-brand/30 animate-pulse">
+                    <div
+                        class="bg-brand/5 dark:bg-brand/10 border border-brand/10 dark:border-brand/20 p-8 rounded-[2.5rem] text-center space-y-4">
+                        <div
+                            class="w-20 h-20 bg-brand text-white rounded-3xl flex items-center justify-center mx-auto shadow-xl shadow-brand/30 animate-pulse">
                             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
                         <div class="space-y-1">
                             <h4 class="font-black text-brand text-xl tracking-tight">Sedang Diproses</h4>
-                            <p class="text-xs text-brand/70 font-medium">Tim kami sedang mengerjakan cucian Anda dengan sepenuh hati.</p>
+                            <p class="text-xs text-brand/70 font-medium">Tim kami sedang mengerjakan cucian Anda dengan
+                                sepenuh hati.</p>
                         </div>
                     </div>
                 @endif

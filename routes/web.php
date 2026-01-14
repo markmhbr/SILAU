@@ -13,6 +13,9 @@ use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\DiskonController;
 use App\Http\Controllers\Admin\LaporanController;
 
+// Controllers Karyawan
+use App\Http\Controllers\Karyawan\DashboardController as KaryawanDashboardController;
+
 // Controllers Pelanggan
 use App\Http\Controllers\Pelanggan\DashboardController as PelangganDashboardController;
 use App\Http\Controllers\Pelanggan\LayananPelangganController;
@@ -67,6 +70,18 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
     Route::patch('/diskon/{id}/toggle', [DiskonController::class, 'toggleStatus'])->name('diskon.toggle');
     Route::resource('/laporan', LaporanController::class)->names('laporan');
     Route::get('/struk/{id}', [TransaksiController::class, 'cetakStruk']);
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes untuk bagian role pelanggan
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth','role:karyawan'])->prefix('karyawan')->name('karyawan.')->group(function () {
+    Route::get('/dashboard', [KaryawanDashboardController::class, 'dashboard'])
+    ->name('dashboard');
 });
 
 

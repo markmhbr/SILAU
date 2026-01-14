@@ -1,9 +1,8 @@
-@extends('layouts.pelanggan')
+@extends('layouts.backend')
 
 @section('title', 'Alamat Pengiriman')
 
-@section('pelanggan')
-
+@section('content')
 <div class="max-w-6xl mx-auto space-y-8 animate-page">
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>

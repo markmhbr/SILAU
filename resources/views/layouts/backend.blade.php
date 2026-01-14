@@ -68,7 +68,7 @@
     @include('layouts.partials.frontend.navbar')
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 animate-page">
-        @yield('pelanggan')
+        @yield('content')
     </main>
 
     @include('layouts.partials.frontend.footer')
