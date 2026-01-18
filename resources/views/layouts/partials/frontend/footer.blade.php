@@ -108,3 +108,6 @@
 
     </div>
 </div>
+
+@include('partials.dataTables')
+@include('partials._sweetalert')

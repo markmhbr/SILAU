@@ -1,11 +1,93 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+/* 1. IMPORT LIBRARY (Agar bisa offline) */
+@import "datatables.net-dt";
+@import "leaflet/dist/leaflet.css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* 2. KONFIGURASI TEMA (Ganti CDN Logic) */
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Font Family */
+    --font-sans: "Inter", "sans-serif";
+
+    --color-brand: #0ea5e9;       /* Biru Cerah (Sky 500) */
+    --color-brand-dark: #0284c7;  /* Biru Gelap (Sky 600) untuk Hover */
+
+    /* Warna Primary */
+    --color-primary-50: #eff6ff;
+    --color-primary-100: #dbeafe;
+    --color-primary-200: #bfdbfe;
+    --color-primary-300: #93c5fd;
+    --color-primary-400: #60a5fa;
+    --color-primary-500: #3b82f6;
+    --color-primary-600: #2563eb;
+    --color-primary-700: #1d4ed8;
+    --color-primary-800: #1e40af;
+    --color-primary-900: #1e3a8a;
+}
+
+/* 3. CUSTOM STYLES & UTILITIES */
+@layer base {
+    [x-cloak] {
+        display: none !important;
+    }
+    
+    body {
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* Scrollbar Style */
+::-webkit-scrollbar { 
+    width: 5px; 
+}
+::-webkit-scrollbar-thumb { 
+    background: #cbd5e1; 
+    border-radius: 10px; 
+}
+
+/* --- SIDEBAR LOGIC --- */
+@media (min-width: 1024px) {
+    .sidebar-is-mini #sidebar { 
+        width: 80px !important; 
+    }
+    .sidebar-is-mini #sidebar .sidebar-content-text { 
+        display: none !important; 
+    }
+    .sidebar-is-mini #sidebar .search-container { 
+        padding-left: 0.5rem !important; 
+        padding-right: 0.5rem !important; 
+    }
+    .sidebar-is-mini #sidebar .px-6,
+    .sidebar-is-mini #sidebar .px-4,
+    .sidebar-is-mini #sidebar .px-3 {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    .sidebar-is-mini #sidebar .menu-link {
+        justify-content: center;
+    }
+    .sidebar-is-mini #main-container {
+        margin-left: 80px !important;
+    }
+}
+
+.ready-transition #sidebar,
+.ready-transition #main-container {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animasi Halaman */
+@keyframes pageIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-page {
+    animation: pageIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.transition-all-custom {
+    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
 }
