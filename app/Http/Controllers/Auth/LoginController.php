@@ -30,6 +30,8 @@ class LoginController extends Controller
                 $redirectUrl = '/login';
                 if (Auth::user()->role === 'admin') {
                     $redirectUrl = '/admin/dashboard';
+                } else if (Auth::user()->role === 'karyawan') {
+                    $redirectUrl = '/karyawan/dashboard';
                 } else if (Auth::user()->role === 'pelanggan') {
                     $redirectUrl = '/pelanggan/dashboard';
                 }
