@@ -1,4 +1,8 @@
-<nav
+{{-- MENU PROFIL (SAMA UNTUK SEMUA) --}}
+        @php
+            $profileRoute = Auth::user()->role == 'pelanggan' ? 'pelanggan.profil.index' : 'karyawan.profil.index';
+        @endphp
+<nav    
     class="sticky top-0 z-50 bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 md:h-20">
@@ -95,7 +99,7 @@
                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
                         class="absolute right-0 mt-3 w-56 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 p-2 z-[60]">
 
-                        <a href="{{ route('pelanggan.profil.index') }}"
+                        <a href="{{ route($profileRoute) }}"
                             class="flex items-center gap-3 p-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors">
                             <span>👤</span> Profile Saya
                         </a>

@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\LaporanController;
 
 // Controllers Karyawan
 use App\Http\Controllers\Karyawan\DashboardController as KaryawanDashboardController;
+use App\Http\Controllers\Karyawan\ProfilKaryawanController;
 
 // Controllers Pelanggan
 use App\Http\Controllers\Pelanggan\DashboardController as PelangganDashboardController;
@@ -82,6 +83,7 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
 Route::middleware(['auth','role:karyawan'])->prefix('karyawan')->name('karyawan.')->group(function () {
     Route::get('/dashboard', [KaryawanDashboardController::class, 'dashboard'])
     ->name('dashboard');
+    Route::resource('/profil', ProfilKaryawanController::class)->names('profil');
 });
 
 
