@@ -17,9 +17,9 @@ class TransaksiController extends Controller
     public function index()
     {
         $transaksis = Transaksi::with(['pelanggan.user', 'layanan'])->get();
-//         foreach ($transaksis as $t) {
-//     dd($t->pelanggan?->user?->toArray());
-// }
+        //         foreach ($transaksis as $t) {
+        //     dd($t->pelanggan?->user?->toArray());
+        // }
 
         return view('content.backend.admin.transaksi.index', compact('transaksis'));
     }
@@ -29,12 +29,12 @@ class TransaksiController extends Controller
      */
     public function create()
     {
-        
-    $pelanggan = Pelanggan::all();
-    // dd($pelanggan->toArray());
-    $layanan = Layanan::all();
-    $transaksi = null;
-    return view('content.backend.admin.transaksi.form', compact('pelanggan', 'layanan','transaksi'));
+
+        $pelanggan = Pelanggan::all();
+        // dd($pelanggan->toArray());
+        $layanan = Layanan::all();
+        $transaksi = null;
+        return view('content.backend.admin.transaksi.form', compact('pelanggan', 'layanan', 'transaksi'));
     }
 
     /**
@@ -42,7 +42,7 @@ class TransaksiController extends Controller
      */
     public function store(Request $request)
     {
-        try {    
+        try {
             $request->validate([
                 'pelanggan_id' => 'required|exists:pelanggan,id',
                 'layanan_id' => 'required|exists:layanan,id',
@@ -53,7 +53,7 @@ class TransaksiController extends Controller
                 'catatan' => 'nullable|string',
             ]);
             // dd($request->all());
-            
+
             Transaksi::create([
                 'pelanggan_id' => $request->pelanggan_id,
                 'layanan_id' => $request->layanan_id,
@@ -77,8 +77,11 @@ class TransaksiController extends Controller
      */
     public function show(string $id)
     {
-        $transaksi = Transaksi::with(['pelanggan', 'layanan'])->get();
-        return view('content.backend.admin.transaksi.invoice',compact('transaksi'));
+        // Gunakan findOrFail dan pastikan relasi terpanggil
+        // detail.blade.php menunjukkan relasi pelanggan memiliki user
+        $transaksi = Transaksi::with(['pelanggan.user', 'layanan', 'diskon'])->findOrFail($id);
+
+        return view('content.backend.admin.transaksi.struk', compact('transaksi'));
     }
 
     /**
@@ -87,9 +90,9 @@ class TransaksiController extends Controller
     public function edit(string $id)
     {
         $transaksi = Transaksi::findOrFail($id); // ambil data pelanggan berdasarkan ID
-        $pelanggan = $transaksi->pelanggan;  
+        $pelanggan = $transaksi->pelanggan;
         $layanan = Layanan::all();
-        
+
         return view('content.backend.admin.transaksi.form', compact('transaksi', 'pelanggan', 'layanan'));
     }
 
@@ -98,7 +101,7 @@ class TransaksiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {    
+        try {
             $request->validate([
                 'pelanggan_id' => 'required|exists:pelanggan,id',
                 'layanan_id' => 'required|exists:layanan,id',
@@ -110,7 +113,7 @@ class TransaksiController extends Controller
             ]);
 
             $transaksi = Transaksi::findOrFail($id);
-            
+
             if ($request->hasFile('bukti_bayar')) {
                 if ($transaksi->bukti_bayar && \Storage::disk('public')->exists($transaksi->bukti_bayar)) {
                     \Storage::disk('public')->delete($transaksi->bukti_bayar);
@@ -143,7 +146,7 @@ class TransaksiController extends Controller
      */
     public function destroy(string $id)
     {
-        
+
         $transaksi = Transaksi::findOrFail($id);
         $transaksi->delete();
 
@@ -153,10 +156,10 @@ class TransaksiController extends Controller
     public function updateStatus($id, $status = 'selesai')
     {
         $transaksi = Transaksi::findOrFail($id);
-    
+
         if ($status === 'selesai') {
-        $transaksi->status = 'selesai';
-        $transaksi->tanggal_selesai = now();
+            $transaksi->status = 'selesai';
+            $transaksi->tanggal_selesai = now();
         } elseif ($status === 'dibatalkan') {
             $transaksi->status = 'dibatalkan';
             $transaksi->tanggal_selesai = null;
@@ -164,18 +167,17 @@ class TransaksiController extends Controller
             $transaksi->status = 'proses';
             $transaksi->tanggal_selesai = null;
         }
-    
+
         $transaksi->save();
-    
+
         return redirect()->back()->with('success', 'Status transaksi berhasil diupdate!');
     }
-    
+
     public function cetakStruk($id)
     {
-        $transaksi = Transaksi::findOrFail($id);
-        
-        return view('struk.thermal', compact('transaksi'));
+        $transaksi = Transaksi::with(['pelanggan.user', 'layanan', 'diskon'])->findOrFail($id);
+
+        // Sesuaikan dengan folder tempat Anda menyimpan file blade struk di atas
+        return view('content.backend.admin.transaksi.struk', compact('transaksi'));
     }
-
-
 }

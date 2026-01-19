@@ -2,14 +2,15 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Struk Laundry</title>
+    <title>Struk Laundry - {{ $transaksi->id }}</title>
     <style>
         body {
             font-family: 'Courier New', monospace;
             font-size: 12px;
-            width: 48mm; /* Lebar thermal printer */
+            width: 58mm; /* Standar thermal printer */
             margin: 0;
             padding: 5mm;
+            background-color: #fff;
         }
         .center { text-align: center; }
         .right { text-align: right; }
@@ -22,10 +23,16 @@
             margin-top: 10px;
             font-size: 10px;
         }
+        
+        /* Menyembunyikan elemen saat diprint jika ada tombol back/tutup */
+        @media print {
+            .no-print { display: none; }
+            @page { margin: 0; }
+            body { margin: 0.5cm; }
+        }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="center">
         <div class="bold">LAUNDRYKU</div>
         <div>Jl. Contoh No. 123</div>
@@ -33,66 +40,72 @@
         <div class="line"></div>
     </div>
 
-    <!-- Transaksi Info -->
     <div>
-        <div>Tgl: {{ $transaksi->created_at->format('d/m/Y H:i') }}</div>
-        <div>No: {{ str_pad($transaksi->id, 6, '0', STR_PAD_LEFT) }}</div>
-        <div>Kasir: {{ $transaksi->kasir }}</div>
+        <div>Tgl: {{ $transaksi->tanggal_masuk->format('d/m/Y H:i') }}</div>
+        <div>No: #TRX{{ str_pad($transaksi->id, 5, '0', STR_PAD_LEFT) }}</div>
+        <div>Kasir: {{ auth()->user()->name }}</div> 
     </div>
     
     <div class="line"></div>
 
-    <!-- Pelanggan Info -->
     <div>
         <div class="bold">Pelanggan:</div>
-        <div>{{ $transaksi->nama_pelanggan }}</div>
-        <div>{{ $transaksi->telepon }}</div>
+        <div>{{ $transaksi->pelanggan->user->name }}</div>
+        <div>{{ $transaksi->pelanggan->no_hp }}</div>
     </div>
 
     <div class="line"></div>
 
-    <!-- Detail Layanan -->
     <div>
         <div class="bold">Detail Layanan:</div>
-        @foreach($transaksi->detailTransaksi as $detail)
-        <div>{{ $detail->layanan }} ({{ $detail->jumlah }}x)</div>
-        <div class="right">Rp {{ number_format($detail->harga * $detail->jumlah, 0, ',', '.') }}</div>
-        @endforeach
+        <div>{{ $transaksi->layanan->nama_layanan }}</div>
+        <div class="right">{{ $transaksi->berat }} kg x Rp {{ number_format($transaksi->layanan->harga_perkilo, 0, ',', '.') }}</div>
+        <div class="right bold">Rp {{ number_format($transaksi->harga_total, 0, ',', '.') }}</div>
     </div>
 
     <div class="line"></div>
 
-    <!-- Total Pembayaran -->
     <div>
-        <div>Total:</div>
-        <div class="right bold">Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</div>
-        
-        @if($transaksi->diskon > 0)
-        <div>Diskon:</div>
-        <div class="right">-Rp {{ number_format($transaksi->diskon, 0, ',', '.') }}</div>
+        @if($transaksi->diskon)
+        <div>Subtotal:</div>
+        <div class="right">Rp {{ number_format($transaksi->harga_total, 0, ',', '.') }}</div>
+        <div>Diskon ({{ $transaksi->diskon->nama_diskon }}):</div>
+        <div class="right">-Rp {{ number_format($transaksi->harga_total - $transaksi->harga_setelah_diskon, 0, ',', '.') }}</div>
+        <div class="line"></div>
         @endif
         
-        <div class="line"></div>
+        <div class="bold">TOTAL BAYAR:</div>
+        <div class="right bold text-xl">Rp {{ number_format($transaksi->harga_setelah_diskon ?? $transaksi->harga_total, 0, ',', '.') }}</div>
         
-        <div class="bold">Total Bayar:</div>
-        <div class="right bold">Rp {{ number_format($transaksi->total_bayar, 0, ',', '.') }}</div>
-        
-        <div>Bayar:</div>
-        <div class="right">Rp {{ number_format($transaksi->jumlah_bayar, 0, ',', '.') }}</div>
-        
-        <div>Kembali:</div>
-        <div class="right">Rp {{ number_format($transaksi->kembalian, 0, ',', '.') }}</div>
+        <div style="margin-top: 5px">Metode: {{ strtoupper($transaksi->metode_pembayaran ?? 'Tunai') }}</div>
+        <div>Status: {{ strtoupper($transaksi->status) }}</div>
     </div>
 
     <div class="line"></div>
 
-    <!-- Footer -->
     <div class="footer center">
         <div>Terima Kasih</div>
-        <div>Barang Siap Diambil:</div>
+        @if($transaksi->tanggal_selesai)
+        <div>Diambil Pada:</div>
         <div class="bold">{{ $transaksi->tanggal_selesai->format('d/m/Y') }}</div>
+        @else
+        <div class="bold italic">Sedang Dalam Proses</div>
+        @endif
         <div class="line"></div>
-        <div>*Simpan struk untuk klaim garansi</div>
+        <div>*Barang yang tidak diambil >30 hari diluar tanggung jawab kami</div>
     </div>
+
+    <script>
+        window.onload = function() {
+            window.print();
+            
+            // Opsional: Menutup jendela setelah print selesai (jika struk terbuka di tab baru)
+            window.onafterprint = function() {
+                // window.close(); 
+                // Atau kembali ke halaman dashboard
+                window.location.href = "{{ route('admin.transaksi.index') }}";
+            };
+        }
+    </script>
 </body>
 </html>
