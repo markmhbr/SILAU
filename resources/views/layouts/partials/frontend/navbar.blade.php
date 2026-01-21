@@ -1,6 +1,7 @@
 {{-- MENU PROFIL (SAMA UNTUK SEMUA) --}}
         @php
             $profileRoute = Auth::user()->role == 'pelanggan' ? 'pelanggan.profil.index' : 'karyawan.profil.index';
+            $alamatRoute = Auth::user()->role == 'pelanggan' ? 'pelanggan.alamat' : 'karyawan.alamat';
         @endphp
 <nav    
     class="sticky top-0 z-50 bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
@@ -37,7 +38,7 @@
 
                     @if (str_contains(strtolower($jabatan), 'kasir'))
                         {{-- Menu Khusus Kasir --}}
-                        <a href="{{-- {{ route('karyawan.transaksi.index') }} --}}"
+                        <a href=" {{ route('karyawan.kasir.index') }} "
                             class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.transaksi*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Transaksi</a>
                         <a href="{{-- {{ route('karyawan.pelanggan.index') }} --}}"
                             class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.pelanggan*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Data
@@ -62,7 +63,7 @@
                     </a>
                 @elseif(Auth::user()->role == 'karyawan' &&
                         str_contains(strtolower(Auth::user()->karyawan->jabatan->nama_jabatan ?? ''), 'kasir'))
-                    <a href="{{-- {{ route('karyawan.transaksi.create') }} --}}"
+                    <a href="{{ route('karyawan.kasir.create') }}"
                         class="hidden lg:flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-full font-bold shadow-lg shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95">
                         <span>📝</span> Transaksi Baru
                     </a>
@@ -104,7 +105,7 @@
                             <span>👤</span> Profile Saya
                         </a>
 
-                        <a href="{{ route('pelanggan.alamat') }}"
+                        <a href="{{ route($alamatRoute) }}"
                             class="flex items-center gap-3 p-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors font-bold text-slate-700 dark:text-slate-200">
                             <span>📍</span> Alamat Saya
                         </a>

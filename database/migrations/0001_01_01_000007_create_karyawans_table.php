@@ -19,6 +19,8 @@ return new class extends Migration {
             $table->foreignId('jabatan_id')
                   ->constrained('jabatans');
 
+
+            $table->string('foto')->nullable();
             $table->string('no_hp')->nullable();
             $table->string('provinsi')->nullable();
             $table->string('kota')->nullable();

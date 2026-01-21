@@ -77,18 +77,23 @@
                                 </span>
                             </td>
                             <td class="px-6 py-5 text-center border-y border-transparent group-hover:border-slate-100 dark:group-hover:border-slate-700">
-                                @php
-                                    $statusMap = [
-                                        'proses' => 'bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 border-blue-200',
-                                        'selesai' => 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border-emerald-200',
-                                        'pending' => 'bg-slate-100 text-slate-500 dark:bg-slate-700/50 dark:text-slate-400 border-slate-200'
-                                    ];
-                                    $currentStatus = $statusMap[$transaksi->status] ?? 'bg-rose-100 text-rose-600 border-rose-200';
-                                @endphp
-                                <span class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] border {{ $currentStatus }} whitespace-nowrap">
-                                    {{ $transaksi->status }}
-                                </span>
-                            </td>
+    @php
+        $statusMap = [
+            'pending'             => 'bg-slate-100 text-slate-500 dark:bg-slate-700/50 dark:text-slate-400 border-slate-200',
+            'menunggu konfirmasi' => 'bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border-amber-200',
+            'proses'              => 'bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 border-blue-200',
+            'sedang diantar'      => 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 border-indigo-200',
+            'selesai'             => 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border-emerald-200',
+        ];
+        
+        // Mengambil style berdasarkan status, default ke warna rose jika status tidak terdaftar
+        $currentStatus = $statusMap[strtolower($transaksi->status)] ?? 'bg-rose-100 text-rose-600 border-rose-200';
+    @endphp
+    
+    <span class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] border {{ $currentStatus }} whitespace-nowrap">
+        {{ $transaksi->status }}
+    </span>
+</td>
                             <td class="px-6 py-5 text-center rounded-r-2xl border-y border-r border-transparent group-hover:border-slate-100 dark:group-hover:border-slate-700">
                                 <a href="{{ route('pelanggan.layanan.detail', $transaksi->id) }}" 
                                    class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white dark:bg-slate-700 text-slate-400 hover:text-brand hover:shadow-md transition-all border border-slate-100 dark:border-slate-600">

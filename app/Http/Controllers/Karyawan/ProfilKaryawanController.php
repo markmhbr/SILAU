@@ -78,5 +78,44 @@ class ProfilKaryawanController extends Controller
         }
     }
 
-    // Method lain bisa dikosongkan jika tidak digunakan (create, store, destroy)
+    /**
+     * Menampilkan form untuk mengedit alamat karyawan.
+     */
+    public function alamat()
+    {
+        $karyawan = Karyawan::where('user_id', Auth::id())->firstOrFail();
+        return view('content.backend.karyawan.alamat', compact('karyawan'));
+    }
+    /**
+     * Memperbarui alamat karyawan.
+     */
+    public function updateAlamat(Request $request)
+    {
+        $request->validate([
+            'latitude' => 'required',
+            'longitude' => 'required',
+            'provinsi' => 'required',
+            'kota' => 'required',
+            'alamat_lengkap' => 'required',
+        ]);
+
+        $karyawan = Karyawan::where('user_id', Auth::id())->firstOrFail();
+
+        $karyawan->update([
+            'provinsi' => $request->provinsi,
+            'kota' => $request->kota,
+            'kecamatan' => $request->kecamatan,
+            'desa' => $request->desa,
+            'alamat_lengkap' => $request->alamat_lengkap,
+            'no_rumah' => $request->no_rumah,
+            'kode_pos' => $request->kode_pos,
+            'patokan' => $request->patokan,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+        ]);
+
+        return redirect()
+            ->route('karyawan.dashboard')
+            ->with('success', 'Alamat berhasil disimpan');
+    }
 }

@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\LaporanController;
 // Controllers Karyawan
 use App\Http\Controllers\Karyawan\DashboardController as KaryawanDashboardController;
 use App\Http\Controllers\Karyawan\ProfilKaryawanController;
+use App\Http\Controllers\Karyawan\KasirController;
 
 // Controllers Pelanggan
 use App\Http\Controllers\Pelanggan\DashboardController as PelangganDashboardController;
@@ -83,7 +84,14 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
 Route::middleware(['auth','role:karyawan'])->prefix('karyawan')->name('karyawan.')->group(function () {
     Route::get('/dashboard', [KaryawanDashboardController::class, 'dashboard'])
     ->name('dashboard');
+    Route::get('/alamat', [ProfilKaryawanController::class, 'alamat'])->name('alamat');
+    Route::put('/alamat', [ProfilKaryawanController::class, 'updateAlamat'])
+        ->name('alamat.update');
     Route::resource('/profil', ProfilKaryawanController::class)->names('profil');
+    // Route Kasir
+    Route::get('/cek-member', [KasirController::class, 'cekMember'])->name('cek-member');
+    Route::resource('/kasir', KasirController::class)->names('kasir');
+    Route::patch('/kasir/{id}/status', [KasirController::class, 'updateStatus'])->name('kasir.status');
 });
 
 

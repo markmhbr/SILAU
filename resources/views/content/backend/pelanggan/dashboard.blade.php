@@ -94,21 +94,37 @@
                         <div class="flex items-center gap-4 flex-1">
                             <div
                                 class="w-12 h-12 md:w-14 md:h-14 bg-white dark:bg-slate-700 rounded-2xl flex items-center justify-center shadow-sm text-xl shrink-0">
-                                🧺
+                                @if ($transaksi->status == 'selesai')
+                                    ✅
+                                @elseif($transaksi->status == 'sedang diantar')
+                                    🚚
+                                @else
+                                    🧺
+                                @endif
                             </div>
                             <div>
                                 <p class="font-black text-slate-800 dark:text-white text-sm md:text-base capitalize">
-                                    {{ $transaksi->layanan->nama_layanan }}</p>
-                                <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-mono">ID:
-                                    #INV-{{ $transaksi->id }}{{ date('dmY', strtotime($transaksi->tanggal_masuk)) }}</p>
+                                    {{ $transaksi->layanan->nama_layanan }}
+                                </p>
+                                <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-mono">
+                                    #INV-{{ $transaksi->id }}{{ date('dmY', strtotime($transaksi->tanggal_masuk)) }}
+                                </p>
                             </div>
                         </div>
 
                         <div class="flex flex-1 items-center gap-1.5 px-2">
-                            <div class="h-1.5 flex-1 bg-brand rounded-full"></div>
                             <div
-                                class="h-1.5 flex-1 {{ in_array($transaksi->status, ['proses', 'selesai']) ? 'bg-brand' : 'bg-slate-200 dark:bg-slate-700' }} rounded-full {{ $transaksi->status == 'proses' ? 'animate-pulse' : '' }}">
+                                class="h-1.5 flex-1 bg-brand rounded-full {{ in_array($transaksi->status, ['pending', 'menunggu konfirmasi']) ? 'animate-pulse' : '' }}">
                             </div>
+
+                            <div
+                                class="h-1.5 flex-1 {{ in_array($transaksi->status, ['proses', 'sedang diantar', 'selesai']) ? 'bg-brand' : 'bg-slate-200 dark:bg-slate-700' }} {{ $transaksi->status == 'proses' ? 'animate-pulse' : '' }} rounded-full">
+                            </div>
+
+                            <div
+                                class="h-1.5 flex-1 {{ in_array($transaksi->status, ['sedang diantar', 'selesai']) ? 'bg-brand' : 'bg-slate-200 dark:bg-slate-700' }} {{ $transaksi->status == 'sedang diantar' ? 'animate-pulse' : '' }} rounded-full">
+                            </div>
+
                             <div
                                 class="h-1.5 flex-1 {{ $transaksi->status == 'selesai' ? 'bg-brand' : 'bg-slate-200 dark:bg-slate-700' }} rounded-full">
                             </div>
@@ -116,9 +132,25 @@
 
                         <div class="flex justify-between md:block md:text-right shrink-0">
                             <p class="text-xs md:text-sm font-black text-brand uppercase tracking-tighter">
-                                {{ $transaksi->status }}</p>
-                            <p class="text-[10px] md:text-xs text-slate-400 mt-0.5">{{ $transaksi->berat }} Kg • Rp
-                                {{ number_format($transaksi->harga_setelah_diskon, 0, ',', '.') }}</p>
+                                {{-- Kustomisasi Tampilan Teks Status --}}
+                                @if ($transaksi->status == 'pending')
+                                    Pending
+                                @elseif($transaksi->status == 'menunggu konfirmasi')
+                                    Menunggu Konfirmasi
+                                @elseif($transaksi->status == 'proses')
+                                    Proses
+                                @elseif($transaksi->status == 'sedang diantar')
+                                    Sedang Diantar
+                                @elseif($transaksi->status == 'selesai')
+                                    Selesai
+                                @else
+                                    {{ $transaksi->status }}
+                                @endif
+                            </p>
+                            <p class="text-[10px] md:text-xs text-slate-400 mt-0.5">
+                                {{ number_format($transaksi->berat, $transaksi->berat == round($transaksi->berat) ? 0 : 1, ',', '.') }}
+                                Kg • Rp {{ number_format($transaksi->harga_setelah_diskon, 0, ',', '.') }}
+                            </p>
                         </div>
                     </div>
                 @empty

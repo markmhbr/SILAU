@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaksi extends Model
 {
-    
+
     protected $table = 'transaksi';
 
     protected $fillable = [
-        'diskon_id',
+        'id_karyawan',
         'pelanggan_id',
         'layanan_id',
+        'diskon_id',
         'tanggal_masuk',
         'tanggal_selesai',
         'status',
@@ -20,7 +21,7 @@ class Transaksi extends Model
         'harga_total',
         'harga_setelah_diskon',
         'metode_pembayaran',
-        'bukti_bayar',
+        'snap_token',
         'catatan'
     ];
 
@@ -30,6 +31,11 @@ class Transaksi extends Model
         'tanggal_selesai' => 'datetime',
     ];
 
+    // Relasi ke karyawan (opsional)
+    public function karyawan()
+    {
+        return $this->belongsTo(Karyawan::class, 'id_karyawan');
+    }
     // Relasi ke pelanggan
     public function pelanggan()
     {
@@ -59,5 +65,4 @@ class Transaksi extends Model
         }
         return $this->harga_total;
     }
-
 }
