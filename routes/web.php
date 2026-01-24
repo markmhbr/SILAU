@@ -90,6 +90,11 @@ Route::middleware(['auth','role:karyawan'])->prefix('karyawan')->name('karyawan.
     Route::resource('/profil', ProfilKaryawanController::class)->names('profil');
     // Route Kasir
     Route::get('/cek-member', [KasirController::class, 'cekMember'])->name('cek-member');
+    
+    Route::get('/kasir/pelanggan', [KasirController::class, 'pelangganIndex'])->name('kasir.pelanggan');
+    Route::get('/kasir/pelanggan/{pelanggan}', [KasirController::class, 'pelangganShow'])
+    ->name('kasir.pelanggan.show');
+
     Route::resource('/kasir', KasirController::class)->names('kasir');
     Route::patch('/kasir/{id}/status', [KasirController::class, 'updateStatus'])->name('kasir.status');
 });

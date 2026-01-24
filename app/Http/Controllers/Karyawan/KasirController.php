@@ -29,6 +29,7 @@ class KasirController extends Controller
     public function index()
     {
         $transaksi = Transaksi::with(['pelanggan.user', 'layanan'])
+            ->whereDate('created_at', now())
             ->latest()
             ->paginate(10);
         return view('content.backend.karyawan.kasir.index', compact('transaksi'));
@@ -216,5 +217,33 @@ class KasirController extends Controller
         $transaksi->update($dataUpdate);
 
         return back()->with('success', 'Status pesanan berhasil diperbarui!');
+    }
+
+    public function pelangganIndex ()
+    {
+        $pelanggan = Pelanggan::with('user')
+        ->withCount('transaksi')
+        ->when(request('q'), function ($query) {
+            $query->whereHas('user', function ($q) {
+                $q->where('name', 'like', '%'.request('q').'%')
+                  ->orWhere('email', 'like', '%'.request('q').'%');
+            })->orWhere('no_hp', 'like', '%'.request('q').'%');
+        })
+        ->latest()
+        ->paginate(10)
+        ->withQueryString();
+
+
+        return view('content.backend.karyawan.kasir.pelanggan.index', compact('pelanggan'));
+    }
+
+    public function pelangganShow(Pelanggan $pelanggan)
+    {
+        $pelanggan->load([
+            'user',
+            'transaksi.layanan'
+        ]);
+
+        return view('content.backend.karyawan.kasir.pelanggan.show', compact('pelanggan'));
     }
 }

@@ -39,9 +39,9 @@
                     @if (str_contains(strtolower($jabatan), 'kasir'))
                         {{-- Menu Khusus Kasir --}}
                         <a href=" {{ route('karyawan.kasir.index') }} "
-                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.transaksi*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Transaksi</a>
-                        <a href="{{-- {{ route('karyawan.pelanggan.index') }} --}}"
-                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.pelanggan*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Data
+                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.kasir*') && !request()->routeIs('karyawan.kasir.pelanggan*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Transaksi</a>
+                        <a href=" {{ route('karyawan.kasir.pelanggan') }} "
+                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.kasir.pelanggan*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Data
                             Pelanggan</a>
                     @endif
 
