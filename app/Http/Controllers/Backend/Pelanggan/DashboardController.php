@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Pelanggan;
+namespace App\Http\Controllers\Backend\Pelanggan;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaksi;

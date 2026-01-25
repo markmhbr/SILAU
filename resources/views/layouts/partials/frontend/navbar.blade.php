@@ -47,8 +47,8 @@
 
                     @if (str_contains(strtolower($jabatan), 'driver'))
                         {{-- Menu Khusus Driver --}}
-                        <a href="{{-- {{ route('karyawan.pickup.index') }} --}}"
-                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.pickup*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Penjemputan</a>
+                        <a href=" {{ route('karyawan.driver.penjemputan') }} "
+                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.driver*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Penjemputan</a>
                         <a href="{{-- {{ route('karyawan.delivery.index') }} --}}"
                             class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.delivery*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Pengantaran</a>
                     @endif

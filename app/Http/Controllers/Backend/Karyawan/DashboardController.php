@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Karyawan;
+namespace App\Http\Controllers\Backend\Karyawan;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -32,10 +32,15 @@ class DashboardController extends Controller
         // --- QUERY UTAMA ---
         // Kita ambil alamat_lengkap dari model Pelanggan
         $antreanTugas = Transaksi::with(['pelanggan.user', 'layanan'])
-            ->whereIn('status', ['pending', 'proses'])
-            ->latest()
-            ->take(10)
-            ->get();
+    ->whereIn('status', ['pending', 'proses'])
+    ->whereHas('pelanggan', function ($q) {
+        $q->whereNotNull('latitude')
+          ->whereNotNull('longitude');
+    })
+    ->latest()
+    ->take(10)
+    ->get();
+
 
         return view('content.backend.karyawan.dashboard', compact(
             'jabatan',

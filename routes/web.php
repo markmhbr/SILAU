@@ -3,25 +3,27 @@
 use Illuminate\Support\Facades\Route;
 
 // Controllers Admin
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\ProfilPerusahaanController;
-use App\Http\Controllers\Admin\JabatanController;
-use App\Http\Controllers\Admin\KaryawanController;
-use App\Http\Controllers\Admin\PelangganController;
-use App\Http\Controllers\Admin\LayananController;
-use App\Http\Controllers\Admin\TransaksiController;
-use App\Http\Controllers\Admin\DiskonController;
-use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Backend\Admin\DashboardController;
+use App\Http\Controllers\Backend\Admin\ProfilPerusahaanController;
+use App\Http\Controllers\Backend\Admin\JabatanController;
+use App\Http\Controllers\Backend\Admin\KaryawanController;
+use App\Http\Controllers\Backend\Admin\PelangganController;
+use App\Http\Controllers\Backend\Admin\LayananController;
+use App\Http\Controllers\Backend\Admin\TransaksiController;
+use App\Http\Controllers\Backend\Admin\DiskonController;
+use App\Http\Controllers\Backend\Admin\LaporanController;
 
 // Controllers Karyawan
-use App\Http\Controllers\Karyawan\DashboardController as KaryawanDashboardController;
-use App\Http\Controllers\Karyawan\ProfilKaryawanController;
-use App\Http\Controllers\Karyawan\KasirController;
+use App\Http\Controllers\Backend\Karyawan\DashboardController as KaryawanDashboardController;
+use App\Http\Controllers\Backend\Karyawan\ProfilKaryawanController;
+use App\Http\Controllers\Backend\Karyawan\KasirController;
+use App\Http\Controllers\Backend\Karyawan\DriverController;
+
 
 // Controllers Pelanggan
-use App\Http\Controllers\Pelanggan\DashboardController as PelangganDashboardController;
-use App\Http\Controllers\Pelanggan\LayananPelangganController;
-use App\Http\Controllers\Pelanggan\ProfilPelangganController;
+use App\Http\Controllers\Backend\Pelanggan\DashboardController as PelangganDashboardController;
+use App\Http\Controllers\Backend\Pelanggan\LayananPelangganController;
+use App\Http\Controllers\Backend\Pelanggan\ProfilPelangganController;
 
 // Controllers Auth
 use App\Http\Controllers\Auth\LoginController;
@@ -97,6 +99,18 @@ Route::middleware(['auth','role:karyawan'])->prefix('karyawan')->name('karyawan.
 
     Route::resource('/kasir', KasirController::class)->names('kasir');
     Route::patch('/kasir/{id}/status', [KasirController::class, 'updateStatus'])->name('kasir.status');
+
+    // =====================
+    // DRIVER
+    // =====================
+    Route::prefix('driver')->name('driver.')->group(function () {
+
+        Route::get('/penjemputan', [DriverController::class, 'penjemputan'])
+            ->name('penjemputan');
+
+        Route::post('/jemput/{transaksi}', [DriverController::class, 'jemput'])
+            ->name('jemput');
+    });
 });
 
 

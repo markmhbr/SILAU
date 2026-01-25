@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Karyawan;
+namespace App\Http\Controllers\Backend\Karyawan;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
