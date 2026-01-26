@@ -53,6 +53,16 @@ Route::get('/profil', [InterfaceController::class, 'profil'])->name('profil');
 Route::get('/kontak', [InterfaceController::class, 'kontak'])->name('kontak');
 Route::get('/testimonial-form', [InterfaceController::class, 'testimonial_form'])->name('testimonial-form');
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes untuk bagian role owner
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth','role:owner'])->prefix('owner')->name('owner.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Backend\Owner\DashboardController::class, 'index'])
+    ->name('dashboard');
+});
 
 /*
 |--------------------------------------------------------------------------

@@ -1,9 +1,15 @@
 {{-- MENU PROFIL (SAMA UNTUK SEMUA) --}}
-        @php
-            $profileRoute = Auth::user()->role == 'pelanggan' ? 'pelanggan.profil.index' : 'karyawan.profil.index';
-            $alamatRoute = Auth::user()->role == 'pelanggan' ? 'pelanggan.alamat' : 'karyawan.alamat';
-        @endphp
-<nav    
+@php
+    if (Auth::user()->role == 'pelanggan') {
+        $profileRoute = 'pelanggan.profil.index';
+        $alamatRoute = 'pelanggan.alamat';
+    } else {
+        $profileRoute = 'karyawan.profil.index';
+        $alamatRoute = 'karyawan.alamat';
+    }
+@endphp
+
+<nav
     class="sticky top-0 z-50 bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 md:h-20">
@@ -30,6 +36,39 @@
                         Saya</a>
                     <a href="{{ route('pelanggan.layanan.index') }}"
                         class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('pelanggan.layanan.index*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Layanan</a>
+                @elseif(Auth::user()->role == 'owner')
+                    {{-- ================= MENU OWNER ================= --}}
+                    <a href="{{ route('owner.dashboard') }}"
+                        class="text-sm transition-all pb-1 px-1
+        {{ request()->routeIs('owner.dashboard')
+            ? 'font-black border-b-2 border-brand text-brand'
+            : 'font-medium text-slate-500 hover:text-brand' }}">
+                        Dashboard
+                    </a>
+
+                    <a href="{{-- {{ route('owner.transaksi.index') }} --}}"
+                        class="text-sm transition-all pb-1 px-1
+        {{ request()->routeIs('owner.transaksi*')
+            ? 'font-black border-b-2 border-brand text-brand'
+            : 'font-medium text-slate-500 hover:text-brand' }}">
+                        Transaksi
+                    </a>
+
+                    <a href="{{-- {{ route('owner.laporan.index') }} --}}"
+                        class="text-sm transition-all pb-1 px-1
+        {{ request()->routeIs('owner.laporan*')
+            ? 'font-black border-b-2 border-brand text-brand'
+            : 'font-medium text-slate-500 hover:text-brand' }}">
+                        Laporan
+                    </a>
+
+                    <a href="{{-- {{ route('owner.pengaturan') }} --}}"
+                        class="text-sm transition-all pb-1 px-1
+        {{ request()->routeIs('owner.pengaturan')
+            ? 'font-black border-b-2 border-brand text-brand'
+            : 'font-medium text-slate-500 hover:text-brand' }}">
+                        Pengaturan
+                    </a>
                 @elseif(Auth::user()->role == 'karyawan')
                     @php $jabatan = Auth::user()->karyawan->jabatan->nama_jabatan ?? ''; @endphp
 
@@ -163,6 +202,42 @@
                         class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('pelanggan.alamat*') ? 'bg-brand text-white shadow-lg shadow-brand/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
                         <span class="text-xl">📍</span>
                         <span class="font-bold">Alamat Saya</span>
+                    </a>
+                @elseif(Auth::user()->role == 'owner')
+                    <a href="{{ route('owner.dashboard') }}"
+                        class="flex items-center gap-3 p-4 rounded-2xl
+        {{ request()->routeIs('owner.dashboard')
+            ? 'bg-brand text-white shadow-lg shadow-brand/20'
+            : 'text-slate-600 hover:bg-slate-50' }}">
+                        <span class="text-xl">📊</span>
+                        <span class="font-bold">Dashboard Owner</span>
+                    </a>
+
+                    <a href="{{-- {{ route('owner.transaksi.index') }} --}}"
+                        class="flex items-center gap-3 p-4 rounded-2xl
+        {{ request()->routeIs('owner.transaksi*')
+            ? 'bg-brand text-white shadow-lg shadow-brand/20'
+            : 'text-slate-600 hover:bg-slate-50' }}">
+                        <span class="text-xl">🧾</span>
+                        <span class="font-bold">Transaksi</span>
+                    </a>
+
+                    <a href="{{-- {{ route('owner.laporan.index') }} --}}"
+                        class="flex items-center gap-3 p-4 rounded-2xl
+        {{ request()->routeIs('owner.laporan*')
+            ? 'bg-brand text-white shadow-lg shadow-brand/20'
+            : 'text-slate-600 hover:bg-slate-50' }}">
+                        <span class="text-xl">📈</span>
+                        <span class="font-bold">Laporan</span>
+                    </a>
+
+                    <a href="{{-- {{ route('owner.pengaturan') }} --}}"
+                        class="flex items-center gap-3 p-4 rounded-2xl
+        {{ request()->routeIs('owner.pengaturan')
+            ? 'bg-brand text-white shadow-lg shadow-brand/20'
+            : 'text-slate-600 hover:bg-slate-50' }}">
+                        <span class="text-xl">⚙️</span>
+                        <span class="font-bold">Pengaturan</span>
                     </a>
                 @elseif(Auth::user()->role == 'karyawan')
                     @php $jabatan = Auth::user()->karyawan->jabatan->nama_jabatan ?? ''; @endphp
