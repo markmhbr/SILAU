@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Midtrans\Config;
 use Midtrans\Snap;
+use Carbon\Carbon;
 use Exception;
 
 class KasirController extends Controller
@@ -29,7 +30,10 @@ class KasirController extends Controller
     public function index()
     {
         $transaksi = Transaksi::with(['pelanggan.user', 'layanan'])
-            ->whereDate('created_at', now())
+            ->whereBetween('created_at', [
+            Carbon::now()->subDays(6)->startOfDay(),
+            Carbon::now()->endOfDay(),
+        ])
             ->latest()
             ->paginate(10);
         return view('content.backend.karyawan.kasir.index', compact('transaksi'));

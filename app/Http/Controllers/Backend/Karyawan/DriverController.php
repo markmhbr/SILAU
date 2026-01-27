@@ -68,4 +68,43 @@ class DriverController extends Controller
             ->route('karyawan.driver.penjemputan')
             ->with('success', 'Penjemputan dimulai');
     }
+
+    /**
+     * Halaman Pengantaran (tugas driver sendiri)
+     */
+    public function pengantaran()
+    {
+        $karyawan = auth()->user()->karyawan;
+
+        $tugasAntar = Transaksi::with(['pelanggan.user'])
+            ->where('status', 'selesai')
+            ->latest()
+            ->get();
+
+        return view('content.backend.karyawan.driver.pengantaran', compact('tugasAntar'));
+    }
+
+    /**
+     * Mulai antar / update status → dikirim
+     */
+    public function antar(Transaksi $transaksi)
+    {
+        $karyawan = auth()->user()->karyawan;
+
+        if ($transaksi->id_karyawan !== $karyawan->id) {
+            abort(403);
+        }
+
+        if ($transaksi->status !== 'selesai') {
+            return back()->with('error', 'Pesanan belum siap diantar');
+        }
+
+        $transaksi->update([
+            'status' => 'dikirim'
+        ]);
+
+        return back()->with('success', 'Pengantaran dimulai');
+    }
+
+
 }

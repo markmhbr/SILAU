@@ -120,6 +120,15 @@ Route::middleware(['auth','role:karyawan'])->prefix('karyawan')->name('karyawan.
 
         Route::post('/jemput/{transaksi}', [DriverController::class, 'jemput'])
             ->name('jemput');
+
+        // =====================
+        // PENGANTARAN
+        // =====================
+        Route::get('/pengantaran', [DriverController::class, 'pengantaran'])
+            ->name('pengantaran');
+    
+        Route::patch('/antar/{transaksi}', [DriverController::class, 'antar'])
+            ->name('antar');
     });
 });
 

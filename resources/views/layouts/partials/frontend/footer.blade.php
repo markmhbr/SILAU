@@ -44,7 +44,7 @@
 
             @if(str_contains($jabatan, 'kasir'))
                 {{-- Tampilan Mobile untuk Kasir --}}
-                <a href="{{-- {{ route('karyawan.transaksi.index') }} --}}"
+                <a href=" {{ route('karyawan.kasir.index') }} "
                     class="flex flex-col items-center gap-1 {{ request()->routeIs('karyawan.transaksi.index') ? 'text-emerald-500' : 'text-slate-400' }}">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -53,13 +53,13 @@
                 </a>
 
                 <div class="-translate-y-6">
-                    <a href="{{-- {{ route('karyawan.transaksi.create') }} --}}"
+                    <a href=" {{ route('karyawan.kasir.create') }} "
                         class="w-14 h-14 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-xl shadow-emerald-500/40 border-4 border-[#f8fafc] dark:border-[#020617]">
                         <span class="text-2xl">📝</span>
                     </a>
                 </div>
 
-                <a href="{{-- {{ route('karyawan.pelanggan.index') }} --}}"
+                <a href=" {{ route('karyawan.kasir.pelanggan') }} "
                     class="flex flex-col items-center gap-1 {{ request()->routeIs('karyawan.pelanggan.*') ? 'text-emerald-500' : 'text-slate-400' }}">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
@@ -69,7 +69,7 @@
 
             @elseif(str_contains($jabatan, 'driver'))
                 {{-- Tampilan Mobile untuk Driver --}}
-                <a href="{{-- {{ route('karyawan.pickup.index') }} --}}"
+                <a href=" {{ route('karyawan.driver.penjemputan') }} "
                     class="flex flex-col items-center gap-1 {{ request()->routeIs('karyawan.pickup*') ? 'text-orange-500' : 'text-slate-400' }}">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
@@ -84,7 +84,7 @@
                     </button>
                 </div>
 
-                <a href="{{-- {{ route('karyawan.delivery.index') }} --}}"
+                <a href=" {{ route('karyawan.driver.pengantaran') }} "
                     class="flex flex-col items-center gap-1 {{ request()->routeIs('karyawan.delivery*') ? 'text-orange-500' : 'text-slate-400' }}">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>

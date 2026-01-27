@@ -87,9 +87,9 @@
                     @if (str_contains(strtolower($jabatan), 'driver'))
                         {{-- Menu Khusus Driver --}}
                         <a href=" {{ route('karyawan.driver.penjemputan') }} "
-                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.driver*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Penjemputan</a>
-                        <a href="{{-- {{ route('karyawan.delivery.index') }} --}}"
-                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.delivery*') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Pengantaran</a>
+                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.driver.penjemputan') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Penjemputan</a>
+                        <a href=" {{ route('karyawan.driver.pengantaran') }} "
+                            class="text-sm transition-all pb-1 px-1 {{ request()->routeIs('karyawan.driver.pengantaran') ? 'font-black border-b-2 border-brand text-brand' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-brand' }}">Pengantaran</a>
                     @endif
                 @endif
             </div>
@@ -240,26 +240,63 @@
                         <span class="font-bold">Pengaturan</span>
                     </a>
                 @elseif(Auth::user()->role == 'karyawan')
-                    @php $jabatan = Auth::user()->karyawan->jabatan->nama_jabatan ?? ''; @endphp
+                    @php
+                        $jabatan = Auth::user()->karyawan->jabatan->nama_jabatan ?? '';
+                    @endphp
+
+                    {{-- Dashboard --}}
                     <a href="{{ route('karyawan.dashboard') }}"
-                        class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('karyawan.dashboard') ? 'bg-brand text-white' : '' }}">
-                        <span class="text-xl">📊</span> <span class="font-bold">Dashboard Karyawan</span>
+                        class="flex items-center gap-3 p-4 rounded-2xl
+        {{ request()->routeIs('karyawan.dashboard')
+            ? 'bg-brand text-white shadow-lg shadow-brand/20'
+            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
+                        <span class="text-xl">📊</span>
+                        <span class="font-bold">Dashboard</span>
                     </a>
 
+                    {{-- ===== KASIR ===== --}}
                     @if (str_contains(strtolower($jabatan), 'kasir'))
-                        <a href="{{-- {{ route('karyawan.transaksi.index') }} --}}"
-                            class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('karyawan.transaksi*') ? 'bg-brand text-white' : '' }}">
-                            <span class="text-xl">💰</span> <span class="font-bold">Kasir / Transaksi</span>
+                        <a href="{{ route('karyawan.kasir.index') }}"
+                            class="flex items-center gap-3 p-4 rounded-2xl
+            {{ request()->routeIs('karyawan.kasir*') && !request()->routeIs('karyawan.kasir.pelanggan*')
+                ? 'bg-brand text-white shadow-lg shadow-brand/20'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
+                            <span class="text-xl">💰</span>
+                            <span class="font-bold">Transaksi</span>
+                        </a>
+
+                        <a href="{{ route('karyawan.kasir.pelanggan') }}"
+                            class="flex items-center gap-3 p-4 rounded-2xl
+            {{ request()->routeIs('karyawan.kasir.pelanggan*')
+                ? 'bg-brand text-white shadow-lg shadow-brand/20'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
+                            <span class="text-xl">👥</span>
+                            <span class="font-bold">Data Pelanggan</span>
                         </a>
                     @endif
 
+                    {{-- ===== DRIVER ===== --}}
                     @if (str_contains(strtolower($jabatan), 'driver'))
-                        <a href="{{-- {{ route('karyawan.pickup.index') }} --}}"
-                            class="flex items-center gap-3 p-4 rounded-2xl {{ request()->routeIs('karyawan.pickup*') ? 'bg-brand text-white' : '' }}">
-                            <span class="text-xl">🚚</span> <span class="font-bold">Tugas Kurir</span>
+                        <a href="{{ route('karyawan.driver.penjemputan') }}"
+                            class="flex items-center gap-3 p-4 rounded-2xl
+            {{ request()->routeIs('karyawan.driver.penjemputan')
+                ? 'bg-brand text-white shadow-lg shadow-brand/20'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
+                            <span class="text-xl">📦</span>
+                            <span class="font-bold">Penjemputan</span>
+                        </a>
+
+                        <a href="{{ route('karyawan.driver.pengantaran') }}"
+                            class="flex items-center gap-3 p-4 rounded-2xl
+            {{ request()->routeIs('karyawan.driver.pengantaran')
+                ? 'bg-brand text-white shadow-lg shadow-brand/20'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900' }}">
+                            <span class="text-xl">🚚</span>
+                            <span class="font-bold">Pengantaran</span>
                         </a>
                     @endif
                 @endif
+
             </div>
         </div>
     </div>
