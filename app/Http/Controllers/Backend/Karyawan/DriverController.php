@@ -90,7 +90,6 @@ class DriverController extends Controller
     public function antar(Transaksi $transaksi)
     {
         $karyawan = auth()->user()->karyawan;
-
         if ($transaksi->id_karyawan !== $karyawan->id) {
             abort(403);
         }

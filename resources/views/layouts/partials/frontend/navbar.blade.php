@@ -46,7 +46,7 @@
                         Dashboard
                     </a>
 
-                    <a href="{{-- {{ route('owner.transaksi.index') }} --}}"
+                    <a href=" {{ route('owner.transaksi.index') }} "
                         class="text-sm transition-all pb-1 px-1
         {{ request()->routeIs('owner.transaksi*')
             ? 'font-black border-b-2 border-brand text-brand'
@@ -54,7 +54,7 @@
                         Transaksi
                     </a>
 
-                    <a href="{{-- {{ route('owner.laporan.index') }} --}}"
+                    <a href=" {{ route('owner.laporan.index') }} "
                         class="text-sm transition-all pb-1 px-1
         {{ request()->routeIs('owner.laporan*')
             ? 'font-black border-b-2 border-brand text-brand'
@@ -62,9 +62,9 @@
                         Laporan
                     </a>
 
-                    <a href="{{-- {{ route('owner.pengaturan') }} --}}"
+                    <a href=" {{ route('owner.pengaturan.index') }} "
                         class="text-sm transition-all pb-1 px-1
-        {{ request()->routeIs('owner.pengaturan')
+        {{ request()->routeIs('owner.pengaturan.index')
             ? 'font-black border-b-2 border-brand text-brand'
             : 'font-medium text-slate-500 hover:text-brand' }}">
                         Pengaturan
@@ -213,7 +213,7 @@
                         <span class="font-bold">Dashboard Owner</span>
                     </a>
 
-                    <a href="{{-- {{ route('owner.transaksi.index') }} --}}"
+                    <a href=" {{ route('owner.transaksi.index') }} "
                         class="flex items-center gap-3 p-4 rounded-2xl
         {{ request()->routeIs('owner.transaksi*')
             ? 'bg-brand text-white shadow-lg shadow-brand/20'
@@ -222,7 +222,7 @@
                         <span class="font-bold">Transaksi</span>
                     </a>
 
-                    <a href="{{-- {{ route('owner.laporan.index') }} --}}"
+                    <a href=" {{ route('owner.laporan.index') }} "
                         class="flex items-center gap-3 p-4 rounded-2xl
         {{ request()->routeIs('owner.laporan*')
             ? 'bg-brand text-white shadow-lg shadow-brand/20'
@@ -231,7 +231,7 @@
                         <span class="font-bold">Laporan</span>
                     </a>
 
-                    <a href="{{-- {{ route('owner.pengaturan') }} --}}"
+                    <a href=" {{ route('owner.pengaturan.index') }} "
                         class="flex items-center gap-3 p-4 rounded-2xl
         {{ request()->routeIs('owner.pengaturan')
             ? 'bg-brand text-white shadow-lg shadow-brand/20'

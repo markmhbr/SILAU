@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
+// Controllers Owner
+use App\Http\Controllers\Backend\Owner\DashboardController as OwnerDashboardController;
+use App\Http\Controllers\Backend\Owner\OwnerController;
+
 // Controllers Admin
 use App\Http\Controllers\Backend\Admin\DashboardController;
 use App\Http\Controllers\Backend\Admin\ProfilPerusahaanController;
@@ -60,8 +64,34 @@ Route::get('/testimonial-form', [InterfaceController::class, 'testimonial_form']
 */
 
 Route::middleware(['auth','role:owner'])->prefix('owner')->name('owner.')->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\Backend\Owner\DashboardController::class, 'index'])
+    Route::get('/dashboard', [OwnerDashboardController::class, 'index'])
     ->name('dashboard');
+
+    Route::get('/transaksi', [OwnerController::class, 'transaksi'])
+        ->name('transaksi.index');
+    Route::get('/transaksi/{id}', [OwnerController::class, 'transaksiDetail'])
+        ->name('transaksi.detail');
+
+    Route::get('/transaksi/export/excel', [OwnerController::class, 'exportExcel'])
+        ->name('transaksi.export.excel');
+
+    Route::get('/transaksi/export/pdf', [OwnerController::class, 'exportPdf'])
+        ->name('transaksi.export.pdf');
+
+    Route::get('/laporan', [OwnerController::class, 'laporan'])
+        ->name('laporan.index');
+
+    Route::get('/laporan/export/excel', [OwnerController::class, 'exportLaporanExcel'])
+    ->name('laporan.export.excel');
+
+Route::get('/laporan/export/pdf', [OwnerController::class, 'exportLaporanPdf'])
+    ->name('laporan.export.pdf');
+
+    Route::get('/pengaturan', [OwnerController::class, 'pengaturan'])
+            ->name('pengaturan.index');
+
+        Route::put('/pengaturan', [OwnerController::class, 'updatePengaturan'])
+            ->name('pengaturan.update');
 });
 
 /*
