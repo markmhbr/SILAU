@@ -30,53 +30,71 @@
     </div>
 
     {{-- ================= KPI CARDS ================= --}}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-10">
+    {{-- ================= KPI CARDS ================= --}}
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-10">
 
-        {{-- TRANSAKSI BULAN INI --}}
-        <div class="bg-blue-50 dark:bg-blue-950/30 p-6 rounded-[2rem] border">
-            <div class="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg">
-                🧾
-            </div>
-            <p class="text-xl font-black text-blue-600 dark:text-blue-400">
-                {{ $totalTransaksiBulanIni ?? 0 }}
-            </p>
-            <p class="text-xs text-slate-500">Transaksi Bulan Ini</p>
+    {{-- TRANSAKSI BULAN INI --}}
+    <div
+        class="bg-blue-50 dark:bg-blue-950/30 p-5 md:p-6 rounded-[2rem] border border-blue-100 dark:border-blue-900/50">
+        <div
+            class="w-10 h-10 md:w-12 md:h-12 bg-blue-500 rounded-2xl flex items-center justify-center text-white text-lg md:text-xl mb-4 shadow-lg shadow-blue-500/30">
+            🧾
         </div>
-
-        {{-- OMZET BULAN INI --}}
-        <div class="bg-emerald-50 dark:bg-emerald-950/30 p-6 rounded-[2rem] border">
-            <div class="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg">
-                💰
-            </div>
-            <p class="text-xl font-black text-emerald-600 dark:text-emerald-400">
-                Rp {{ number_format($omzetBulanIni ?? 0, 0, ',', '.') }}
-            </p>
-            <p class="text-xs text-slate-500">Omzet Bulan Ini</p>
-        </div>
-
-        {{-- ORDER BELUM SELESAI --}}
-        <div class="bg-amber-50 dark:bg-amber-950/30 p-6 rounded-[2rem] border">
-            <div class="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg">
-                ⏳
-            </div>
-            <p class="text-xl font-black text-amber-600 dark:text-amber-400">
-                {{ $orderBelumSelesai ?? 0 }}
-            </p>
-            <p class="text-xs text-slate-500">Order Belum Selesai</p>
-        </div>
-
-        {{-- LAYANAN TERLARIS --}}
-        <div class="bg-purple-50 dark:bg-purple-950/30 p-6 rounded-[2rem] border">
-            <div class="w-12 h-12 bg-purple-500 rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg">
-                ⭐
-            </div>
-            <p class="text-sm font-black text-purple-600 dark:text-purple-400 line-clamp-1">
-                {{ $layananTerlaris->nama_layanan ?? 'Belum ada' }}
-            </p>
-            <p class="text-xs text-slate-500">Layanan Terlaris</p>
-        </div>
-
+        <p class="text-blue-600 dark:text-blue-400 font-black text-sm md:text-base">
+            {{ $totalTransaksiBulanIni ?? 0 }}
+        </p>
+        <p class="text-[11px] md:text-sm text-slate-500 font-medium">
+            Transaksi Bulan Ini
+        </p>
     </div>
+
+    {{-- OMZET BULAN INI --}}
+    <div
+        class="bg-emerald-50 dark:bg-emerald-950/30 p-5 md:p-6 rounded-[2rem] border border-emerald-100 dark:border-emerald-900/50">
+        <div
+            class="w-10 h-10 md:w-12 md:h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white text-lg md:text-xl mb-4 shadow-lg shadow-emerald-500/30">
+            💰
+        </div>
+        <p class="text-emerald-600 dark:text-emerald-400 font-black text-sm md:text-base">
+            Rp {{ number_format($omzetBulanIni ?? 0, 0, ',', '.') }}
+        </p>
+        <p class="text-[11px] md:text-sm text-slate-500 font-medium">
+            Omzet Bulan Ini
+        </p>
+    </div>
+
+    {{-- ORDER BELUM SELESAI --}}
+    <div
+        class="bg-amber-50 dark:bg-amber-950/30 p-5 md:p-6 rounded-[2rem] border border-amber-100 dark:border-amber-900/50">
+        <div
+            class="w-10 h-10 md:w-12 md:h-12 bg-amber-500 rounded-2xl flex items-center justify-center text-white text-lg md:text-xl mb-4 shadow-lg shadow-amber-500/30">
+            ⏳
+        </div>
+        <p class="text-amber-600 dark:text-amber-400 font-black text-sm md:text-base">
+            {{ $orderBelumSelesai ?? 0 }}
+        </p>
+        <p class="text-[11px] md:text-sm text-slate-500 font-medium">
+            Order Belum Selesai
+        </p>
+    </div>
+
+    {{-- LAYANAN TERLARIS --}}
+    <div
+        class="bg-purple-50 dark:bg-purple-950/30 p-5 md:p-6 rounded-[2rem] border border-purple-100 dark:border-purple-900/50">
+        <div
+            class="w-10 h-10 md:w-12 md:h-12 bg-purple-500 rounded-2xl flex items-center justify-center text-white text-lg md:text-xl mb-4 shadow-lg shadow-purple-500/30">
+            ⭐
+        </div>
+        <p class="text-purple-600 dark:text-purple-400 font-black text-sm md:text-base line-clamp-1">
+            {{ $layananTerlaris->nama_layanan ?? 'Belum ada' }}
+        </p>
+        <p class="text-[11px] md:text-sm text-slate-500 font-medium">
+            Layanan Terlaris
+        </p>
+    </div>
+
+</div>
+
 
     {{-- ================= TABEL TRANSAKSI TERAKHIR ================= --}}
     <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-6 shadow-sm">

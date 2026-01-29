@@ -103,7 +103,7 @@
                                                 {{ date('d/m/Y', strtotime($t->tanggal_masuk)) }}</div>
                                         </td>
                                         <td class="px-4 py-4 font-semibold text-slate-700 dark:text-slate-300">
-                                            {{ $t->pelanggan->user->name }}
+                                            {{ $t->pelanggan->user->name ?? "Guest" }}
                                         </td>
                                         <td class="px-4 py-4">
                                             <span
