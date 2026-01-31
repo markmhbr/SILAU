@@ -13,11 +13,11 @@
                 </nav>
                 <h2 class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Rincian Pesanan</h2>
                 <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">ID: <span
-                        class="font-mono text-brand">#TRX-{{ $transaksi->id }}{{ $transaksi->tanggal_masuk->format('Ymd') }}</span>
+                        class="font-mono text-brand">#{{ $transaksi->order_id ?? 'TRX-' . $transaksi->id }}</span>
                 </p>
             </div>
 
-            <a href="{{ route('pelanggan.pesanan') }}"
+            <a href="{{ route('pelanggan.layanan.index') }}"
                 class="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-brand transition-colors bg-white dark:bg-slate-800 px-4 py-2 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
@@ -39,16 +39,22 @@
                                 </p>
                                 @php
                                     $statusStyle = [
-                                        'selesai' => 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600',
-                                        'menunggu konfirmasi' => 'bg-blue-100 dark:bg-blue-500/10 text-blue-600',
-                                        'proses' => 'bg-amber-100 dark:bg-amber-500/10 text-amber-600',
-                                        'pending' => 'bg-slate-100 dark:bg-slate-500/10 text-slate-600',
+                                        'menunggu penjemputan' => 'bg-slate-100 dark:bg-slate-500/10 text-slate-600',
+                                        'diambil_driver'       => 'bg-blue-100 dark:bg-blue-500/10 text-blue-600',
+                                        'diterima_kasir'       => 'bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600',
+                                        'ditimbang'            => 'bg-purple-100 dark:bg-purple-500/10 text-purple-600',
+                                        'menunggu pembayaran'  => 'bg-rose-100 dark:bg-rose-500/10 text-rose-600',
+                                        'dibayar'              => 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600',
+                                        'diproses'             => 'bg-amber-100 dark:bg-amber-500/10 text-amber-600',
+                                        'selesai'              => 'bg-green-100 dark:bg-green-500/10 text-green-600',
+                                        'dibatalkan'           => 'bg-red-100 dark:bg-red-500/10 text-red-600',
                                     ];
+                                    $statusText = str_replace('_', ' ', $transaksi->status);
                                     $currentStyle = $statusStyle[$transaksi->status] ?? 'bg-amber-100 text-amber-600';
                                 @endphp
                                 <span
                                     class="inline-flex px-4 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wider {{ $currentStyle }}">
-                                    {{ $transaksi->status }}
+                                    {{ $statusText }}
                                 </span>
                             </div>
                             <div class="text-right space-y-1">
@@ -68,10 +74,13 @@
                                     <h4 class="font-black text-slate-800 dark:text-white capitalize">
                                         {{ $transaksi->layanan->nama_layanan }}</h4>
                                     <p class="text-xs text-slate-500 italic">
-                                        {{ $transaksi->layanan->jenis_layanan ?? 'Layanan Reguler' }}</p>
+                                        {{ $transaksi->cara_serah == 'jemput' ? 'Layanan Jemput' : 'Antar Sendiri' }}</p>
                                 </div>
                                 <div class="text-right">
-                                    <p class="font-black text-brand text-lg">{{ (float) $transaksi->berat }} kg</p>
+                                    <p class="font-black text-brand text-lg">{{ (float) ($transaksi->berat_aktual ?? $transaksi->estimasi_berat) }} kg</p>
+                                    <span class="text-[9px] font-bold uppercase {{ $transaksi->berat_aktual ? 'text-emerald-500' : 'text-slate-400' }}">
+                                        {{ $transaksi->berat_aktual ? 'Berat Aktual' : 'Estimasi Berat' }}
+                                    </span>
                                 </div>
                             </div>
 
@@ -109,13 +118,13 @@
                             </p>
                         </div>
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                            {{ $transaksi->tanggal_masuk->format('d M Y') }}</p>
+                            {{ $transaksi->created_at->format('d M Y') }}</p>
                     </div>
                 </div>
             </div>
 
             <div class="lg:col-span-1">
-                @if ($transaksi->metode_pembayaran == 'qris' && $transaksi->status == 'pending')
+                @if ($transaksi->metode_pembayaran == 'qris' && $transaksi->status == 'menunggu pembayaran')
                     <div
                         class="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-brand/20 overflow-hidden sticky top-24">
                         <div class="bg-brand p-5 text-center">
@@ -140,27 +149,20 @@
                     </div>
 
                     {{-- Script Snap Midtrans --}}
-                    <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
-                    </script>
+                    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
                     <script>
-                        const payButton = document.getElementById('pay-button');
-                        payButton.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            window.snap.pay('{{ $transaksi->snap_token }}', {
-                                onSuccess: function(result) {
-                                    window.location.href = "{{ route('pelanggan.pesanan') }}";
-                                },
-                                onPending: function(result) {
-                                    alert("Selesaikan pembayaran Anda segera!");
-                                },
-                                onError: function(result) {
-                                    alert("Pembayaran gagal, silakan coba lagi.");
-                                }
-                            });
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const payButton = document.getElementById('pay-button');
+                            if (payButton) {
+                                payButton.addEventListener('click', function (e) {
+                                    e.preventDefault();
+                                    window.snap.pay('{{ $transaksi->snap_token }}');
+                                });
+                            }
                         });
                     </script>
-                @elseif($transaksi->status == 'menunggu konfirmasi')
-                    {{-- STATUS BARU: MENUNGGU KONFIRMASI --}}
+
+                @elseif($transaksi->status == 'dibayar' || $transaksi->status == 'menunggu pembayaran' && $transaksi->paid_at)
                     <div
                         class="bg-blue-50 dark:bg-blue-500/5 border border-blue-100 dark:border-blue-500/20 p-8 rounded-[2.5rem] text-center space-y-4">
                         <div
@@ -171,10 +173,8 @@
                             </svg>
                         </div>
                         <div class="space-y-1">
-                            <h4 class="font-black text-blue-800 dark:text-blue-400 text-xl tracking-tight">Sedang Diperiksa
-                            </h4>
-                            <p class="text-xs text-blue-600/70 dark:text-blue-500/60 font-medium">Bukti transfer Anda telah
-                                diterima. Mohon tunggu admin melakukan verifikasi pembayaran.</p>
+                            <h4 class="font-black text-blue-800 dark:text-blue-400 text-xl tracking-tight">Pembayaran Berhasil</h4>
+                            <p class="text-xs text-blue-600/70 dark:text-blue-500/60 font-medium">Transaksi telah terverifikasi. Pesanan akan segera diproses oleh tim kami.</p>
                         </div>
                     </div>
                 @elseif($transaksi->status == 'selesai')
@@ -192,6 +192,18 @@
                                 Selesai!</h4>
                             <p class="text-xs text-emerald-600/70 dark:text-emerald-500/60 font-medium">Pakaian Anda sudah
                                 bersih, wangi, dan siap diambil.</p>
+                        </div>
+                    </div>
+                @elseif($transaksi->status == 'menunggu penjemputan' || $transaksi->status == 'diambil_driver')
+                    <div
+                        class="bg-indigo-50 dark:bg-indigo-500/5 border border-indigo-100 dark:border-indigo-500/20 p-8 rounded-[2.5rem] text-center space-y-4">
+                        <div
+                            class="w-20 h-20 bg-indigo-500 text-white rounded-3xl flex items-center justify-center mx-auto shadow-xl shadow-indigo-500/30">
+                            🚚
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-black text-indigo-800 dark:text-indigo-400 text-xl tracking-tight">Dalam Penjemputan</h4>
+                            <p class="text-xs text-indigo-600/70 dark:text-indigo-500/60 font-medium">Driver kami sedang menuju lokasi atau sedang membawa cucian Anda ke outlet.</p>
                         </div>
                     </div>
                 @else

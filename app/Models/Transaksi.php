@@ -10,18 +10,21 @@ class Transaksi extends Model
     protected $table = 'transaksi';
 
     protected $fillable = [
-        'id_karyawan',
+        'order_id',
         'pelanggan_id',
+        'driver_id',       // Di migration namanya driver_id, bukan id_karyawan
+        'kasir_id',        // Di migration namanya kasir_id
         'layanan_id',
         'diskon_id',
-        'tanggal_masuk',
-        'tanggal_selesai',
-        'status',
-        'berat',
-        'harga_total',
-        'harga_setelah_diskon',
+        'cara_serah',      // Tambahkan ini karena ada di migration
+        'estimasi_berat',  // Gunakan estimasi_berat, bukan berat
+        'berat_aktual',
+        'harga_estimasi',  // Gunakan ini untuk harga awal
+        'harga_final',
         'metode_pembayaran',
         'snap_token',
+        'paid_at',
+        'status',
         'catatan'
     ];
 

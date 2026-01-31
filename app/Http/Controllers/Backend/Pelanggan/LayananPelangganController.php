@@ -43,6 +43,11 @@ class LayananPelangganController extends Controller
     {
         $pelanggan = Pelanggan::where('user_id', auth()->id())->first();
 
+        // Pastikan data pelanggan ada dulu
+        if (!$pelanggan) {
+            return redirect()->route('pelanggan.index')->with('error', 'Profil pelanggan tidak ditemukan.');
+        }
+
         // CEK KONDISI: Jika koordinat atau alamat belum diisi
         if (!$pelanggan->latitude || !$pelanggan->alamat_lengkap) {
             return redirect()->route('pelanggan.alamat')
@@ -62,95 +67,63 @@ class LayananPelangganController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'pelanggan_id' => 'required|exists:pelanggan,id',
-            'layanan_id' => 'required|exists:layanan,id',
-            'berat' => 'required|numeric|min:0.1',
-            'diskon_id' => 'nullable|exists:diskon,id',
-            'metode_pembayaran' => 'required|string|in:tunai,qris',
-            'catatan' => 'nullable|string',
+            'pelanggan_id'      => 'required|exists:pelanggan,id',
+            'layanan_id'        => 'required|exists:layanan,id',
+            'cara_serah'        => 'required|in:jemput,antar',
+            'estimasi_berat'    => 'required|numeric|min:0.1',
+            'metode_pembayaran' => 'required|in:tunai,qris',
+            'diskon_id'         => 'nullable|exists:diskon,id',
+            'catatan'           => 'nullable|string',
         ]);
 
         $layanan = Layanan::findOrFail($request->layanan_id);
-        $hargaLayanan = $layanan->harga_perkilo * $request->berat;
 
-        // Hitung Diskon
-        $diskon = 0;
-        if ($request->diskon_id) {
-            $diskonModel = Diskon::find($request->diskon_id);
-            if ($diskonModel && $hargaLayanan >= $diskonModel->minimal_transaksi) {
-                $diskon = ($diskonModel->tipe === 'persentase') 
-                    ? ($hargaLayanan * $diskonModel->nilai) / 100 
-                    : $diskonModel->nilai;
-            }
-        }
+        // Harga masih ESTIMASI
+        $harga_estimasi = $layanan->harga_perkilo * $request->estimasi_berat;
 
-        $hargaFinal = $hargaLayanan - $diskon;
-        $statusTransaksi = ($request->metode_pembayaran === 'tunai') ? 'proses' : 'pending';
+        // Tentukan status awal berdasarkan cara serah
+        $status_awal = $request->cara_serah === 'jemput'
+            ? 'menunggu penjemputan'
+            : 'menunggu diantar';
 
-        // Buat Transaksi di Database
         $transaksi = Transaksi::create([
-            'pelanggan_id' => $request->pelanggan_id,
-            'layanan_id' => $request->layanan_id,
-            'diskon_id' => $request->diskon_id,
-            'tanggal_masuk' => now(),
-            'berat' => $request->berat,
+            'pelanggan_id'      => $request->pelanggan_id,
+            'layanan_id'        => $request->layanan_id,
+            'diskon_id'         => $request->diskon_id,
+            'cara_serah'        => $request->cara_serah,
+
+            'estimasi_berat'    => $request->estimasi_berat,
+            'harga_estimasi'    => $harga_estimasi,
+
             'metode_pembayaran' => $request->metode_pembayaran,
-            'status' => $statusTransaksi,
-            'catatan' => $request->catatan,
-            'harga_total' => $hargaLayanan,
-            'harga_setelah_diskon' => $hargaFinal,
+            'status'            => $status_awal,
+            'catatan'           => $request->catatan,
         ]);
 
-        // LOGIKA MIDTRANS (Hanya jika memilih QRIS/Online)
-        if ($request->metode_pembayaran === 'qris') {
-            $params = [
-                'transaction_details' => [
-                    'order_id' => 'TRX-' . $transaksi->id . '-' . time(),
-                    'gross_amount' => (int) $hargaFinal,
-                ],
-                'customer_details' => [
-                    'first_name' => auth()->user()->name,
-                    'email' => auth()->user()->email,
-                ],
-                'item_details' => [
-                    [
-                        'id' => $layanan->id,
-                        'price' => (int) ($hargaFinal / $request->berat), // Harga rata-rata per kg setelah diskon
-                        'quantity' => $request->berat,
-                        'name' => $layanan->nama_layanan,
-                    ]
-                ]
-            ];
-
-            try {
-                $snapToken = Snap::getSnapToken($params);
-                $transaksi->snap_token = $snapToken;
-                $transaksi->save();
-            } catch (\Exception $e) {
-                return back()->with('error', 'Gagal terhubung ke Midtrans: ' . $e->getMessage());
-            }
-        }
-
-        // Update poin pelanggan
-        $pelanggan = Pelanggan::find($request->pelanggan_id);
-        $pelanggan->poin += ($hargaFinal / 10);
-        $pelanggan->save();
-
-        return redirect()->route('pelanggan.layanan.detail', $transaksi->id)
-            ->with('success', 'Pesanan berhasil dibuat!');
+        return redirect()
+            ->route('pelanggan.layanan.detail', $transaksi->id)
+            ->with('success', 'Pesanan berhasil dibuat. Menunggu proses selanjutnya.');
     }
+
 
 
     public function detail($id)
     {
-        $transaksi = Transaksi::with(['pelanggan', 'layanan'])->findOrFail($id);
+        // Gunakan eager loading untuk diskon juga jika ada relasinya
+        $transaksi = Transaksi::with(['pelanggan', 'layanan', 'diskon'])->findOrFail($id);
 
-        $hargaLayanan = $transaksi->layanan->harga_perkilo * $transaksi->berat;
+        // Gunakan berat_aktual jika sudah ditimbang, jika belum gunakan estimasi
+        $berat = $transaksi->berat_aktual ?? $transaksi->estimasi_berat;
+
+        // Hitung harga layanan dasar
+        $hargaLayanan = $transaksi->layanan->harga_perkilo * $berat;
 
         $diskon = 0;
         if ($transaksi->diskon) {
-            // cek minimal transaksi dulu
-            if ($hargaLayanan >= $transaksi->diskon->minimal_transaksi) {
+            // Cek minimal transaksi (pastikan kolom ini ada di tabel diskon)
+            $minimal = $transaksi->diskon->minimal_transaksi ?? 0;
+
+            if ($hargaLayanan >= $minimal) {
                 if ($transaksi->diskon->tipe === 'persentase') {
                     $diskon = ($hargaLayanan * $transaksi->diskon->nilai) / 100;
                 } else {
@@ -159,14 +132,16 @@ class LayananPelangganController extends Controller
             }
         }
 
-
-        $hargaFinal = $hargaLayanan - $diskon;
+        // Gunakan harga_final dari DB jika status sudah 'dibayar' atau 'selesai'
+        // Jika masih baru, tampilkan harga_estimasi
+        $hargaFinal = $transaksi->harga_final ?? ($hargaLayanan - $diskon);
 
         return view('content.backend.pelanggan.layanan.detail', compact(
             'transaksi',
             'hargaLayanan',
             'diskon',
-            'hargaFinal'
+            'hargaFinal',
+            'berat'
         ));
     }
 

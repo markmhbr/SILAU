@@ -107,9 +107,9 @@
                                             class="block text-sm font-bold mb-2 text-slate-700 dark:text-slate-300">Estimasi
                                             Berat</label>
                                         <div class="relative">
-                                            <input type="number" step="0.1" name="berat" id="beratInput"
+                                            <input type="number" step="0.1" name="estimasi_berat" id="beratInput"
                                                 class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-brand outline-none transition text-sm"
-                                                placeholder="0.0" value="{{ old('berat', $transaksi->berat ?? '') }}"
+                                                placeholder="0.0" value="{{ old('estimasi_berat', $transaksi->estimasi_berat ?? '') }}"
                                                 required>
                                             <span
                                                 class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">KG</span>
@@ -152,6 +152,23 @@
                                                 QRIS / E-Wallet</option>
                                         </select>
                                     </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-bold mb-2 text-slate-700 dark:text-slate-300">
+                                        Cara Penyerahan
+                                    </label>
+                                    <select name="cara_serah"
+                                        class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-brand outline-none transition appearance-none cursor-pointer text-sm"
+                                        required>
+                                        <option value="" disabled selected>- Pilih Cara -</option>
+                                        <option value="jemput" {{ old('cara_serah', $transaksi->cara_serah ?? '') == 'jemput' ? 'selected' : '' }}>
+                                            Dijemput Driver
+                                        </option>
+                                        <option value="antar" {{ old('cara_serah', $transaksi->cara_serah ?? '') == 'antar' ? 'selected' : '' }}>
+                                            Antar Sendiri ke Outlet
+                                        </option>
+                                    </select>
                                 </div>
 
                                 <div>
