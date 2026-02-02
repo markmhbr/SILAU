@@ -107,7 +107,7 @@
                             @if (str_contains($jabatan, 'kasir'))
                                 <th class="px-4 py-2">Layanan</th>
                             @endif
-                                <th class="px-4 py-2">Status</th>
+                            <th class="px-4 py-2">Status</th>
                             <th class="px-4 py-2 text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -147,10 +147,17 @@
                                 <td class="px-4 py-4">
                                     <span
                                         class="px-3 py-1 rounded-full text-[10px] font-black uppercase
-                                    {{ $item->status == 'baru' ? 'bg-blue-100 text-blue-600' : 'bg-amber-100 text-amber-600' }}">
+        {{ in_array($item->status, ['menunggu penjemputan', 'menunggu diantar'])
+            ? 'bg-blue-100 text-blue-600'
+            : (in_array($item->status, ['diproses', 'ditimbang', 'diterima_kasir'])
+                ? 'bg-amber-100 text-amber-600'
+                : ($item->status === 'selesai'
+                    ? 'bg-green-100 text-green-600'
+                    : 'bg-slate-100 text-slate-600')) }}">
                                         {{ $item->status }}
                                     </span>
                                 </td>
+
 
                                 <td class="px-4 py-4 rounded-r-[1.5rem] text-right">
                                     @if (str_contains($jabatan, 'driver'))

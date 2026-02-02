@@ -49,6 +49,7 @@
                             <p class="text-xs font-bold text-emerald-700 dark:text-emerald-400">
                                 ✅ Member Ditemukan: <span id="memberName" class="uppercase"></span>
                             </p>
+                            <input type="hidden" name="pelanggan_id" id="inputPelangganId">
                         </div>
 
                         <div id="guestInfo" class="p-4 rounded-2xl border border-slate-100 bg-slate-50 dark:bg-slate-800/50">
@@ -77,8 +78,8 @@
                             <div class="relative">
                                 <input 
                                     type="number" 
-                                    step="0.1" 
-                                    name="berat" 
+                                    step="0.01" 
+                                    name="berat_aktual" 
                                     id="beratInput" 
                                     class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 outline-none text-sm" 
                                     placeholder="0.0" 
@@ -110,6 +111,9 @@
                             </select>
                         </div>
                     </div>
+
+                    {{-- CARA SERAH UNTUK KASIR BIASANYA ANTAR SENDIRI --}}
+                    <input type="hidden" name="cara_serah" value="antar">
                 </div>
             </div>
 
@@ -131,6 +135,7 @@
                             <span id="label-poin" class="text-amber-400 font-bold">+ 0</span>
                         </div>
                         <input type="hidden" name="poin_didapat" id="input-poin" value="0">
+                        <input type="hidden" name="harga_final" id="input-harga-final" value="0">
                     </div>
                     <div class="mb-8">
                         <span class="text-[10px] text-white/50 uppercase font-black tracking-widest">Total Tagihan</span>
@@ -147,79 +152,61 @@
 </div>
 
 <script>
-// 1. Inisialisasi Elemen DOM
 const layananSelect = document.getElementById('layananSelect');
 const beratInput = document.getElementById('beratInput');
 const diskonSelect = document.getElementById('diskonSelect');
-
 const labelSubtotal = document.getElementById('label-subtotal');
 const labelDiskon = document.getElementById('label-diskon');
 const labelTotal = document.getElementById('label-total');
 const labelPoin = document.getElementById('label-poin');
 
-const memberInfo = document.getElementById('memberInfo');
-const guestInfo = document.getElementById('guestInfo');
-const memberName = document.getElementById('memberName');
-
 function hitung() {
-    // Ambil nilai dasar
     const harga = parseFloat(layananSelect.options[layananSelect.selectedIndex]?.dataset.harga || 0);
     const beratVal = parseFloat(beratInput.value || 0);
-    
-    // Hitung Subtotal
     const subtotal = harga * beratVal;
 
-    // Hitung Potongan Diskon
     const diskonOpt = diskonSelect.options[diskonSelect.selectedIndex];
     const diskonTipe = diskonOpt?.dataset.tipe || '';
     const diskonNilai = parseFloat(diskonOpt?.dataset.nilai || 0);
     
     let potongan = diskonTipe === 'persentase' ? (subtotal * diskonNilai / 100) : diskonNilai;
-    
-    // Hitung Total Tagihan (Subtotal - Diskon)
     const totalTagihan = Math.max(0, subtotal - potongan);
-
-    // Hitung Poin (10% dari Total Tagihan)
     const poin = Math.floor(totalTagihan * 0.1);
 
-    // Update Tampilan (Format Rupiah)
     labelSubtotal.textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
     labelDiskon.textContent = `- Rp ${potongan.toLocaleString('id-ID')}`;
     labelTotal.textContent = `Rp ${totalTagihan.toLocaleString('id-ID')}`;
     labelPoin.textContent = `+ ${poin.toLocaleString('id-ID')}`;
+    
     document.getElementById('input-poin').value = poin;
+    document.getElementById('input-harga-final').value = totalTagihan;
 }
 
-// Event Listener untuk update otomatis
 [layananSelect, beratInput, diskonSelect].forEach(e => {
     e.addEventListener('input', hitung);
     e.addEventListener('change', hitung);
 });
 
-// CEK MEMBER
 document.getElementById('btnCekMember').onclick = async () => {
     const email = document.getElementById('emailSearch').value;
-    if (!email) {
-        alert('Masukkan email');
-        return;
-    }
+    if (!email) return alert('Masukkan email');
 
     try {
         const res = await fetch(`/karyawan/cek-member?email=${email}`);
         const data = await res.json();
 
         if (data.success) {
-            memberInfo.classList.remove('hidden');
-            guestInfo.classList.add('hidden');
-            memberName.textContent = data.nama;
+            document.getElementById('memberInfo').classList.remove('hidden');
+            document.getElementById('guestInfo').classList.add('hidden');
+            document.getElementById('memberName').textContent = data.nama;
+            document.getElementById('inputPelangganId').value = data.id;
         } else {
             alert('Member tidak ditemukan');
-            memberInfo.classList.add('hidden');
-            guestInfo.classList.remove('hidden');
+            document.getElementById('memberInfo').classList.add('hidden');
+            document.getElementById('guestInfo').classList.remove('hidden');
+            document.getElementById('inputPelangganId').value = '';
         }
-    } catch (error) {
-        console.error('Error:', error);
-    }
+    } catch (error) { console.error(error); }
 };
 </script>
 @endsection
