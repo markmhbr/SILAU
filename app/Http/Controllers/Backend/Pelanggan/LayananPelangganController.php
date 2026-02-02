@@ -39,27 +39,27 @@ class LayananPelangganController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        $pelanggan = Pelanggan::where('user_id', auth()->id())->first();
+        public function create()
+        {
+            $pelanggan = Pelanggan::where('user_id', auth()->id())->first();
 
-        // Pastikan data pelanggan ada dulu
-        if (!$pelanggan) {
-            return redirect()->route('pelanggan.index')->with('error', 'Profil pelanggan tidak ditemukan.');
+            // Pastikan data pelanggan ada dulu
+            if (!$pelanggan) {
+                return redirect()->route('pelanggan.index')->with('error', 'Profil pelanggan tidak ditemukan.');
+            }
+
+            // CEK KONDISI: Jika koordinat atau alamat belum diisi
+            if (!$pelanggan->latitude || !$pelanggan->alamat_lengkap) {
+                return redirect()->route('pelanggan.alamat')
+                    ->with('error', 'Silahkan lengkapi alamat penjemputan Anda terlebih dahulu sebelum membuat pesanan.');
+            }
+
+            $layanan = Layanan::all();
+            $diskon = Diskon::all();
+            $transaksi = null;
+
+            return view('content.backend.pelanggan.layanan.form', compact('pelanggan', 'layanan', 'transaksi', 'diskon'));
         }
-
-        // CEK KONDISI: Jika koordinat atau alamat belum diisi
-        if (!$pelanggan->latitude || !$pelanggan->alamat_lengkap) {
-            return redirect()->route('pelanggan.alamat')
-                ->with('error', 'Silahkan lengkapi alamat penjemputan Anda terlebih dahulu sebelum membuat pesanan.');
-        }
-
-        $layanan = Layanan::all();
-        $diskon = Diskon::all();
-        $transaksi = null;
-
-        return view('content.backend.pelanggan.layanan.form', compact('pelanggan', 'layanan', 'transaksi', 'diskon'));
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -87,6 +87,7 @@ class LayananPelangganController extends Controller
             : 'menunggu diantar';
 
         $transaksi = Transaksi::create([
+            'order_id'         => 'TRX-' . time(),
             'pelanggan_id'      => $request->pelanggan_id,
             'layanan_id'        => $request->layanan_id,
             'diskon_id'         => $request->diskon_id,

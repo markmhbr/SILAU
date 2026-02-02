@@ -66,17 +66,10 @@ Route::get('/testimonial-form', [InterfaceController::class, 'testimonial_form']
 Route::middleware(['auth','role:owner'])->prefix('owner')->name('owner.')->group(function () {
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])
     ->name('dashboard');
-
-    Route::get('/transaksi', [OwnerController::class, 'transaksi'])
-        ->name('transaksi.index');
-    Route::get('/transaksi/{id}', [OwnerController::class, 'transaksiDetail'])
-        ->name('transaksi.detail');
-
-    Route::get('/transaksi/export/excel', [OwnerController::class, 'exportExcel'])
-        ->name('transaksi.export.excel');
-
-    Route::get('/transaksi/export/pdf', [OwnerController::class, 'exportPdf'])
-        ->name('transaksi.export.pdf');
+    Route::get('/alamat', [ProfilKaryawanController::class, 'alamat'])->name('alamat');
+    Route::put('/alamat', [ProfilKaryawanController::class, 'updateAlamat'])
+        ->name('alamat.update');
+    Route::resource('/profil', ProfilKaryawanController::class)->names('profil');
 
     Route::get('/laporan', [OwnerController::class, 'laporan'])
         ->name('laporan.index');
@@ -139,6 +132,8 @@ Route::middleware(['auth','role:karyawan'])->prefix('karyawan')->name('karyawan.
 
     Route::resource('/kasir', KasirController::class)->names('kasir');
     Route::patch('/kasir/{id}/status', [KasirController::class, 'updateStatus'])->name('kasir.status');
+    Route::put('/kasir/{id}/berat', [KasirController::class, 'updateBerat'])
+    ->name('kasir.berat');
 
     // =====================
     // DRIVER

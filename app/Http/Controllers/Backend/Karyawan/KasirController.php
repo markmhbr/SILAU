@@ -65,133 +65,76 @@ class KasirController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'layanan_id' => 'required|exists:layanan,id',
-            'berat' => 'required|numeric|min:0.1',
-            'metode_pembayaran' => 'required|in:tunai,qris',
-            'email' => 'nullable|email', // cari pelanggan pakai email
-            'diskon_id' => 'nullable|exists:diskon,id',
-            'catatan' => 'nullable|string',
+{
+    $request->validate([
+        'layanan_id' => 'required|exists:layanan,id',
+        'estimasi_berat' => 'required|numeric|min:0.1',
+        'metode_pembayaran' => 'required|in:tunai,qris',
+        'email' => 'nullable|email',
+        'diskon_id' => 'nullable|exists:diskon,id',
+        'catatan' => 'nullable|string',
+    ]);
+
+    DB::beginTransaction();
+    try {
+        $kasir = Karyawan::where('user_id', Auth::id())->firstOrFail();
+
+        // pelanggan (member / guest)
+        $pelanggan = null;
+        if ($request->filled('email')) {
+            $user = User::where('email', $request->email)->first();
+            if ($user && $user->pelanggan) {
+                $pelanggan = $user->pelanggan;
+            }
+        }
+
+        $layanan = Layanan::findOrFail($request->layanan_id);
+
+        // hitung estimasi
+        $hargaEstimasi = $layanan->harga_perkilo * $request->estimasi_berat;
+
+        $diskonNominal = 0;
+        if ($request->diskon_id) {
+            $diskon = Diskon::find($request->diskon_id);
+            if ($diskon && $hargaEstimasi >= $diskon->minimal_transaksi) {
+                $diskonNominal = $diskon->tipe === 'persentase'
+                    ? ($hargaEstimasi * $diskon->nilai / 100)
+                    : $diskon->nilai;
+            }
+        }
+
+        $hargaEstimasiFinal = max(0, $hargaEstimasi - $diskonNominal);
+
+        $transaksi = Transaksi::create([
+            'order_id'         => 'TRX-' . time(),
+            'kasir_id'         => $kasir->id,
+            'pelanggan_id'     => $pelanggan?->id,
+            'layanan_id'       => $layanan->id,
+            'diskon_id'        => $request->diskon_id,
+            'cara_serah'       => 'antar',
+
+            'estimasi_berat'   => $request->estimasi_berat,
+            'harga_estimasi'   => $hargaEstimasiFinal,
+
+            'berat_aktual'     => null,
+            'harga_final'      => null,
+
+            'metode_pembayaran'=> $request->metode_pembayaran,
+            'status'           => 'diterima kasir',
+            'catatan'          => $request->catatan,
         ]);
 
-        try {
-            DB::beginTransaction();
+        DB::commit();
+        return redirect()
+            ->route('karyawan.kasir.show', $transaksi->id)
+            ->with('success', 'Transaksi berhasil dibuat');
 
-            // ===============================
-            // 1. AMBIL KARYAWAN LOGIN
-            // ===============================
-            $karyawan = Karyawan::where('user_id', Auth::id())->firstOrFail();
-
-            // ===============================
-            // 2. TENTUKAN PELANGGAN (MEMBER / GUEST)
-            // ===============================
-            $pelanggan = null;
-
-            if ($request->filled('email')) {
-                $user = User::where('email', $request->email)->first();
-
-                if ($user && $user->pelanggan) {
-                    $pelanggan = $user->pelanggan;
-                }
-            }
-
-            // ===============================
-            // 3. HITUNG HARGA LAYANAN
-            // ===============================
-            $layanan = Layanan::findOrFail($request->layanan_id);
-            $hargaLayanan = $layanan->harga_perkilo * $request->berat;
-
-            // ===============================
-            // 4. HITUNG DISKON (JAGA LOGIKA)
-            // ===============================
-            $diskonNominal = 0;
-
-            if ($request->diskon_id) {
-                $diskonModel = Diskon::find($request->diskon_id);
-
-                if (
-                    $diskonModel &&
-                    $hargaLayanan >= $diskonModel->minimal_transaksi
-                ) {
-                    $diskonNominal = ($diskonModel->tipe === 'persentase')
-                        ? ($hargaLayanan * $diskonModel->nilai) / 100
-                        : $diskonModel->nilai;
-                }
-            }
-
-            if ($diskonNominal > $hargaLayanan) {
-                throw new \Exception('Diskon melebihi harga transaksi.');
-            }
-
-            $hargaFinal = $hargaLayanan - $diskonNominal;
-
-            // ===============================
-            // 5. STATUS TRANSAKSI
-            // ===============================
-            $statusTransaksi = ($request->metode_pembayaran === 'tunai')
-                ? 'proses'
-                : 'pending';
-
-            // ===============================
-            // 6. SIMPAN TRANSAKSI
-            // ===============================
-            $transaksi = Transaksi::create([
-                'id_karyawan'          => $karyawan->id,
-                'pelanggan_id'         => $pelanggan?->id, // NULL = guest
-                'layanan_id'           => $layanan->id,
-                'diskon_id'            => $request->diskon_id,
-                'tanggal_masuk'        => now(),
-                'berat'                => $request->berat,
-                'harga_total'          => $hargaLayanan,
-                'harga_setelah_diskon' => $hargaFinal,
-                'metode_pembayaran'    => $request->metode_pembayaran,
-                'status'               => $statusTransaksi,
-                'catatan'              => $request->catatan,
-            ]);
-
-            // ===============================
-            // 7. MIDTRANS (QRIS)
-            // ===============================
-            if ($request->metode_pembayaran === 'qris') {
-                $params = [
-                    'transaction_details' => [
-                        'order_id' => 'TRX-KSR-' . $transaksi->id . '-' . time(),
-                        'gross_amount' => (int) $hargaFinal,
-                    ],
-                    'customer_details' => [
-                        'first_name' => $pelanggan ? $pelanggan->user->name : 'Guest',
-                        'email'      => $pelanggan ? $pelanggan->user->email : 'guest@laundry.com',
-
-                    ],
-                ];
-
-                $snapToken = Snap::getSnapToken($params);
-                $transaksi->update(['snap_token' => $snapToken]);
-            }
-
-            // ===============================
-            // 8. POIN MEMBER (AMAN)
-            // ===============================
-            if ($pelanggan && $request->metode_pembayaran === 'tunai') {
-                // Ambil langsung dari input hidden yang dikirim form
-                $poinDidapat = $request->input('poin_didapat', 0);
-
-                if ($poinDidapat > 0) {
-                    $pelanggan->increment('poin', $poinDidapat);
-                }
-            }
-
-            DB::commit();
-
-            return redirect()
-                ->route('karyawan.kasir.show', $transaksi->id)
-                ->with('success', 'Transaksi berhasil dibuat');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', $e->getMessage());
-        }
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', $e->getMessage());
     }
+}
+
 
 
     public function show($id)
@@ -242,12 +185,37 @@ class KasirController extends Controller
     }
 
     public function pelangganShow(Pelanggan $pelanggan)
-    {
-        $pelanggan->load([
-            'user',
-            'transaksi.layanan'
-        ]);
+{
+    // Mengurutkan transaksi terbaru di atas
+    $pelanggan->load([
+        'user', 
+        'transaksi' => function($query) {
+            $query->latest(); // Transaksi terbaru muncul paling atas
+        },
+        'transaksi.layanan'
+    ]);
 
-        return view('content.backend.karyawan.kasir.pelanggan.show', compact('pelanggan'));
-    }
+    return view('content.backend.karyawan.kasir.pelanggan.show', compact('pelanggan'));
+}
+
+    public function updateBerat(Request $request, $id)
+{
+    $request->validate([
+        'berat_aktual' => 'required|numeric|min:0.1',
+    ]);
+
+    $transaksi = Transaksi::with('layanan')->findOrFail($id);
+
+    $hargaFinal = $transaksi->layanan->harga_perkilo * $request->berat_aktual;
+
+    $transaksi->update([
+        'berat_aktual' => $request->berat_aktual,
+        'harga_final'  => $hargaFinal,
+        'status'       => 'ditimbang',
+    ]);
+
+    return back()->with('success', 'Berat aktual & harga final diperbarui');
+}
+
+
 }

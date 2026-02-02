@@ -7,177 +7,72 @@ use Illuminate\Http\Request;
 use App\Models\Pelanggan;
 use App\Models\Layanan;
 use App\Models\Transaksi;
+use App\Models\ProfilPerusahaan;
 use Illuminate\Support\Facades\Storage;
 
 class TransaksiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $transaksis = Transaksi::with(['pelanggan.user', 'layanan'])->get();
-        //         foreach ($transaksis as $t) {
-        //     dd($t->pelanggan?->user?->toArray());
-        // }
+        // Mengambil data dengan relasi, diurutkan dari yang terbaru
+        $transaksis = Transaksi::with(['pelanggan.user', 'layanan'])->latest()->get();
 
         return view('content.backend.admin.transaksi.index', compact('transaksis'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function destroy(string $id)
     {
+        $transaksi = Transaksi::findOrFail($id);
+        $transaksi->delete();
 
-        $pelanggan = Pelanggan::all();
-        // dd($pelanggan->toArray());
-        $layanan = Layanan::all();
-        $transaksi = null;
-        return view('content.backend.admin.transaksi.form', compact('pelanggan', 'layanan', 'transaksi'));
+        return redirect()->route('admin.transaksi.index')->with('success', 'Transaksi berhasil dihapus!');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function updateStatus($id, $status)
     {
-        try {
-            $request->validate([
-                'pelanggan_id' => 'required|exists:pelanggan,id',
-                'layanan_id' => 'required|exists:layanan,id',
-                'berat' => 'required|numeric|min:0.1',
-                'harga_total' => 'required|numeric|min:0',
-                'metode_pembayaran' => 'nullable|string|in:tunai,transfer,e-wallet',
-                'bukti_bayar' => 'nullable|file|mimes:jpg,png,jpeg,pdf',
-                'catatan' => 'nullable|string',
-            ]);
-            // dd($request->all());
+        $transaksi = Transaksi::findOrFail($id);
+        
+        // Daftar status yang valid sesuai dengan enum di database Anda
+        $validStatus = ['menunggu pembayaran', 'diproses', 'selesai', 'dibatalkan'];
 
-            Transaksi::create([
-                'pelanggan_id' => $request->pelanggan_id,
-                'layanan_id' => $request->layanan_id,
-                'tanggal_masuk' => now(),
-                'berat' => $request->berat,
-                'harga_total' => $request->harga_total,
-                'metode_pembayaran' => $request->metode_pembayaran,
-                'bukti_bayar' => $request->bukti_bayar ? $request->file('bukti_bayar')->store('bukti_bayar', 'public') : null,
-                'catatan' => $request->catatan,
-                'status' => 'proses', // default status
-            ]);
-
-            return redirect()->route('layanan.index')->with('success', 'Data transaksi berhasil ditambahkan.');
-        } catch (\Throwable $th) {
-            throw $th;
+        if (in_array($status, $validStatus)) {
+            $transaksi->status = $status;
+            
+            // Logika tanggal selesai
+            if ($status === 'selesai') {
+                $transaksi->tanggal_selesai = now();
+            } else {
+                $transaksi->tanggal_selesai = null;
+            }
+            
+            $transaksi->save();
+            return redirect()->back()->with('success', "Status transaksi #{$transaksi->order_id} diperbarui menjadi {$status}!");
         }
+
+        return redirect()->back()->with('error', 'Status tidak valid!');
     }
 
     /**
      * Display the specified resource.
+     * Halaman Detail Transaksi di Dashboard
      */
-    public function show(string $id)
-    {
-        // Gunakan findOrFail dan pastikan relasi terpanggil
-        // detail.blade.php menunjukkan relasi pelanggan memiliki user
-        $transaksi = Transaksi::with(['pelanggan.user', 'layanan', 'diskon'])->findOrFail($id);
+    public function show($id)
+{
+    $transaksi = Transaksi::with(['pelanggan.user', 'layanan', 'diskon'])->findOrFail($id);
+    // Ambil data profil perusahaan pertama
+    $profil = ProfilPerusahaan::first(); 
 
-        return view('content.backend.admin.transaksi.struk', compact('transaksi'));
-    }
+    return view('content.backend.admin.transaksi.struk', compact('transaksi', 'profil'));
+}
 
     /**
-     * Show the form for editing the specified resource.
+     * Cetak Struk format Thermal
      */
-    public function edit(string $id)
-    {
-        $transaksi = Transaksi::findOrFail($id); // ambil data pelanggan berdasarkan ID
-        $pelanggan = $transaksi->pelanggan;
-        $layanan = Layanan::all();
-
-        return view('content.backend.admin.transaksi.form', compact('transaksi', 'pelanggan', 'layanan'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        try {
-            $request->validate([
-                'pelanggan_id' => 'required|exists:pelanggan,id',
-                'layanan_id' => 'required|exists:layanan,id',
-                'berat' => 'required|numeric|min:0.1',
-                'harga_total' => 'required|numeric|min:0',
-                'metode_pembayaran' => 'nullable|string|in:tunai,transfer,e-wallet',
-                'bukti_bayar' => 'nullable|file|mimes:jpg,png,jpeg,pdf',
-                'catatan' => 'nullable|string',
-            ]);
-
-            $transaksi = Transaksi::findOrFail($id);
-
-            if ($request->hasFile('bukti_bayar')) {
-                if ($transaksi->bukti_bayar && \Storage::disk('public')->exists($transaksi->bukti_bayar)) {
-                    \Storage::disk('public')->delete($transaksi->bukti_bayar);
-                }
-                $buktiBaru = $request->file('bukti_bayar')->store('bukti_bayar', 'public');
-            } else {
-                $buktiBaru = $transaksi->bukti_bayar; // tetap pakai yang lama
-            }
-
-            $transaksi->update([
-                'pelanggan_id' => $request->pelanggan_id,
-                'layanan_id' => $request->layanan_id,
-                'berat' => $request->berat,
-                'harga_total' => $request->harga_total,
-                'metode_pembayaran' => $request->metode_pembayaran,
-                'bukti_bayar' => $buktiBaru,
-                'catatan' => $request->catatan,
-                // status jangan diubah kalau memang cuma update data lain
-            ]);
-
-            return redirect()->route('admin.transaksi.index')->with('success', 'Data transaksi berhasil diperbarui.');
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-    }
-
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-
-        $transaksi = Transaksi::findOrFail($id);
-        $transaksi->delete();
-
-        return redirect()->route('admin.transaksi.index')->with('success', 'Data berhasil dihapus!');
-    }
-
-    public function updateStatus($id, $status = 'selesai')
-    {
-        $transaksi = Transaksi::findOrFail($id);
-
-        if ($status === 'selesai') {
-            $transaksi->status = 'selesai';
-            $transaksi->tanggal_selesai = now();
-        } elseif ($status === 'dibatalkan') {
-            $transaksi->status = 'dibatalkan';
-            $transaksi->tanggal_selesai = null;
-        } elseif ($status === 'proses') {
-            $transaksi->status = 'proses';
-            $transaksi->tanggal_selesai = null;
-        }
-
-        $transaksi->save();
-
-        return redirect()->back()->with('success', 'Status transaksi berhasil diupdate!');
-    }
-
     public function cetakStruk($id)
     {
         $transaksi = Transaksi::with(['pelanggan.user', 'layanan', 'diskon'])->findOrFail($id);
-
-        // Sesuaikan dengan folder tempat Anda menyimpan file blade struk di atas
+        
+        // Arahkan ke view struk yang minimalis
         return view('content.backend.admin.transaksi.struk', compact('transaksi'));
     }
 }

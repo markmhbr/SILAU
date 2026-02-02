@@ -48,8 +48,8 @@ return new class extends Migration
             $table->enum('status', [
                 'menunggu penjemputan',
                 'menunggu diantar',
-                'diambil_driver',
-                'diterima_kasir',
+                'diambil driver',
+                'diterima kasir',
                 'ditimbang',
                 'menunggu pembayaran',
                 'dibayar',

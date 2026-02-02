@@ -25,21 +25,35 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {{-- KOLOM KIRI: INFO HARGA & INPUT BERAT --}}
+        {{-- KOLOM KIRI: INPUT & RINCIAN --}}
         <div class="lg:col-span-2 space-y-6">
             
-            {{-- FORM INPUT BERAT (Hanya muncul jika status masih awal/belum diproses) --}}
-            @if(in_array($transaksi->status, ['menunggu_penjemputan', 'diambil_driver', 'diterima_kasir', 'pending']))
+            {{-- SEKSI ESTIMASI (Data dari Pelanggan) --}}
+            <div class="bg-slate-100/50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 rounded-[2.5rem] p-6">
+                <div class="flex flex-wrap gap-8">
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Estimasi Berat (User)</p>
+                        <p class="text-lg font-bold text-slate-700 dark:text-slate-300">{{ $transaksi->estimasi_berat ?? '0' }} KG</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Estimasi Harga</p>
+                        <p class="text-lg font-bold text-slate-700 dark:text-slate-300">Rp {{ number_format($transaksi->harga_estimasi ?? 0, 0, ',', '.') }}</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- FORM INPUT BERAT AKTUAL (Muncul jika belum ditimbang) --}}
+            @if(is_null($transaksi->berat_aktual))
             <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-sm border-2 border-brand/20">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 bg-brand text-white rounded-xl flex items-center justify-center shadow-lg shadow-brand/20">⚖️</div>
                     <div>
-                        <h3 class="font-black text-slate-800 dark:text-white uppercase tracking-wider text-sm">Penimbangan Barang</h3>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase">Update berat riil untuk menghitung harga final</p>
+                        <h3 class="font-black text-slate-800 dark:text-white uppercase tracking-wider text-sm">Penimbangan Riil</h3>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase">Masukkan berat aktual untuk menghitung harga final</p>
                     </div>
                 </div>
 
-                <form action="{{ route('karyawan.kasir.update', $transaksi->id) }}" method="POST">
+                <form action="{{ route('karyawan.kasir.berat', $transaksi->id) }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="flex flex-col md:flex-row gap-4">
@@ -47,8 +61,7 @@
                             <input 
                                 type="number" 
                                 step="0.01" 
-                                name="berat" 
-                                value="{{ $transaksi->berat }}" 
+                                name="berat_aktual" 
                                 class="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 focus:border-brand outline-none transition font-black text-brand text-lg"
                                 placeholder="0.00"
                                 required
@@ -56,41 +69,52 @@
                             <span class="absolute right-6 top-1/2 -translate-y-1/2 font-black text-slate-400 uppercase text-xs">Kilogram</span>
                         </div>
                         <button type="submit" class="px-8 py-4 bg-brand hover:bg-brandDark text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-brand/20 active:scale-95">
-                            Update Berat & Harga
+                            Hitung & Simpan Harga
                         </button>
                     </div>
                 </form>
             </div>
             @endif
 
-            {{-- RINCIAN NOTA --}}
-            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-sm border border-slate-200 dark:border-slate-800">
+            {{-- HASIL AKHIR & RINCIAN NOTA --}}
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-sm border border-slate-200 dark:border-slate-800 relative overflow-hidden">
+                {{-- Watermark Status --}}
+                @if($transaksi->berat_aktual)
+                <div class="absolute -right-4 -top-4 bg-emerald-500/10 text-emerald-500 px-8 py-4 rotate-12 font-black uppercase text-xs border border-emerald-500/20">
+                    Selesai Timbang
+                </div>
+                @endif
+
                 <div class="flex items-center justify-between mb-8">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 text-brand rounded-2xl flex items-center justify-center text-xl">🧺</div>
                         <div>
                             <h3 class="font-black text-slate-800 dark:text-white uppercase tracking-wider text-sm">{{ $transaksi->layanan->nama_layanan }}</h3>
-                            <p class="text-xs text-slate-400 font-bold italic">Berat: {{ $transaksi->berat }} KG</p>
+                            <p class="text-xs text-slate-400 font-bold italic">
+                                Berat Aktual: <span class="text-brand">{{ $transaksi->berat_aktual ?? 'Belum diisi' }} KG</span>
+                            </p>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Bayar</p>
-                        <p class="text-2xl font-black text-brand">Rp {{ number_format($hargaFinal, 0, ',', '.') }}</p>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Bayar Final</p>
+                        <p class="text-2xl font-black text-brand">Rp {{ number_format($transaksi->harga_final ?? 0, 0, ',', '.') }}</p>
                     </div>
                 </div>
 
                 <div class="space-y-4 border-t border-slate-100 dark:border-slate-800 pt-6">
                     <div class="flex justify-between text-sm">
                         <span class="text-slate-500 font-medium">Harga Layanan (Subtotal)</span>
-                        <span class="text-slate-800 dark:text-slate-200 font-bold">Rp {{ number_format($hargaLayanan, 0, ',', '.') }}</span>
+                        <span class="text-slate-800 dark:text-slate-200 font-bold">Rp {{ number_format($transaksi->harga_layanan ?? 0, 0, ',', '.') }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
-                        <span class="text-slate-500 font-medium">Diskon Terpasang</span>
-                        <span class="text-emerald-500 font-bold">- Rp {{ number_format($diskon, 0, ',', '.') }}</span>
+                        <span class="text-slate-500 font-medium">Diskon</span>
+                        <span class="text-emerald-500 font-bold">
+    - Rp {{ number_format($transaksi->diskon->nilai ?? 0, 0, ',', '.') }}
+</span>
                     </div>
                     <div class="flex justify-between text-sm pt-4 border-t border-dashed border-slate-200 dark:border-slate-700">
-                        <span class="text-slate-800 dark:text-white font-black uppercase tracking-tight">Total Tagihan Final</span>
-                        <span class="text-brand font-black text-xl">Rp {{ number_format($hargaFinal, 0, ',', '.') }}</span>
+                        <span class="text-slate-800 dark:text-white font-black uppercase tracking-tight text-lg">Tagihan yang Harus Dibayar</span>
+                        <span class="text-brand font-black text-2xl">Rp {{ number_format($transaksi->harga_final ?? 0, 0, ',', '.') }}</span>
                     </div>
                 </div>
             </div>
@@ -116,8 +140,8 @@
                     <div>
                         <select name="status" class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none text-sm font-bold text-slate-700 dark:text-slate-200">
                             @foreach([
-                                'pending', 'menunggu_penjemputan', 'diambil_driver', 
-                                'diterima_kasir', 'ditimbang', 'menunggu_pembayaran', 
+                                'menunggu penjemputan','menunggu diantar', 'diambil driver', 
+                                'diterima kasir', 'ditimbang', 'menunggu pembayaran', 
                                 'dibayar', 'diproses', 'selesai', 'dibatalkan'
                             ] as $st)
                                 <option value="{{ $st }}" {{ $transaksi->status == $st ? 'selected' : '' }}>

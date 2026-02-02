@@ -3,6 +3,9 @@
     if (Auth::user()->role == 'pelanggan') {
         $profileRoute = 'pelanggan.profil.index';
         $alamatRoute = 'pelanggan.alamat';
+    } elseif (Auth::user()->role == 'owner') {
+        $profileRoute = 'owner.profil.index';
+        $alamatRoute = 'owner.alamat';
     } else {
         $profileRoute = 'karyawan.profil.index';
         $alamatRoute = 'karyawan.alamat';
@@ -44,14 +47,6 @@
             ? 'font-black border-b-2 border-brand text-brand'
             : 'font-medium text-slate-500 hover:text-brand' }}">
                         Dashboard
-                    </a>
-
-                    <a href=" {{ route('owner.transaksi.index') }} "
-                        class="text-sm transition-all pb-1 px-1
-        {{ request()->routeIs('owner.transaksi*')
-            ? 'font-black border-b-2 border-brand text-brand'
-            : 'font-medium text-slate-500 hover:text-brand' }}">
-                        Transaksi
                     </a>
 
                     <a href=" {{ route('owner.laporan.index') }} "
@@ -211,15 +206,6 @@
             : 'text-slate-600 hover:bg-slate-50' }}">
                         <span class="text-xl">📊</span>
                         <span class="font-bold">Dashboard Owner</span>
-                    </a>
-
-                    <a href=" {{ route('owner.transaksi.index') }} "
-                        class="flex items-center gap-3 p-4 rounded-2xl
-        {{ request()->routeIs('owner.transaksi*')
-            ? 'bg-brand text-white shadow-lg shadow-brand/20'
-            : 'text-slate-600 hover:bg-slate-50' }}">
-                        <span class="text-xl">🧾</span>
-                        <span class="font-bold">Transaksi</span>
                     </a>
 
                     <a href=" {{ route('owner.laporan.index') }} "
