@@ -73,37 +73,46 @@ class DriverController extends Controller
      * Halaman Pengantaran (tugas driver sendiri)
      */
     public function pengantaran()
-    {
-        $karyawan = auth()->user()->karyawan;
+{
+    $karyawan = auth()->user()->karyawan;
 
-        $tugasAntar = Transaksi::with(['pelanggan.user'])
-            ->where('status', 'selesai')
-            ->latest()
-            ->get();
+    // Menampilkan transaksi yang statusnya 'menunggu diantar' 
+    // dan ditugaskan ke driver yang sedang login
+    $tugasAntar = Transaksi::with(['pelanggan.user'])
+        ->where('driver_id', $karyawan->id)
+        ->where('status', 'menunggu diantar') // Sesuai enum di migration
+        ->latest()
+        ->get();
 
-        return view('content.backend.karyawan.driver.pengantaran', compact('tugasAntar'));
+    return view('content.backend.karyawan.driver.pengantaran', compact('tugasAntar'));
+}
+
+/**
+ * Mulai antar / update status
+ */
+public function antar(Transaksi $transaksi)
+{
+    $karyawan = auth()->user()->karyawan;
+
+    // Pastikan ini memang tugas si driver tersebut
+    if ($transaksi->driver_id !== $karyawan->id) {
+        abort(403, 'Ini bukan tugas pengantaran Anda.');
     }
 
-    /**
-     * Mulai antar / update status → dikirim
-     */
-    public function antar(Transaksi $transaksi)
-    {
-        $karyawan = auth()->user()->karyawan;
-        if ($transaksi->id_karyawan !== $karyawan->id) {
-            abort(403);
-        }
-
-        if ($transaksi->status !== 'selesai') {
-            return back()->with('error', 'Pesanan belum siap diantar');
-        }
-
-        $transaksi->update([
-            'status' => 'dikirim'
-        ]);
-
-        return back()->with('success', 'Pengantaran dimulai');
+    // Cek apakah statusnya valid untuk diantar
+    if ($transaksi->status !== 'menunggu diantar') {
+        return back()->with('error', 'Pesanan belum siap atau sudah diantar');
     }
+
+    // Karena di migration enum tidak ada 'dikirim', kita update ke 'selesai' 
+    // atau jika Anda ingin 'diproses' (tergantung alur laundry Anda)
+    // Di sini saya asumsikan 'selesai' berarti sudah sampai ke pelanggan.
+    $transaksi->update([
+        'status' => 'selesai' 
+    ]);
+
+    return back()->with('success', 'Status pesanan berhasil diperbarui menjadi Selesai');
+}
 
 
 }
