@@ -1,11 +1,15 @@
 {{-- MENU PROFIL (SAMA UNTUK SEMUA) --}}
 @php
-    if (Auth::user()->role == 'pelanggan') {
+    $userRole = Auth::user()->role;
+    // Tentukan route akun secara dinamis
+    $akunParams = ['role' => $userRole];
+
+    if ($userRole == 'pelanggan') {
         $profileRoute = 'pelanggan.profil.index';
         $alamatRoute = 'pelanggan.alamat';
-    } elseif (Auth::user()->role == 'owner') {
-        $profileRoute = 'owner.profil.index';
-        $alamatRoute = 'owner.alamat';
+    } elseif ($userRole == 'owner') {
+        $profileRoute = null; // Owner tidak pakai ini
+        $alamatRoute = null; // Owner tidak pakai ini
     } else {
         $profileRoute = 'karyawan.profil.index';
         $alamatRoute = 'karyawan.alamat';
@@ -134,14 +138,23 @@
                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
                         class="absolute right-0 mt-3 w-56 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 p-2 z-[60]">
 
-                        <a href="{{ route($profileRoute) }}"
-                            class="flex items-center gap-3 p-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors">
-                            <span>👤</span> Profile Saya
-                        </a>
+                        {{-- Hide Profil & Alamat jika Owner --}}
+                        @if (Auth::user()->role != 'owner')
+                            <a href="{{ route($profileRoute) }}"
+                                class="flex items-center gap-3 p-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors {{ request()->routeIs($profileRoute) ? 'bg-slate-50 dark:bg-slate-800 font-bold text-brand' : '' }}">
+                                <span>👤</span> Profile Saya
+                            </a>
 
-                        <a href="{{ route($alamatRoute) }}"
-                            class="flex items-center gap-3 p-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors font-bold text-slate-700 dark:text-slate-200">
-                            <span>📍</span> Alamat Saya
+                            <a href="{{ route($alamatRoute) }}"
+                                class="flex items-center gap-3 p-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors {{ request()->routeIs($alamatRoute) ? 'bg-slate-50 dark:bg-slate-800 font-bold text-brand' : '' }}">
+                                <span>📍</span> Alamat Saya
+                            </a>
+                        @endif
+
+                        {{-- Menu Keamanan Akun (Muncul untuk SEMUA role) --}}
+                        <a href="{{ route('akun', $akunParams) }}"
+                            class="flex items-center gap-3 p-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors {{ request()->routeIs($akunParams) ? 'bg-slate-50 dark:bg-slate-800 font-bold text-brand' : 'font-bold text-slate-700 dark:text-slate-200' }}">
+                            <span>🔐</span> Keamanan Akun
                         </a>
 
                         <div class="border-t border-slate-100 dark:border-slate-800 my-1"></div>

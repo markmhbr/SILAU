@@ -36,6 +36,9 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 
+// Controllers Account
+use App\Http\Controllers\Backend\AccountController;
+
 // Controllers Interface
 use App\Http\Controllers\InterfaceController;
 
@@ -56,6 +59,20 @@ Route::get('/', [InterfaceController::class, 'beranda'])->name('beranda');
 Route::get('/profil', [InterfaceController::class, 'profil'])->name('profil');
 Route::get('/kontak', [InterfaceController::class, 'kontak'])->name('kontak');
 Route::get('/testimonial-form', [InterfaceController::class, 'testimonial_form'])->name('testimonial-form');
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes untuk kelola akun (update email dan password)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('{role}')->group(function () {
+        Route::get('/kelola-akun', [AccountController::class, 'index'])->name('akun');
+        Route::patch('/kelola-akun/email', [AccountController::class, 'updateEmail'])->name('akun.email');
+        Route::patch('/kelola-akun/password', [AccountController::class, 'updatePassword'])->name('akun.password');
+    });
+});
 
 /*
 |--------------------------------------------------------------------------

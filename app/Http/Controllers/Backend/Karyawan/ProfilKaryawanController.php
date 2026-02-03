@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Storage;
 
 class ProfilKaryawanController extends Controller
@@ -61,7 +63,7 @@ class ProfilKaryawanController extends Controller
 
                 $file = $request->file('foto');
                 $path = $file->store('foto_karyawan', 'public');
-                
+
                 $karyawan->update([
                     'foto' => $path
                 ]);
@@ -70,7 +72,6 @@ class ProfilKaryawanController extends Controller
             return redirect()
                 ->route('karyawan.profil.index')
                 ->with('success', 'Profil Anda berhasil diperbarui!');
-
         } catch (\Throwable $th) {
             return redirect()
                 ->back()
@@ -117,5 +118,46 @@ class ProfilKaryawanController extends Controller
         return redirect()
             ->route('karyawan.dashboard')
             ->with('success', 'Alamat berhasil disimpan');
+    }
+
+    public function akun()
+    {
+        $karyawan = Karyawan::where('user_id', Auth::id())->firstOrFail();
+        return view('content.backend.karyawan.account', compact('karyawan'));
+    }
+
+    public function updateEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
+        ], [
+            'email.unique' => 'Email ini sudah digunakan oleh pengguna lain.',
+        ]);
+
+        $user = Auth::user();
+        $user->update([
+            'email' => $request->email
+        ]);
+
+        return back()->with('success', 'Alamat email berhasil diperbarui.');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'confirmed', Password::min(8)],
+        ], [
+            'current_password.current_password' => 'Password lama yang Anda masukkan salah.',
+            'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
+            'password.min' => 'Password minimal harus 8 karakter.',
+        ]);
+
+        $user = Auth::user();
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return back()->with('success', 'Password berhasil diubah.');
     }
 }
