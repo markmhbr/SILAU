@@ -3,9 +3,14 @@
 @section('title', 'Tugas Pengantaran')
 
 @section('content')
-    <div class="max-w-7xl mx-auto space-y-6">
+    <div class="max-w-5xl mx-auto space-y-8 animate-fadeIn">
 
         <div>
+            <nav class="flex text-[10px] uppercase tracking-widest text-slate-400 mb-2 space-x-2 font-bold">
+                <a href="{{ route('karyawan.dashboard') }}" class="hover:text-brand transition">Home</a>
+                <span>/</span>
+                <span class="text-slate-600 dark:text-slate-300">Pengantaran</span>
+            </nav>
             <h2 class="text-2xl font-black text-slate-800">
                 🗺️ Tugas Pengantaran
             </h2>
@@ -44,7 +49,8 @@
                 </div>
 
                 <a href="https://www.google.com/maps/search/?api=1&query={{ $item->pelanggan->latitude }},{{ $item->pelanggan->longitude }}"
-                    target="_blank" class="inline-block text-orange-600 font-bold text-xs uppercase tracking-widest hover:underline">
+                    target="_blank"
+                    class="inline-block text-orange-600 font-bold text-xs uppercase tracking-widest hover:underline">
                     🧭 Buka di Google Maps App
                 </a>
 
@@ -54,13 +60,13 @@
                     @method('PATCH')
 
                     {{-- Catatan dari Kasir jika ada --}}
-                    @if($item->catatan)
+                    @if ($item->catatan)
                         <div class="p-3 bg-slate-50 rounded-lg text-sm text-slate-600 mb-3 italic">
                             "{{ $item->catatan }}"
                         </div>
                     @endif
 
-                    <button type="submit" onclick="return confirm('Selesaikan pengantaran ini?')" 
+                    <button type="submit" onclick="return confirm('Selesaikan pengantaran ini?')"
                         class="w-full py-3 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700 transition">
                         ✅ Selesaikan Pengantaran
                     </button>
