@@ -170,11 +170,17 @@ class LayananPelangganController extends Controller
     {
         // Ambil pelanggan yang login
         $pelanggan = Pelanggan::where('user_id', auth()->id())->first();
-
-        // Ambil semua transaksi milik pelanggan itu saja, sekaligus eager load layanan
-        $transaksis = Transaksi::with('layanan')
+    
+        if (!$pelanggan) {
+            return redirect()->back()->with('error', 'Data pelanggan tidak ditemukan.');
+        }
+    
+        // Eager load layanan DAN diskon untuk menghindari N+1 query
+        $transaksis = Transaksi::with(['layanan', 'diskon'])
             ->where('pelanggan_id', $pelanggan->id)
+            ->orderBy('created_at', 'desc')
             ->get();
+    
         return view('content.backend.pelanggan.layanan.pesanan', compact('transaksis'));
     }
 

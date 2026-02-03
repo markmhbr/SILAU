@@ -64,7 +64,8 @@
                                         class="px-6 py-5 border-y border-transparent group-hover:border-slate-100 dark:group-hover:border-slate-700">
                                         <div
                                             class="font-bold text-slate-800 dark:text-white group-hover:text-brand transition-colors whitespace-nowrap">
-                                            {{ $transaksi->layanan->nama_layanan }}</div>
+                                            {{ $transaksi->layanan->nama_layanan }}
+                                        </div>
                                         <div
                                             class="text-[10px] bg-brand/10 text-brand px-2 py-0.5 rounded-md inline-block mt-1 font-black uppercase tracking-tighter">
                                             {{ $transaksi->layanan->jenis_layanan }}
@@ -72,7 +73,9 @@
                                     </td>
                                     <td
                                         class="px-6 py-5 font-bold text-slate-600 dark:text-slate-300 border-y border-transparent group-hover:border-slate-100 dark:group-hover:border-slate-700 whitespace-nowrap">
-                                        {{ intval($transaksi->berat) == $transaksi->berat ? intval($transaksi->berat) : $transaksi->berat }}
+                                        {{-- Menggunakan berat_aktual jika tersedia, jika tidak pakai estimasi --}}
+                                        @php $berat = $transaksi->berat_aktual ?? $transaksi->estimasi_berat; @endphp
+                                        {{ number_format($berat, 1) }}
                                         <span class="text-[10px] font-normal text-slate-400 uppercase">kg</span>
                                     </td>
                                     <td
@@ -80,12 +83,10 @@
                                         @php
                                             $diskonNominal = 0;
                                             if ($transaksi->diskon) {
+                                                $hargaDasar = $transaksi->harga_estimasi;
                                                 $diskonNominal =
                                                     $transaksi->diskon->tipe === 'persentase'
-                                                        ? ($transaksi->layanan->harga_perkilo *
-                                                                $transaksi->berat *
-                                                                $transaksi->diskon->nilai) /
-                                                            100
+                                                        ? ($hargaDasar * $transaksi->diskon->nilai) / 100
                                                         : $transaksi->diskon->nilai;
                                             }
                                         @endphp
@@ -100,33 +101,34 @@
                                         class="px-6 py-5 text-right border-y border-transparent group-hover:border-slate-100 dark:group-hover:border-slate-700 whitespace-nowrap">
                                         <span class="font-black text-slate-900 dark:text-white text-base">
                                             Rp
-                                            {{ number_format($transaksi->harga_after_diskon ?? $transaksi->harga_setelah_diskon, 0, ',', '.') }}
+                                            {{ number_format($transaksi->harga_final ?? $transaksi->harga_estimasi, 0, ',', '.') }}
                                         </span>
                                     </td>
                                     <td
                                         class="px-6 py-5 text-center border-y border-transparent group-hover:border-slate-100 dark:group-hover:border-slate-700">
                                         @php
+                                            // Sesuaikan key array ini dengan ENUM di migration
                                             $statusMap = [
-                                                'pending' =>
-                                                    'bg-slate-100 text-slate-500 dark:bg-slate-700/50 dark:text-slate-400 border-slate-200',
-                                                'menunggu konfirmasi' =>
-                                                    'bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border-amber-200',
-                                                'proses' =>
-                                                    'bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 border-blue-200',
-                                                'sedang diantar' =>
-                                                    'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 border-indigo-200',
-                                                'selesai' =>
-                                                    'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border-emerald-200',
+                                                'menunggu penjemputan' =>
+                                                    'bg-amber-100 text-amber-600 border-amber-200',
+                                                'menunggu diantar' => 'bg-blue-100 text-blue-600 border-blue-200',
+                                                'diambil driver' => 'bg-indigo-100 text-indigo-600 border-indigo-200',
+                                                'diterima kasir' => 'bg-purple-100 text-purple-600 border-purple-200',
+                                                'ditimbang' => 'bg-cyan-100 text-cyan-600 border-cyan-200',
+                                                'menunggu pembayaran' => 'bg-rose-100 text-rose-600 border-rose-200',
+                                                'dibayar' => 'bg-emerald-100 text-emerald-600 border-emerald-200',
+                                                'diproses' => 'bg-sky-100 text-sky-600 border-sky-200',
+                                                'selesai' => 'bg-green-100 text-green-600 border-green-200',
+                                                'dibatalkan' => 'bg-slate-100 text-slate-500 border-slate-200',
                                             ];
 
-                                            // Mengambil style berdasarkan status, default ke warna rose jika status tidak terdaftar
-                                            $currentStatus =
+                                            $currentStatusStyle =
                                                 $statusMap[strtolower($transaksi->status)] ??
-                                                'bg-rose-100 text-rose-600 border-rose-200';
+                                                'bg-slate-100 text-slate-500 border-slate-200';
                                         @endphp
 
                                         <span
-                                            class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] border {{ $currentStatus }} whitespace-nowrap">
+                                            class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] border {{ $currentStatusStyle }} whitespace-nowrap">
                                             {{ $transaksi->status }}
                                         </span>
                                     </td>
