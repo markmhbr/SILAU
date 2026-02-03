@@ -24,7 +24,7 @@ class DriverController extends Controller
         }
 
         $antreanTugas = Transaksi::with(['pelanggan.user'])
-            ->where('status', 'pending')
+            ->where('status', 'menunggu penjemputan')
             ->whereHas('pelanggan', function ($q) {
                 $q->whereNotNull('latitude')
                   ->whereNotNull('longitude');
@@ -50,7 +50,7 @@ class DriverController extends Controller
         }
 
         // Validasi status
-        if ($transaksi->status !== 'pending') {
+        if ($transaksi->status !== 'menunggu penjemputan') {
             return back()->with('error', 'Tugas ini sudah diproses');
         }
 
@@ -60,7 +60,7 @@ class DriverController extends Controller
         }
 
         $transaksi->update([
-            'status' => 'dijemput',
+            'status' => 'diambil driver',
             'id_karyawan' => $karyawan->id,
         ]);
 
