@@ -61,7 +61,7 @@ class DriverController extends Controller
 
         $transaksi->update([
             'status' => 'diambil driver',
-            'id_karyawan' => $karyawan->id,
+            'driver_id' => $karyawan->id, // GUNAKAN driver_id, bukan id_karyawan
         ]);
 
         return redirect()
@@ -78,11 +78,7 @@ class DriverController extends Controller
 
     // Menampilkan transaksi yang statusnya 'menunggu diantar' 
     // dan ditugaskan ke driver yang sedang login
-    $tugasAntar = Transaksi::with(['pelanggan.user'])
-        ->where('driver_id', $karyawan->id)
-        ->where('status', 'menunggu diantar') // Sesuai enum di migration
-        ->latest()
-        ->get();
+    $tugasAntar = Transaksi::with(['pelanggan.user']);
 
     return view('content.backend.karyawan.driver.pengantaran', compact('tugasAntar'));
 }
