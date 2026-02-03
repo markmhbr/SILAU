@@ -214,7 +214,7 @@
             
             {{-- PELANGGAN --}}
             <td class="px-4 py-4 font-bold">
-                {{ $item->pelanggan->nama ?? 'Guest' }}
+                {{ $item->pelanggan->user->name ?? 'Guest' }}
                 <div class="text-[10px] text-slate-400 font-normal">{{ $item->order_id }}</div>
             </td>
 
