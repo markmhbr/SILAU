@@ -124,11 +124,22 @@
                             </div>
 
                             <div class="md:col-span-2">
-                                <label
-                                    class="text-xs font-black text-slate-400 uppercase tracking-widest ml-2 mb-2 block">Alamat
-                                    Lengkap</label>
-                                <textarea name="alamat" rows="3"
-                                    class="w-full py-3.5 px-5 rounded-[1.5rem] border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-emerald-500">{{ old('alamat', $profil->alamat) }}</textarea>
+                                <label class="text-xs font-black text-slate-400 uppercase tracking-widest ml-2 mb-2 block">
+                                    Alamat Lengkap
+                                </label>
+                                <textarea id="alamat" name="alamat" rows="3" onkeyup="updateMapPreview()"
+                                    class="w-full py-3.5 px-5 rounded-[1.5rem] border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-emerald-500 mb-4">{{ old('alamat', $profil->alamat) }}</textarea>
+
+                                {{-- Container Preview Maps --}}
+                                <div
+                                    class="overflow-hidden rounded-[1.5rem] border border-slate-200 dark:border-slate-700 h-64 shadow-inner bg-slate-50">
+                                    <iframe id="mapPreview" width="100%" height="100%" style="border:0;" loading="lazy"
+                                        allowfullscreen
+                                        src="https://maps.google.com/maps?q={{ urlencode($profil->alamat) }}&t=&z=15&ie=UTF8&iwloc=&output=embed">
+                                    </iframe>
+                                </div>
+                                <p class="mt-2 text-[10px] text-slate-400 ml-2 italic">*Ketik alamat lengkap (Jalan, Kota,
+                                    Kec) untuk hasil yang akurat</p>
                             </div>
                         </div>
                     </div>
@@ -171,6 +182,38 @@
                     placeholder.classList.add('hidden');
                 }
             }
+        }
+
+        // Preview Logo
+        document.getElementById('logo-input').onchange = function(evt) {
+            const [file] = this.files;
+            if (file) {
+                const preview = document.getElementById('logo-preview');
+                const placeholder = document.getElementById('logo-placeholder');
+                preview.src = URL.createObjectURL(file);
+                preview.classList.remove('hidden');
+                if (placeholder) placeholder.classList.add('hidden');
+            }
+        }
+
+        // Preview Google Maps
+        let mapTimeout;
+
+        function updateMapPreview() {
+            // Clear timeout sebelumnya agar tidak spam request
+            clearTimeout(mapTimeout);
+
+            mapTimeout = setTimeout(() => {
+                const addressInput = document.getElementById('alamat');
+                const mapPreview = document.getElementById('mapPreview');
+                const address = addressInput.value.trim();
+
+                if (address.length > 5) { // Update jika teks lebih dari 5 karakter
+                    const encodedAddress = encodeURIComponent(address);
+                    mapPreview.src =
+                        `https://maps.google.com/maps?q=${encodedAddress}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+                }
+            }, 1000); // Tunggu 1 detik setelah user berhenti mengetik
         }
     </script>
 @endsection
