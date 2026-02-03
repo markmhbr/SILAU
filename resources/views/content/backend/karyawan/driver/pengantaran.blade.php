@@ -5,17 +5,14 @@
 @section('content')
     <div class="max-w-7xl mx-auto space-y-6">
 
-        <h1 class="text-2xl font-black text-slate-800">
-            🗺️ Tugas Pengantaran
-        </h1>
-        
-
-        <h2 class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">
-            🚚 Tugas Pengantaran
-        </h2>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Daftar pelanggan yang harus diantar oleh driver hari ini
-        </p>
+        <div>
+            <h2 class="text-2xl font-black text-slate-800">
+                🗺️ Tugas Pengantaran
+            </h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Daftar pelanggan yang harus diantar oleh driver hari ini
+            </p>
+        </div>
 
         @forelse ($tugasAntar as $item)
             <div class="bg-white rounded-xl shadow p-6 space-y-4">
