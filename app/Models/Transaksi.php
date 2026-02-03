@@ -34,29 +34,31 @@ class Transaksi extends Model
         'tanggal_selesai' => 'datetime',
     ];
 
-    // Relasi ke karyawan (opsional)
-    public function karyawan()
-    {
-        return $this->belongsTo(Karyawan::class, 'id_karyawan');
-    }
-    // Relasi ke pelanggan
-    public function pelanggan()
-    {
-        return $this->belongsTo(Pelanggan::class);
+    // Relasi ke Pelanggan
+    public function pelanggan() {
+        return $this->belongsTo(Pelanggan::class, 'pelanggan_id');
     }
 
-    // Relasi ke layanan (opsional)
-    public function layanan()
-    {
-        return $this->belongsTo(Layanan::class);
+    // Relasi ke Layanan
+    public function layanan() {
+        return $this->belongsTo(Layanan::class, 'layanan_id');
     }
 
-    // Relasi ke diskon (opsional)
-    public function diskon()
-    {
-        return $this->belongsTo(Diskon::class);
+    // Relasi ke Diskon
+    public function diskon() {
+        return $this->belongsTo(Diskon::class, 'diskon_id');
     }
 
+    // Relasi Spesifik Karyawan
+    public function driver() {
+        return $this->belongsTo(Karyawan::class, 'driver_id');
+    }
+
+    public function kasir() {
+        return $this->belongsTo(Karyawan::class, 'kasir_id');
+    }
+
+    // Method untuk menghitung harga setelah diskon
     public function hargaSetelahDiskon()
     {
         if ($this->diskon) {

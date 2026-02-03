@@ -205,43 +205,62 @@
                             <th class="px-4 py-2 text-center">Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @forelse($laporan as $item)
-                            <tr class="bg-slate-50/70 dark:bg-slate-800/40">
-                                <td class="px-4 py-4">{{ $item->tanggal_masuk?->format('d M Y') }}</td>
-                                <td class="px-4 py-4 font-bold">
-                                    {{ $item->pelanggan->user->name ?? 'Guest' }}
-                                </td>
-                                <td class="px-4 py-4">{{ $item->layanan->nama_layanan ?? '-' }}</td>
-                                <td class="px-4 py-4 font-black text-emerald-600">
-                                    Rp {{ number_format($item->hargaSetelahDiskon(), 0, ',', '.') }}
-                                </td>
-                                <td class="px-4 py-4 text-center">
-                                    @php
-                                        $badge = match ($item->status) {
-                                            'baru' => 'bg-blue-100 text-blue-600',
-                                            'proses' => 'bg-amber-100 text-amber-600',
-                                            'selesai' => 'bg-emerald-100 text-emerald-600',
-                                            'diantar' => 'bg-purple-100 text-purple-600',
-                                            default => 'bg-slate-100 text-slate-600',
-                                        };
-                                    @endphp
+                    {{-- Ganti bagian <tbody> sampai </tbody> --}}
+<tbody>
+    @forelse($laporan as $item)
+        <tr class="bg-slate-50/70 dark:bg-slate-800/40">
+            {{-- TANGGAL --}}
+            <td class="px-4 py-4">{{ $item->created_at->format('d M Y') }}</td>
+            
+            {{-- PELANGGAN --}}
+            <td class="px-4 py-4 font-bold">
+                {{ $item->pelanggan->nama ?? 'Guest' }}
+                <div class="text-[10px] text-slate-400 font-normal">{{ $item->order_id }}</div>
+            </td>
 
-                                    <span
-                                        class="px-3 py-1 rounded-full text-[10px] font-black uppercase {{ $badge }}">
-                                        {{ $item->status }}
-                                    </span>
+            {{-- LAYANAN --}}
+            <td class="px-4 py-4">{{ $item->layanan->nama_layanan ?? '-' }}</td>
 
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="text-center py-10 text-slate-400">
-                                    Tidak ada data laporan
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
+            {{-- TOTAL HARGA + LABEL ESTIMASI --}}
+            <td class="px-4 py-4">
+                @if($item->harga_final)
+                    <div class="font-black text-emerald-600">
+                        Rp {{ number_format($item->harga_final, 0, ',', '.') }}
+                    </div>
+                @else
+                    <div class="font-black text-amber-600">
+                        Rp {{ number_format($item->harga_estimasi, 0, ',', '.') }}
+                    </div>
+                    <span class="text-[9px] text-amber-500 font-bold uppercase italic">Estimasi</span>
+                @endif
+            </td>
+
+            {{-- STATUS (Badge Berwarna) --}}
+            <td class="px-4 py-4 text-center">
+                @php
+                    $badge = match ($item->status) {
+                        'selesai'               => 'bg-emerald-100 text-emerald-600',
+                        'dibatalkan'           => 'bg-red-100 text-red-600',
+                        'diproses', 'dibayar'   => 'bg-blue-100 text-blue-600',
+                        'menunggu pembayaran', 'ditimbang' => 'bg-amber-100 text-amber-600',
+                        'menunggu penjemputan', 'menunggu diantar' => 'bg-slate-100 text-slate-600',
+                        default                 => 'bg-purple-100 text-purple-600',
+                    };
+                @endphp
+
+                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase {{ $badge }}">
+                    {{ $item->status }}
+                </span>
+            </td>
+        </tr>
+    @empty
+        <tr>
+            <td colspan="5" class="text-center py-10 text-slate-400">
+                Tidak ada data laporan untuk filter ini
+            </td>
+        </tr>
+    @endforelse
+</tbody>
                 </table>
             </div>
         </div>

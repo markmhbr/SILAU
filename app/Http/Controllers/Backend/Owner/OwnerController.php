@@ -16,13 +16,14 @@ class OwnerController extends Controller
     public function laporan(Request $request)
 {
     // ================= QUERY UTAMA =================
-    $query = Transaksi::with(['pelanggan.user', 'layanan']);
+    // Sesuai migrasi: Relasi ke pelanggan, lalu pelanggan ke user (jika ada)
+    $query = Transaksi::with(['pelanggan', 'layanan']);
 
-    // ================= FILTER TANGGAL =================
+    // ================= FILTER TANGGAL (Menggunakan created_at) =================
     if ($request->from && $request->to) {
-        $query->whereBetween('tanggal_masuk', [
-            $request->from,
-            $request->to
+        $query->whereBetween('created_at', [
+            $request->from . ' 00:00:00',
+            $request->to . ' 23:59:59'
         ]);
     }
 
@@ -36,22 +37,23 @@ class OwnerController extends Controller
     // ================= RINGKASAN =================
     $totalTransaksi = $laporan->count();
 
-    $totalOmzet = $laporan->sum(function ($item) {
-        return $item->hargaSetelahDiskon();
-    });
+    // Omzet hanya dihitung dari harga_final pada transaksi yang 'selesai' atau 'dibayar'
+    $totalOmzet = $laporan->whereIn('status', ['selesai', 'dibayar', 'diproses'])->sum('harga_final');
 
-    $totalProses  = $laporan->where('status', 'proses')->count();
+    // Total Proses: Semua status kecuali selesai, dibatalkan, dan menunggu penjemputan
+    $totalProses  = $laporan->whereNotIn('status', ['selesai', 'dibatalkan', 'menunggu penjemputan'])->count();
     $totalSelesai = $laporan->where('status', 'selesai')->count();
 
     // ================= GUEST vs MEMBER =================
     $guestCount  = Transaksi::whereNull('pelanggan_id')->count();
     $memberCount = Transaksi::whereNotNull('pelanggan_id')->count();
 
-    // ================= STATUS LIST (UNTUK DROPDOWN) =================
-    $statusList = Transaksi::select('status')
-        ->distinct()
-        ->orderBy('status')
-        ->pluck('status');
+    // ================= STATUS LIST (Sesuai Enum di Migration) =================
+    $statusList = [
+        'menunggu penjemputan', 'menunggu diantar', 'diambil driver',
+        'diterima kasir', 'ditimbang', 'menunggu pembayaran',
+        'dibayar', 'diproses', 'selesai', 'dibatalkan'
+    ];
 
     return view('content.backend.owner.laporan.index', compact(
         'laporan',
@@ -68,20 +70,23 @@ class OwnerController extends Controller
 
     public function exportLaporanExcel(Request $request)
 {
+    $fileName = 'laporan-laundry-' . now()->format('Y-m-d-His') . '.xlsx';
+    
     return Excel::download(
         new LaporanExport($request),
-        'laporan-transaksi.xlsx'
+        $fileName
     );
 }
 
 public function exportLaporanPdf(Request $request)
 {
-    $query = Transaksi::with(['pelanggan.user', 'layanan']);
+    $query = Transaksi::with(['pelanggan', 'layanan']);
 
+    // Sesuaikan dengan kolom created_at sesuai migration
     if ($request->from && $request->to) {
-        $query->whereBetween('tanggal_masuk', [
-            $request->from,
-            $request->to
+        $query->whereBetween('created_at', [
+            $request->from . ' 00:00:00',
+            $request->to . ' 23:59:59'
         ]);
     }
 
@@ -94,7 +99,7 @@ public function exportLaporanPdf(Request $request)
     $pdf = Pdf::loadView('content.backend.owner.laporan.pdf', compact('laporan'))
         ->setPaper('a4', 'portrait');
 
-    return $pdf->download('laporan-transaksi.pdf');
+    return $pdf->download('laporan-transaksi-' . date('Y-m-d') . '.pdf');
 }
 
     

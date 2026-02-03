@@ -9,40 +9,40 @@ use App\Models\Layanan;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         // ================= HARI INI =================
-        $omzetHariIni = Transaksi::whereDate('tanggal_masuk', today())
+        // Menggunakan created_at dan harga_final sesuai migrasi
+        $omzetHariIni = Transaksi::whereDate('created_at', today())
             ->where('status', 'selesai')
-            ->sum('harga_setelah_diskon');
+            ->sum('harga_final');
 
-        $totalTransaksiHariIni = Transaksi::whereDate('tanggal_masuk', today())
+        $totalTransaksiHariIni = Transaksi::whereDate('created_at', today())
             ->count();
 
         // ================= BULAN INI =================
-        $totalTransaksiBulanIni = Transaksi::whereMonth('tanggal_masuk', now()->month)
-            ->whereYear('tanggal_masuk', now()->year)
+        $totalTransaksiBulanIni = Transaksi::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
             ->count();
 
-        $omzetBulanIni = Transaksi::whereMonth('tanggal_masuk', now()->month)
-            ->whereYear('tanggal_masuk', now()->year)
+        $omzetBulanIni = Transaksi::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
             ->where('status', 'selesai')
-            ->sum('harga_setelah_diskon');
+            ->sum('harga_final');
 
         // ================= ORDER BELUM SELESAI =================
-        $orderBelumSelesai = Transaksi::where('status', '!=', 'selesai')->count();
+        // Mengambil semua status kecuali 'selesai' dan 'dibatalkan'
+        $orderBelumSelesai = Transaksi::whereNotIn('status', ['selesai', 'dibatalkan'])->count();
 
         // ================= LAYANAN TERLARIS =================
+        // Pastikan di model Layanan sudah ada relasi: public function transaksi()
         $layananTerlaris = Layanan::withCount('transaksi')
             ->orderByDesc('transaksi_count')
             ->first();
 
         // ================= TRANSAKSI TERBARU =================
         $transaksiTerbaru = Transaksi::with(['pelanggan', 'layanan'])
-            ->orderByDesc('tanggal_masuk')
+            ->orderByDesc('created_at')
             ->limit(5)
             ->get();
 
@@ -55,53 +55,5 @@ class DashboardController extends Controller
             'layananTerlaris',
             'transaksiTerbaru'
         ));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

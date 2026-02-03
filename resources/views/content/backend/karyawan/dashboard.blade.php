@@ -118,11 +118,11 @@
                                     <div class="flex items-center gap-3">
                                         <div
                                             class="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center font-bold">
-                                            {{ substr($item->pelanggan->user->name ?? '?', 0, 1) }}
+                                            {{ substr($item->pelanggan->user->name ?? 'Guest', 0, 1) }}
                                         </div>
                                         <div>
                                             <p class="text-sm font-bold text-slate-800 dark:text-white">
-                                                {{ $item->pelanggan->user->name ?? 'User' }}</p>
+                                                {{ $item->pelanggan->user->name ?? 'Guest' }}</p>
                                             {{-- TAMPILKAN ALAMAT JIKA DRIVER --}}
                                             @if (str_contains($jabatan, 'driver'))
                                                 <p class="text-[10px] text-slate-500 line-clamp-1 max-w-[200px]">
