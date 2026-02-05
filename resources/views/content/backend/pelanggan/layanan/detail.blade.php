@@ -150,17 +150,42 @@
 
                     {{-- Script Snap Midtrans --}}
                     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            const payButton = document.getElementById('pay-button');
-                            if (payButton) {
-                                payButton.addEventListener('click', function (e) {
-                                    e.preventDefault();
-                                    window.snap.pay('{{ $transaksi->snap_token }}');
-                                });
-                            }
-                        });
-                    </script>
+                    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const payButton = document.getElementById('pay-button');
+        if (payButton) {
+            payButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // Cek apakah token ada di console browser (F12)
+                console.log("Snap Token:", '{{ $transaksi->snap_token }}');
+
+                if ('{{ $transaksi->snap_token }}' === '') {
+                    alert('Snap Token kosong! Periksa backend saat create token.');
+                    return;
+                }
+
+                window.snap.pay('{{ $transaksi->snap_token }}', {
+                    onSuccess: function(result) {
+                        alert("Pembayaran Berhasil!"); 
+                        location.reload();
+                    },
+                    onPending: function(result) {
+                        alert("Menunggu pembayaran...");
+                        location.reload();
+                    },
+                    onError: function(result) {
+                        alert("Pembayaran gagal!");
+                        console.log(result);
+                    },
+                    onClose: function() {
+                        alert('Anda menutup popup tanpa menyelesaikan pembayaran');
+                    }
+                });
+            });
+        }
+    });
+</script>
 
                 @elseif($transaksi->status == 'dibayar' || $transaksi->status == 'menunggu pembayaran' && $transaksi->paid_at)
                     <div

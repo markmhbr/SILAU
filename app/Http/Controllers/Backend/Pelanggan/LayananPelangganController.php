@@ -109,42 +109,64 @@ class LayananPelangganController extends Controller
 
 
     public function detail($id)
-    {
-        // Gunakan eager loading untuk diskon juga jika ada relasinya
-        $transaksi = Transaksi::with(['pelanggan', 'layanan', 'diskon'])->findOrFail($id);
+{
+    $transaksi = Transaksi::with(['pelanggan', 'layanan', 'diskon'])->findOrFail($id);
 
-        // Gunakan berat_aktual jika sudah ditimbang, jika belum gunakan estimasi
-        $berat = $transaksi->berat_aktual ?? $transaksi->estimasi_berat;
+    $berat = $transaksi->berat_aktual ?? $transaksi->estimasi_berat;
+    $hargaLayanan = $transaksi->layanan->harga_perkilo * $berat;
 
-        // Hitung harga layanan dasar
-        $hargaLayanan = $transaksi->layanan->harga_perkilo * $berat;
-
-        $diskon = 0;
-        if ($transaksi->diskon) {
-            // Cek minimal transaksi (pastikan kolom ini ada di tabel diskon)
-            $minimal = $transaksi->diskon->minimal_transaksi ?? 0;
-
-            if ($hargaLayanan >= $minimal) {
-                if ($transaksi->diskon->tipe === 'persentase') {
-                    $diskon = ($hargaLayanan * $transaksi->diskon->nilai) / 100;
-                } else {
-                    $diskon = $transaksi->diskon->nilai;
-                }
+    $diskon = 0;
+    if ($transaksi->diskon) {
+        $minimal = $transaksi->diskon->minimal_transaksi ?? 0;
+        if ($hargaLayanan >= $minimal) {
+            if ($transaksi->diskon->tipe === 'persentase') {
+                $diskon = ($hargaLayanan * $transaksi->diskon->nilai) / 100;
+            } else {
+                $diskon = $transaksi->diskon->nilai;
             }
         }
-
-        // Gunakan harga_final dari DB jika status sudah 'dibayar' atau 'selesai'
-        // Jika masih baru, tampilkan harga_estimasi
-        $hargaFinal = $transaksi->harga_final ?? ($hargaLayanan - $diskon);
-
-        return view('content.backend.pelanggan.layanan.detail', compact(
-            'transaksi',
-            'hargaLayanan',
-            'diskon',
-            'hargaFinal',
-            'berat'
-        ));
     }
+
+    $hargaFinal = $transaksi->harga_final ?? ($hargaLayanan - $diskon);
+
+    // --- LOGIC MIDTRANS MULAI DISINI ---
+    // Jika metode QRIS, status menunggu pembayaran, dan belum punya snap_token
+    if ($transaksi->metode_pembayaran == 'qris' && $transaksi->status == 'menunggu pembayaran' && !$transaksi->snap_token) {
+        try {
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $transaksi->order_id,
+                    'gross_amount' => (int) $hargaFinal, // Harus integer
+                ],
+                'customer_details' => [
+                    'first_name' => auth()->user()->name,
+                    'email' => auth()->user()->email,
+                ],
+                // Opsional: Batasi metode pembayaran agar hanya muncul yang kamu mau
+                'enabled_payments' => ['qris', 'gopay', 'shopeepay', 'bank_transfer'],
+            ];
+
+            $snapToken = \Midtrans\Snap::getSnapToken($params);
+            
+            // Simpan token ke database supaya tidak request ulang terus setiap refresh
+            $transaksi->snap_token = $snapToken;
+            $transaksi->save();
+            
+        } catch (\Exception $e) {
+            // Jika error, kita log tapi tetap tampilkan halaman
+            \Log::error('Midtrans Error: ' . $e->getMessage());
+        }
+    }
+    // --- LOGIC MIDTRANS SELESAI ---
+
+    return view('content.backend.pelanggan.layanan.detail', compact(
+        'transaksi',
+        'hargaLayanan',
+        'diskon',
+        'hargaFinal',
+        'berat'
+    ));
+}
 
 
     public function bayar(Request $request, $id)
