@@ -29,6 +29,22 @@ class ProfilKaryawanController extends Controller
     }
 
     /**
+     * Cetak Kartu Karyawan sendiri
+     */
+    public function printCard()
+    {
+        $karyawan = Karyawan::with(['user', 'jabatan'])->where('user_id', Auth::id())->firstOrFail();
+
+        // QR Code content is the barcode string
+        $qrCode = QrCode::size(200)
+            ->format('svg')
+            ->margin(1)
+            ->generate($karyawan->barcode);
+
+        return view('content.backend.admin.karyawan.print-card', compact('karyawan', 'qrCode'));
+    }
+
+    /**
      * Update profil karyawan (Nama, No HP, Alamat, Foto).
      */
     public function update(Request $request, $id)

@@ -148,19 +148,19 @@
 
                 {{-- QR Section --}}
                 <div class="w-full mt-auto mb-6">
-                    <div class="glass flex items-center p-4 rounded-[2rem] gap-4 border border-white/5">
+                    <div class="glass flex flex-col items-center p-5 rounded-[2rem] gap-3 border border-white/5">
                         <div
-                            class="bg-white p-2 rounded-2xl shadow-xl flex-shrink-0 w-20 h-20 flex items-center justify-center overflow-hidden">
+                            class="bg-white p-3 rounded-2xl shadow-xl w-32 h-32 flex items-center justify-center overflow-hidden">
                             {!! $qrCode !!}
                         </div>
-                        <div class="text-left overflow-hidden">
-                            <p class="text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-1">Employee ID
-                            </p>
-                            <p class="mono text-[10px] font-bold text-white tracking-widest truncate">
+                        <div class="text-center w-full">
+                            <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">Employee
+                                ID</p>
+                            <p class="mono text-[12px] font-bold text-white tracking-widest truncate">
                                 {{ $karyawan->barcode }}</p>
-                            <p class="text-[8px] text-slate-400 mt-2 leading-tight italic px-0.5">Scan untuk absensi
-                                harian
-                                via dashboard admin.</p>
+                            <p class="text-[9px] text-slate-400 mt-2 leading-tight italic px-1">
+                                Scan untuk absensi harian via dashboard admin.
+                            </p>
                         </div>
                     </div>
                 </div>

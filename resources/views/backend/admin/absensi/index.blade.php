@@ -21,22 +21,7 @@
             </div>
         @endif
 
-        <!-- Card Scanner QR -->
-        <div
-            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-brand/50 dark:border-brand/30 p-6 mb-8 text-center ring-4 ring-brand/10 transition-all duration-300">
-            <h2 class="text-xl font-bold mb-2 flex justify-center items-center gap-2"><i
-                    class="fas fa-qrcode text-brand"></i> Scan QR Absensi Karyawan</h2>
-            <p class="text-sm text-slate-500 mb-6">Arahkan Kartu QR Karyawan ke kamera untuk mencatat kehadiran.</p>
 
-            <div id="qr-reader"
-                class="mx-auto max-w-md bg-slate-50 dark:bg-slate-900 rounded-2xl overflow-hidden shadow-inner border-2 border-slate-100 dark:border-slate-700">
-            </div>
-
-            <form action="{{ route('admin.absensi.scan') }}" method="POST" id="scanForm" class="hidden">
-                @csrf
-                <input type="text" name="barcode" id="barcodeInput">
-            </form>
-        </div>
 
         <!-- Tabel Rekap -->
         <div
@@ -170,46 +155,5 @@
     </div>
 
     @push('scripts')
-        <script src="https://unpkg.com/html5-qrcode"></script>
-        <script>
-            function onScanSuccess(decodedText, decodedResult) {
-                // Hentikan scanner sementara agar tidak dobel submit
-                html5QrcodeScanner.clear();
-
-                // Isi input hidden dan submit form
-                document.getElementById('barcodeInput').value = decodedText;
-                document.getElementById('scanForm').submit();
-            }
-
-            function onScanFailure(error) {
-                // Tidak perlu log error terlalu sering agar console bersih
-            }
-
-            let html5QrcodeScanner = new Html5QrcodeScanner(
-                "qr-reader", {
-                    fps: 10,
-                    qrbox: {
-                        width: 250,
-                        height: 250
-                    }
-                }, /* verbose= */ false);
-            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-
-            function openEditModal(id, status, keterangan) {
-                document.getElementById('editForm').action = `/admin/absensi/${id}`;
-                document.getElementById('edit_status').value = status;
-                document.getElementById('edit_keterangan').value = keterangan !== 'null' ? keterangan : '';
-
-                const modal = document.getElementById('editModal');
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            }
-
-            function closeEditModal() {
-                const modal = document.getElementById('editModal');
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        </script>
     @endpush
 @endsection

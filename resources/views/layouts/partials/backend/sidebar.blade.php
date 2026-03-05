@@ -94,9 +94,13 @@
                     [
                         'role' => 'admin',
                         'label' => 'Absensi',
-                        'route' => 'admin.absensi.index',
                         'icon' => 'fas fa-calendar-check',
                         'cat' => 'Manajemen Data',
+                        'submenus' => [
+                            ['label' => 'Data Absensi', 'route' => 'admin.absensi.index'],
+                            ['label' => 'Atur Jam Kerja', 'route' => 'admin.jam.index', 'icon' => 'fas fa-clock'],
+                            ['label' => 'Kiosk Scanner', 'route' => 'admin.absensi.kiosk', 'icon' => 'fas fa-camera'],
+                        ],
                     ],
                     [
                         'role' => 'karyawan',
@@ -137,18 +141,69 @@
             @endphp
 
             @php $currentCat = ''; @endphp
-            @foreach ($menus as $menu)
+            @foreach ($menus as $index => $menu)
                 @if (Auth::user()->role == $menu['role'])
                     @if ($currentCat != $menu['cat'])
-                        <div class="text-[11px] font-bold text-slate-400 uppercase px-3 py-2 mt-4 sidebar-content-text">
-                            {{ $menu['cat'] }}</div>
+                        <div
+                            class="text-[11px] font-bold text-slate-400 uppercase px-3 py-2 mt-2 sidebar-content-text tracking-widest">
+                            {{ $menu['cat'] }}
+                        </div>
                         @php $currentCat = $menu['cat']; @endphp
                     @endif
-                    <a href="{{ route($menu['route']) }}"
-                        class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all {{ request()->routeIs($menu['route']) ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400 font-bold' : 'hover:bg-slate-100 dark:hover:bg-slate-700' }}">
-                        <i class="{{ $menu['icon'] }} w-5 text-center"></i>
-                        <span class="sidebar-content-text">{{ $menu['label'] }}</span>
-                    </a>
+
+                    @if (isset($menu['submenus']))
+                        @php
+                            $isActiveDropdown = false;
+                            foreach ($menu['submenus'] as $sub) {
+                                if (request()->routeIs($sub['route'])) {
+                                    $isActiveDropdown = true;
+                                    break;
+                                }
+                            }
+                        @endphp
+                        <div class="mb-1" x-data="{ open: {{ $isActiveDropdown ? 'true' : 'false' }} }">
+                            <button @click="open = !open"
+                                class="w-full menu-link flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ $isActiveDropdown ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 font-bold' : 'hover:bg-slate-100 hover:text-slate-800 dark:hover:bg-slate-700/50 dark:hover:text-white text-slate-500 dark:text-slate-400 font-medium' }}">
+                                <div class="flex items-center gap-3">
+                                    <i
+                                        class="{{ $menu['icon'] }} w-5 text-center text-lg {{ $isActiveDropdown ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500' }}"></i>
+                                    <span class="sidebar-content-text">{{ $menu['label'] }}</span>
+                                </div>
+                                <i class="fas fa-chevron-down text-[10px] transition-transform duration-300 sidebar-content-text"
+                                    :class="{ 'rotate-180': open }"></i>
+                            </button>
+
+                            <div x-show="open" x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 -translate-y-2"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 -translate-y-2"
+                                class="mt-1 space-y-1 pl-10 pr-2 sidebar-content-text"
+                                style="display: {{ $isActiveDropdown ? 'block' : 'none' }}">
+                                @foreach ($menu['submenus'] as $sub)
+                                    <a href="{{ route($sub['route']) }}"
+                                        class="block px-3 py-2 rounded-lg text-sm transition-all relative {{ request()->routeIs($sub['route']) ? 'text-indigo-600 dark:text-indigo-400 font-bold bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800/50' }}">
+                                        @if (request()->routeIs($sub['route']))
+                                            <div
+                                                class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-indigo-500 -ml-4">
+                                            </div>
+                                        @endif
+                                        {{ $sub['label'] }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        <div class="mb-1">
+                            <a href="{{ route($menu['route']) }}"
+                                class="menu-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs($menu['route']) ? 'bg-primary-50 text-primary-600 dark:bg-primary-500/10 dark:text-primary-400 font-bold shadow-sm border border-primary-100 dark:border-primary-500/20' : 'hover:bg-slate-100 hover:text-slate-800 dark:hover:bg-slate-700/50 dark:hover:text-white text-slate-600 dark:text-slate-300 font-medium' }}">
+                                <i
+                                    class="{{ $menu['icon'] }} w-5 text-center text-lg {{ request()->routeIs($menu['route']) ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300' }} transition-colors"></i>
+                                <span class="sidebar-content-text">{{ $menu['label'] }}</span>
+                            </a>
+                        </div>
+                    @endif
                 @endif
             @endforeach
         </nav>

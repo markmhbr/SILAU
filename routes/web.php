@@ -17,6 +17,7 @@ use App\Http\Controllers\Backend\Admin\TransaksiController;
 use App\Http\Controllers\Backend\Admin\DiskonController;
 use App\Http\Controllers\Backend\Admin\LaporanController;
 use App\Http\Controllers\Backend\Admin\AbsensiController as AdminAbsensiController;
+use App\Http\Controllers\Backend\Admin\JamKerjaController;
 
 // Controllers Karyawan
 use App\Http\Controllers\Backend\Karyawan\DashboardController as KaryawanDashboardController;
@@ -117,6 +118,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         ->name('dashboard');
     Route::resource('/profil-perusahaan', ProfilPerusahaanController::class)->names('profil-perusahaan');
     Route::resource('/jabatan', JabatanController::class)->names('jabatan');
+    Route::get('/karyawan/print-all', [KaryawanController::class, 'printAllCards'])->name('karyawan.print-all');
     Route::get('/karyawan/{id}/print-card', [KaryawanController::class, 'printCard'])->name('karyawan.print-card');
     Route::resource('/karyawan', KaryawanController::class)->names('karyawan');
     Route::resource('/pelanggan', PelangganController::class)->names('pelanggan');
@@ -127,8 +129,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/diskon/{id}/toggle', [DiskonController::class, 'toggleStatus'])->name('diskon.toggle');
     Route::resource('/laporan', LaporanController::class)->names('laporan');
     Route::get('/struk/{id}', [TransaksiController::class, 'cetakStruk']);
+
+    // Custom Absensi & Jam Kerja Routes
+    Route::get('/absensi/kiosk', [AdminAbsensiController::class, 'kiosk'])->name('absensi.kiosk');
     Route::post('/absensi/scan', [AdminAbsensiController::class, 'scanBarcode'])->name('absensi.scan');
     Route::resource('/absensi', AdminAbsensiController::class)->names('absensi');
+
+    Route::get('/jam-kerja', [JamKerjaController::class, 'index'])->name('jam.index');
+    Route::post('/jam-kerja', [JamKerjaController::class, 'update'])->name('jam.update');
 });
 
 
@@ -144,6 +152,7 @@ Route::middleware(['auth', 'role:karyawan'])->prefix('karyawan')->name('karyawan
     Route::get('/alamat', [ProfilKaryawanController::class, 'alamat'])->name('alamat');
     Route::put('/alamat', [ProfilKaryawanController::class, 'updateAlamat'])
         ->name('alamat.update');
+    Route::get('/profil/print-card', [ProfilKaryawanController::class, 'printCard'])->name('profil.print-card');
     Route::resource('/profil', ProfilKaryawanController::class)->names('profil');
 
     // Route Absensi

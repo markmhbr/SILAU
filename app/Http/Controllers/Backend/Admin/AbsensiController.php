@@ -20,6 +20,11 @@ class AbsensiController extends Controller
         return view('backend.admin.absensi.index', compact('absensis'));
     }
 
+    public function kiosk()
+    {
+        return view('backend.admin.absensi.kiosk');
+    }
+
     public function create()
     {
         // Fitur tambah absensi manual (misal izin/sakit) jika diperlukan.
@@ -75,6 +80,9 @@ class AbsensiController extends Controller
         $karyawan = Karyawan::with('user')->where('barcode', $request->barcode)->first();
 
         if (!$karyawan) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Barcode tidak dikenali atau karyawan tidak ditemukan.']);
+            }
             return redirect()->back()->with('error', 'Barcode tidak dikenali atau karyawan tidak ditemukan.');
         }
 
@@ -98,6 +106,9 @@ class AbsensiController extends Controller
         } else {
             // Cek apakah sudah absen keluar
             if ($absensi->waktu_keluar) {
+                if ($request->ajax()) {
+                    return response()->json(['success' => false, 'message' => "Karyawan {$karyawan->user->name} sudah melakukan Absen Keluar hari ini."]);
+                }
                 return redirect()->back()->with('error', "Karyawan {$karyawan->user->name} sudah melakukan Absen Keluar hari ini.");
             }
 
@@ -108,6 +119,20 @@ class AbsensiController extends Controller
             $tipe = 'Keluar';
         }
 
-        return redirect()->back()->with('success', "Berhasil! {$karyawan->user->name} telah Absen {$tipe} pada {$waktu_sekarang}.");
+        $message = "Berhasil! {$karyawan->user->name} telah Absen {$tipe} pada {$waktu_sekarang}.";
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'data' => [
+                    'nama' => $karyawan->user->name,
+                    'tipe' => $tipe,
+                    'waktu' => $waktu_sekarang
+                ]
+            ]);
+        }
+
+        return redirect()->back()->with('success', $message);
     }
 }

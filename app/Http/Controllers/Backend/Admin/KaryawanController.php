@@ -71,4 +71,70 @@ class KaryawanController extends Controller
 
         return view('content.backend.admin.karyawan.print-card', compact('karyawan', 'qrCode'));
     }
+    public function update(Request $request, $id)
+    {
+        $karyawan = Karyawan::with('user')->findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $karyawan->user->id,
+            'password' => 'nullable|string|min:6',
+            'jabatan_id' => 'required|exists:jabatans,id',
+        ]);
+
+        try {
+            $userData = [
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+            ];
+
+            if (!empty($validated['password'])) {
+                $userData['password'] = Hash::make($validated['password']);
+            }
+
+            $karyawan->user->update($userData);
+
+            $karyawan->update([
+                'jabatan_id' => $validated['jabatan_id'],
+            ]);
+
+            return redirect()->back()->with('success', 'Data karyawan berhasil diperbarui!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal: ' . $e->getMessage());
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            // id yang dikirim dari halaman index adalah user_id
+            $user = User::findOrFail($id);
+            Karyawan::where('user_id', $user->id)->delete();
+            $user->delete();
+
+            return redirect()->back()->with('success', 'Akun karyawan berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal: ' . $e->getMessage());
+        }
+    }
+
+    public function printAllCards()
+    {
+        $karyawans = Karyawan::with(['user', 'jabatan'])->get();
+
+        $cardsData = [];
+        foreach ($karyawans as $karyawan) {
+            $qrCode = QrCode::size(200)
+                ->format('svg')
+                ->margin(1)
+                ->generate($karyawan->barcode);
+
+            $cardsData[] = [
+                'karyawan' => $karyawan,
+                'qrCode' => $qrCode
+            ];
+        }
+
+        return view('content.backend.admin.karyawan.print-all-cards', compact('cardsData'));
+    }
 }
