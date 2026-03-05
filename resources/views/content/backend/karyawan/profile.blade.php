@@ -65,6 +65,20 @@
                             <input type="file" id="foto-input" name="foto" class="hidden" accept="image/*">
                             <p class="mt-6 text-[10px] text-slate-400 uppercase font-bold tracking-widest">Format: JPG, PNG
                                 (Maks 2MB)</p>
+
+                            {{-- QR CODE ABSENSI --}}
+                            <div
+                                class="mt-12 p-6 bg-slate-50 dark:bg-slate-800/80 rounded-[2rem] border-2 border-dashed border-slate-200 dark:border-slate-700 text-center">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">QR Absensi
+                                    Anda</p>
+                                <div class="flex justify-center mb-4">
+                                    <div class="p-3 bg-white rounded-2xl shadow-sm">
+                                        {!! $qrCode !!}
+                                    </div>
+                                </div>
+                                <p class="text-xs font-bold text-slate-600 dark:text-slate-300">Tunjukkan QR ini ke
+                                    Admin<br>saat masuk/pulang kerja.</p>
+                            </div>
                         </div>
 
                         <div class="w-full lg:w-2/3 space-y-6">

@@ -17,6 +17,7 @@ class Karyawan extends Model
     protected $fillable = [
         'user_id',
         'jabatan_id',
+        'barcode',
         'foto',
         'no_hp',
         'provinsi',
@@ -67,7 +68,7 @@ class Karyawan extends Model
         if ($this->foto) {
             return asset('storage/' . $this->foto);
         }
-        
+
         return asset('images/default-avatar.png');
     }
 
@@ -78,7 +79,7 @@ class Karyawan extends Model
     public function getAlamatGabunganAttribute()
     {
         $alamat = $this->alamat_lengkap;
-        
+
         if ($this->no_rumah) $alamat .= " No. " . $this->no_rumah;
         if ($this->desa) $alamat .= ", Desa/Kel. " . $this->desa;
         if ($this->kecamatan) $alamat .= ", Kec. " . $this->kecamatan;
@@ -89,11 +90,8 @@ class Karyawan extends Model
         return $alamat;
     }
 
-    // Rencana Relasi ke Absensi ke depannya
-    /*
     public function absensis()
     {
         return $this->hasMany(Absensi::class);
     }
-    */
 }

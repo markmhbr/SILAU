@@ -91,6 +91,48 @@
                         'icon' => 'fas fa-book',
                         'cat' => 'Transaksi & Laporan',
                     ],
+                    [
+                        'role' => 'admin',
+                        'label' => 'Absensi',
+                        'route' => 'admin.absensi.index',
+                        'icon' => 'fas fa-calendar-check',
+                        'cat' => 'Manajemen Data',
+                    ],
+                    [
+                        'role' => 'karyawan',
+                        'label' => 'Dashboard',
+                        'route' => 'karyawan.dashboard',
+                        'icon' => 'fas fa-tachometer-alt',
+                        'cat' => 'Utama',
+                    ],
+                    [
+                        'role' => 'karyawan',
+                        'label' => 'Absensi',
+                        'route' => 'karyawan.absensi.index',
+                        'icon' => 'fas fa-clock',
+                        'cat' => 'Utama',
+                    ],
+                    [
+                        'role' => 'karyawan',
+                        'label' => 'Kasir',
+                        'route' => 'karyawan.kasir.index',
+                        'icon' => 'fas fa-cash-register',
+                        'cat' => 'Kasir',
+                    ],
+                    [
+                        'role' => 'karyawan',
+                        'label' => 'Jemput',
+                        'route' => 'karyawan.driver.penjemputan',
+                        'icon' => 'fas fa-truck',
+                        'cat' => 'Driver',
+                    ],
+                    [
+                        'role' => 'karyawan',
+                        'label' => 'Antar',
+                        'route' => 'karyawan.driver.pengantaran',
+                        'icon' => 'fas fa-map-marker-alt',
+                        'cat' => 'Driver',
+                    ],
                 ];
             @endphp
 

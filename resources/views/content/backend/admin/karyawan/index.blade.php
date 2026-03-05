@@ -57,14 +57,22 @@
                                         @endif
                                     </td>
                                     <td class="px-4 py-4 text-center">
-                                        <form action="{{ route('admin.karyawan.destroy', $karyawan->user_id) }}"
-                                            method="POST" onsubmit="return confirm('Hapus akun ini?')">
-                                            @csrf @method('DELETE')
-                                            <button type="submit"
-                                                class="w-9 h-9 flex items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 hover:bg-rose-600 hover:text-white transition-all">
-                                                <i class="fas fa-trash text-sm"></i>
-                                            </button>
-                                        </form>
+                                        <div class="flex items-center justify-center gap-2">
+                                            <a href="{{ route('admin.karyawan.print-card', $karyawan->id) }}"
+                                                target="_blank"
+                                                class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all"
+                                                title="Cetak Kartu ID">
+                                                <i class="fas fa-id-card text-sm"></i>
+                                            </a>
+                                            <form action="{{ route('admin.karyawan.destroy', $karyawan->user_id) }}"
+                                                method="POST" onsubmit="return confirm('Hapus akun ini?')">
+                                                @csrf @method('DELETE')
+                                                <button type="submit"
+                                                    class="w-9 h-9 flex items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 hover:bg-rose-600 hover:text-white transition-all">
+                                                    <i class="fas fa-trash text-sm"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -97,6 +105,17 @@
                     <input type="password" name="password"
                         class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none"
                         required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Jabatan</label>
+                    <select name="jabatan_id"
+                        class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-indigo-500 outline-none"
+                        required>
+                        <option value="">Pilih Jabatan</option>
+                        @foreach ($jabatans as $jb)
+                            <option value="{{ $jb->id }}">{{ $jb->nama_jabatan }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="flex justify-end gap-3 mt-6">
                     <button type="button" onclick="closeModal('modalTambah')"

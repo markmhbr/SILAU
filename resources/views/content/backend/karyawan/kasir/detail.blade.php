@@ -139,12 +139,60 @@
                 </div>
 
                 {{-- CATATAN --}}
-                <div class="bg-slate-50 dark:bg-slate-800/50 rounded-3xl p-6 border border-slate-100 dark:border-slate-800">
+                <div
+                    class="bg-slate-50 dark:bg-slate-800/50 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 mb-6">
                     <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Catatan Pesanan</h4>
                     <p class="text-sm text-slate-600 dark:text-slate-400 font-medium">
                         "{{ $transaksi->catatan ?? 'Tidak ada catatan khusus.' }}"
                     </p>
                 </div>
+
+                {{-- AKSI PEMBAYARAN KASIR --}}
+                @if (in_array($transaksi->status, ['ditimbang', 'menunggu pembayaran']) && $transaksi->harga_final)
+                    <div
+                        class="bg-brand/10 dark:bg-brand/5 border-2 border-brand/20 rounded-[2.5rem] p-8 shadow-sm relative overflow-hidden">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div
+                                class="w-12 h-12 bg-white dark:bg-slate-800 text-brand rounded-full flex items-center justify-center shadow font-black text-xl">
+                                💳</div>
+                            <div>
+                                <h3 class="font-black text-slate-800 dark:text-white uppercase tracking-wider text-sm">
+                                    Lanjutkan Pembayaran</h3>
+                                <p class="text-xs text-slate-500 font-bold">Pilih metode yang sesuai dengan permintaan
+                                    pelanggan.</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 flex flex-col sm:flex-row gap-4">
+                            @if ($transaksi->metode_pembayaran === 'tunai')
+                                <form action="{{ route('karyawan.kasir.bayar', $transaksi->id) }}" method="POST"
+                                    class="w-full">
+                                    @csrf
+                                    <button type="submit"
+                                        class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black px-6 py-4 rounded-2xl uppercase tracking-widest text-xs transition shadow-lg shadow-emerald-500/30">
+                                        <i class="fas fa-money-bill-wave mr-2"></i> Konfirmasi Pembayaran Tunai
+                                    </button>
+                                </form>
+                            @elseif($transaksi->metode_pembayaran === 'qris')
+                                @if (!$transaksi->snap_token)
+                                    <form action="{{ route('karyawan.kasir.bayar', $transaksi->id) }}" method="POST"
+                                        class="w-full">
+                                        @csrf
+                                        <button type="submit"
+                                            class="w-full bg-brand hover:bg-brandDark text-white font-black px-6 py-4 rounded-2xl uppercase tracking-widest text-xs transition shadow-lg shadow-brand/30">
+                                            <i class="fas fa-qrcode mr-2"></i> Generate QRIS Token
+                                        </button>
+                                    </form>
+                                @else
+                                    <button type="button" id="pay-button"
+                                        class="w-full bg-slate-900 dark:bg-slate-700 hover:bg-black text-white font-black px-6 py-4 rounded-2xl uppercase tracking-widest text-xs transition shadow-lg">
+                                        <i class="fas fa-qrcode mr-2"></i> Tampilkan QRIS Midtrans
+                                    </button>
+                                @endif
+                            @endif
+                        </div>
+                    </div>
+                @endif
             </div>
 
             {{-- KOLOM KANAN: STATUS & MEMBER --}}
@@ -216,4 +264,42 @@
             </div>
         </div>
     </div>
+
+    @if ($transaksi->snap_token && $transaksi->metode_pembayaran === 'qris' && $transaksi->status === 'menunggu pembayaran')
+        @push('scripts')
+            <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}">
+            </script>
+            <script>
+                document.getElementById('pay-button').onclick = function() {
+                    // SnapToken acquired from previous step
+                    snap.pay('{{ $transaksi->snap_token }}', {
+                        // Optional
+                        onSuccess: function(result) {
+                            // Update status transaksi jika berhasil
+                            fetch("{{ route('karyawan.kasir.bayar', $transaksi->id) }}", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                },
+                                body: JSON.stringify({
+                                    qris_success: true
+                                })
+                            }).then(r => r.json()).then(data => {
+                                if (data.success) {
+                                    window.location.reload();
+                                }
+                            });
+                        },
+                        onPending: function(result) {
+                            alert("Menunggu pembayaran Anda!");
+                        },
+                        onError: function(result) {
+                            alert("Pembayaran gagal!");
+                        }
+                    });
+                };
+            </script>
+        @endpush
+    @endif
 @endsection

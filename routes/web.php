@@ -16,12 +16,14 @@ use App\Http\Controllers\Backend\Admin\LayananController;
 use App\Http\Controllers\Backend\Admin\TransaksiController;
 use App\Http\Controllers\Backend\Admin\DiskonController;
 use App\Http\Controllers\Backend\Admin\LaporanController;
+use App\Http\Controllers\Backend\Admin\AbsensiController as AdminAbsensiController;
 
 // Controllers Karyawan
 use App\Http\Controllers\Backend\Karyawan\DashboardController as KaryawanDashboardController;
 use App\Http\Controllers\Backend\Karyawan\ProfilKaryawanController;
 use App\Http\Controllers\Backend\Karyawan\KasirController;
 use App\Http\Controllers\Backend\Karyawan\DriverController;
+use App\Http\Controllers\Backend\Karyawan\AbsensiController as KaryawanAbsensiController;
 
 
 // Controllers Pelanggan
@@ -80,9 +82,9 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth','role:owner'])->prefix('owner')->name('owner.')->group(function () {
+Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->group(function () {
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])
-    ->name('dashboard');
+        ->name('dashboard');
     Route::get('/alamat', [ProfilKaryawanController::class, 'alamat'])->name('alamat');
     Route::put('/alamat', [ProfilKaryawanController::class, 'updateAlamat'])
         ->name('alamat.update');
@@ -92,16 +94,16 @@ Route::middleware(['auth','role:owner'])->prefix('owner')->name('owner.')->group
         ->name('laporan.index');
 
     Route::get('/laporan/export/excel', [OwnerController::class, 'exportLaporanExcel'])
-    ->name('laporan.export.excel');
+        ->name('laporan.export.excel');
 
-Route::get('/laporan/export/pdf', [OwnerController::class, 'exportLaporanPdf'])
-    ->name('laporan.export.pdf');
+    Route::get('/laporan/export/pdf', [OwnerController::class, 'exportLaporanPdf'])
+        ->name('laporan.export.pdf');
 
     Route::get('/pengaturan', [OwnerController::class, 'pengaturan'])
-            ->name('pengaturan.index');
+        ->name('pengaturan.index');
 
-        Route::put('/pengaturan', [OwnerController::class, 'updatePengaturan'])
-            ->name('pengaturan.update');
+    Route::put('/pengaturan', [OwnerController::class, 'updatePengaturan'])
+        ->name('pengaturan.update');
 });
 
 /*
@@ -110,11 +112,12 @@ Route::get('/laporan/export/pdf', [OwnerController::class, 'exportLaporanPdf'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])
-    ->name('dashboard');
+        ->name('dashboard');
     Route::resource('/profil-perusahaan', ProfilPerusahaanController::class)->names('profil-perusahaan');
     Route::resource('/jabatan', JabatanController::class)->names('jabatan');
+    Route::get('/karyawan/{id}/print-card', [KaryawanController::class, 'printCard'])->name('karyawan.print-card');
     Route::resource('/karyawan', KaryawanController::class)->names('karyawan');
     Route::resource('/pelanggan', PelangganController::class)->names('pelanggan');
     Route::resource('/layanan', LayananController::class)->names('layanan');
@@ -124,6 +127,8 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
     Route::patch('/diskon/{id}/toggle', [DiskonController::class, 'toggleStatus'])->name('diskon.toggle');
     Route::resource('/laporan', LaporanController::class)->names('laporan');
     Route::get('/struk/{id}', [TransaksiController::class, 'cetakStruk']);
+    Route::post('/absensi/scan', [AdminAbsensiController::class, 'scanBarcode'])->name('absensi.scan');
+    Route::resource('/absensi', AdminAbsensiController::class)->names('absensi');
 });
 
 
@@ -133,24 +138,29 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth','role:karyawan'])->prefix('karyawan')->name('karyawan.')->group(function () {
+Route::middleware(['auth', 'role:karyawan'])->prefix('karyawan')->name('karyawan.')->group(function () {
     Route::get('/dashboard', [KaryawanDashboardController::class, 'dashboard'])
-    ->name('dashboard');
+        ->name('dashboard');
     Route::get('/alamat', [ProfilKaryawanController::class, 'alamat'])->name('alamat');
     Route::put('/alamat', [ProfilKaryawanController::class, 'updateAlamat'])
         ->name('alamat.update');
     Route::resource('/profil', ProfilKaryawanController::class)->names('profil');
+
+    // Route Absensi
+    Route::get('/absensi', [KaryawanAbsensiController::class, 'index'])->name('absensi.index');
+    Route::post('/absensi/masuk', [KaryawanAbsensiController::class, 'masuk'])->name('absensi.masuk');
+    Route::post('/absensi/keluar', [KaryawanAbsensiController::class, 'keluar'])->name('absensi.keluar');
     // Route Kasir
     Route::get('/cek-member', [KasirController::class, 'cekMember'])->name('cek-member');
-    
+
     Route::get('/kasir/pelanggan', [KasirController::class, 'pelangganIndex'])->name('kasir.pelanggan');
     Route::get('/kasir/pelanggan/{pelanggan}', [KasirController::class, 'pelangganShow'])
-    ->name('kasir.pelanggan.show');
+        ->name('kasir.pelanggan.show');
 
     Route::resource('/kasir', KasirController::class)->names('kasir');
     Route::patch('/kasir/{id}/status', [KasirController::class, 'updateStatus'])->name('kasir.status');
     Route::put('/kasir/{id}/berat', [KasirController::class, 'updateBerat'])
-    ->name('kasir.berat');
+        ->name('kasir.berat');
 
     // =====================
     // DRIVER
@@ -168,7 +178,7 @@ Route::middleware(['auth','role:karyawan'])->prefix('karyawan')->name('karyawan.
         // =====================
         Route::get('/pengantaran', [DriverController::class, 'pengantaran'])
             ->name('pengantaran');
-    
+
         Route::patch('/antar/{transaksi}', [DriverController::class, 'antar'])
             ->name('antar');
     });
@@ -181,9 +191,9 @@ Route::middleware(['auth','role:karyawan'])->prefix('karyawan')->name('karyawan.
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth','role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
+Route::middleware(['auth', 'role:pelanggan'])->prefix('pelanggan')->name('pelanggan.')->group(function () {
     Route::get('/dashboard', [PelangganDashboardController::class, 'dashboard'])
-    ->name('dashboard');
+        ->name('dashboard');
     Route::get('/alamat', [ProfilPelangganController::class, 'alamat'])->name('alamat');
     Route::put('/alamat', [ProfilPelangganController::class, 'updateAlamat'])
         ->name('alamat.update');
@@ -202,9 +212,9 @@ Route::middleware(['auth','role:pelanggan'])->prefix('pelanggan')->name('pelangg
 */
 
 Route::controller(LoginController::class)->group(function () {
-Route::get('/login', 'showLoginForm')->name('login');
-Route::post('/login', 'login');
-Route::post('/logout', 'logout')->name('logout');
+    Route::get('/login', 'showLoginForm')->name('login');
+    Route::post('/login', 'login');
+    Route::post('/logout', 'logout')->name('logout');
 });
 
 
@@ -215,8 +225,8 @@ Route::post('/logout', 'logout')->name('logout');
 */
 
 Route::controller(RegisterController::class)->group(function () {
-Route::get('/register', 'showRegistrationForm')->name('register');
-Route::post('/register', 'register');
+    Route::get('/register', 'showRegistrationForm')->name('register');
+    Route::post('/register', 'register');
 });
 
 
@@ -230,5 +240,3 @@ Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkReques
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
-
-

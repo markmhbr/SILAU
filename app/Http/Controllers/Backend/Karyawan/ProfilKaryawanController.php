@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ProfilKaryawanController extends Controller
 {
@@ -17,13 +18,14 @@ class ProfilKaryawanController extends Controller
      */
     public function index()
     {
-        // Ambil data karyawan berdasarkan user_id yang sedang login
-        // Eager load jabatan untuk menampilkan nama jabatan di view
         $karyawan = Karyawan::with('jabatan')
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        return view('content.backend.karyawan.profile', compact('karyawan'));
+        // Generate QR code for the profile page
+        $qrCode = QrCode::size(120)->generate($karyawan->barcode);
+
+        return view('content.backend.karyawan.profile', compact('karyawan', 'qrCode'));
     }
 
     /**

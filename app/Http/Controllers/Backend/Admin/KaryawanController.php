@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Backend\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Karyawan;
-use App\Models\Jabatan; // Tambahkan ini
+use App\Models\Jabatan;
+use SimpleSoftwareIO\QrCode\Facades\QrCode; // Tambahkan ini
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class KaryawanController extends Controller
 {
@@ -48,11 +50,25 @@ class KaryawanController extends Controller
                 'jabatan_id' => $validated['jabatan_id'], // Masukkan jabatan pilihan admin
                 'status_kerja' => 'aktif', // Default status
                 'tanggal_masuk' => now(), // Default tanggal masuk
+                'barcode' => 'EMP-' . strtoupper(Str::random(8)), // Auto-generate QR ID
             ]);
 
             return redirect()->back()->with('success', 'Akun karyawan berhasil dibuat!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal: ' . $e->getMessage());
         }
+    }
+
+    public function printCard($id)
+    {
+        $karyawan = Karyawan::with(['user', 'jabatan'])->findOrFail($id);
+
+        // QR Code content is the barcode string
+        $qrCode = QrCode::size(200)
+            ->format('svg')
+            ->margin(1)
+            ->generate($karyawan->barcode);
+
+        return view('content.backend.admin.karyawan.print-card', compact('karyawan', 'qrCode'));
     }
 }
