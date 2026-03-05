@@ -3,88 +3,92 @@
 @section('title', 'Layanan')
 
 @section('content')
-    <div class="space-y-6">
+    <div x-data="{
+        modalOpen: false,
+        isEdit: false,
+        formAction: '',
+        formData: { id: '', nama_layanan: '', deskripsi: '', harga_perkilo: '' },
+        openModal(edit = false, data = null) {
+            this.isEdit = edit;
+            if (edit && data) {
+                this.formData = { ...data };
+                this.formAction = '{{ route('admin.layanan.index') }}/' + data.id;
+            } else {
+                this.formData = { id: '', nama_layanan: '', deskripsi: '', harga_perkilo: '' };
+                this.formAction = '{{ route('admin.layanan.store') }}';
+            }
+            this.modalOpen = true;
+        }
+    }" class="space-y-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Daftar Layanan</h2>
-                <p class="text-sm text-slate-500">Kelola paket laundry dan harga per kilogram</p>
+                <p class="text-sm text-slate-500">Kelola paket laundry, deskripsi, dan harga per kilogram</p>
             </div>
-            <nav class="flex text-sm text-slate-500 space-x-2">
-                <a href="#" class="hover:text-primary-600">Home</a>
-                <span>/</span>
-                <span class="text-slate-900 dark:text-slate-200 font-medium">Layanan</span>
-            </nav>
+            <button @click="openModal(false)"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 active:scale-95">
+                <i class="fas fa-plus-circle"></i> Tambah Layanan Baru
+            </button>
         </div>
 
         <div
-            class="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 p-4 rounded-2xl flex items-start gap-4">
-            <div
-                class="w-10 h-10 bg-indigo-500 text-white rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-indigo-500/20">
-                <i class="fas fa-concierge-bell"></i>
-            </div>
-            <div class="text-sm text-indigo-800 dark:text-indigo-300">
-                <p class="font-bold mb-1">Manajemen Layanan:</p>
-                <div class="flex flex-wrap gap-4">
-                    <span class="flex items-center gap-1.5"><i class="fas fa-edit text-xs"></i> Klik tombol biru untuk
-                        memperbarui harga atau deskripsi.</span>
-                    <span class="flex items-center gap-1.5"><i class="fas fa-trash text-xs text-rose-500"></i> Klik tombol
-                        merah untuk menghapus jenis layanan.</span>
-                </div>
-            </div>
-        </div>
-
-        <div
-            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-            <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
-                <h3 class="font-bold text-slate-800 dark:text-white">Data Layanan Laundry</h3>
-                {{-- <a href="{{ route('admin.layanan.create') }}" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition shadow-md shadow-primary-500/20">
-                Tambah Layanan
-            </a> --}}
-            </div>
-
+            class="bg-white dark:bg-slate-800 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden transition-all">
             <div class="p-6">
                 <div class="overflow-x-auto">
                     <table id="serviceTable" class="w-full text-sm text-left">
                         <thead>
                             <tr
-                                class="text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700 uppercase text-[11px] tracking-wider">
-                                <th class="px-4 py-4 font-bold text-center w-12">No</th>
-                                <th class="px-4 py-4 font-bold">Nama Layanan</th>
-                                <th class="px-4 py-4 font-bold">Deskripsi</th>
-                                <th class="px-4 py-4 font-bold">Harga /Kg</th>
-                                <th class="px-4 py-4 font-bold text-center">Aksi</th>
+                                class="text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-700 uppercase text-[10px] font-black tracking-[0.2em]">
+                                <th class="px-4 py-5 text-center w-12">No</th>
+                                <th class="px-4 py-5 font-bold">Jenis Layanan</th>
+                                <th class="px-4 py-5">Deskripsi Singkat</th>
+                                <th class="px-4 py-5 font-bold">Harga / Kg</th>
+                                <th class="px-4 py-5 text-center">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                        <tbody class="divide-y divide-slate-50 dark:divide-slate-700/50">
                             @foreach ($layanans as $layanan)
-                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
-                                    <td class="px-4 py-4 text-center text-slate-500 font-medium">{{ $loop->iteration }}</td>
-                                    <td class="px-4 py-4">
+                                <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors group">
+                                    <td class="px-4 py-5 text-center text-slate-400 font-medium">{{ $loop->iteration }}</td>
+                                    <td class="px-4 py-5">
                                         <div class="flex items-center gap-3">
                                             <div
-                                                class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
+                                                class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
                                                 <i class="fas fa-tshirt"></i>
                                             </div>
                                             <span
-                                                class="font-bold text-slate-900 dark:text-white">{{ $layanan->nama_layanan }}</span>
+                                                class="font-black text-white dark:text-white bg-indigo-600 px-3 py-1 rounded-lg text-xs">{{ $layanan->nama_layanan }}</span>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-4 text-slate-500 dark:text-slate-400 max-w-xs italic text-xs">
+                                    <td
+                                        class="px-4 py-5 text-slate-500 dark:text-slate-400 italic text-xs max-w-xs truncate">
                                         "{{ $layanan->deskripsi }}"
                                     </td>
-                                    <td class="px-4 py-4">
+                                    <td class="px-4 py-5">
                                         <span
-                                            class="inline-flex items-center px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 font-bold tracking-tight">
+                                            class="inline-flex items-center px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black tracking-tight text-sm">
                                             Rp {{ number_format($layanan->harga_perkilo, 0, ',', '.') }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-4">
+                                    <td class="px-4 py-5">
                                         <div class="flex items-center justify-center gap-2">
-                                            <a href="{{ route('admin.layanan.edit', $layanan->id) }}"
-                                                class="w-9 h-9 flex items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-all"
-                                                title="Edit Layanan">
+                                            <button
+                                                @click="openModal(true, { id: '{{ $layanan->id }}', nama_layanan: '{{ $layanan->nama_layanan }}', deskripsi: '{{ $layanan->deskripsi }}', harga_perkilo: '{{ $layanan->harga_perkilo }}' })"
+                                                class="w-10 h-10 flex items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
+                                                title="Edit Data">
                                                 <i class="fas fa-edit text-sm"></i>
-                                            </a>
+                                            </button>
+
+                                            <form action="{{ route('admin.layanan.destroy', $layanan->id) }}"
+                                                method="POST" class="delete-form">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button"
+                                                    class="btn-delete w-10 h-10 flex items-center justify-center rounded-2xl bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-600 hover:text-white transition-all shadow-sm"
+                                                    title="Hapus Data">
+                                                    <i class="fas fa-trash text-sm"></i>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -94,39 +98,135 @@
                 </div>
             </div>
         </div>
+
+        <!-- Premium Modal Component -->
+        <template x-teleport="body">
+            <div x-show="modalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-8" x-cloak>
+                <div x-show="modalOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="modalOpen = false"
+                    class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+
+                <div x-show="modalOpen" x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                    x-transition:enter-end="opacity-100 scale-100 translate-y-0" x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                    class="relative w-full max-w-xl bg-white dark:bg-slate-800 rounded-[2.5rem] shadow-2xl border border-white/20 overflow-hidden">
+
+                    <div
+                        class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-xl font-black text-slate-800 dark:text-white"
+                                x-text="isEdit ? 'Ubah Informasi Layanan' : 'Buat Jenis Layanan Baru'"></h3>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Tentukan nama,
+                                harga, dan deskripsi paket laundry</p>
+                        </div>
+                        <button @click="modalOpen = false"
+                            class="w-10 h-10 flex items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-rose-500 hover:text-white transition-all">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <form :action="formAction" method="POST" class="p-8">
+                        @csrf
+                        <template x-if="isEdit">
+                            @method('PUT')
+                        </template>
+
+                        <div class="space-y-6">
+                            <!-- Input Nama Layanan -->
+                            <div class="group">
+                                <label
+                                    class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Nama
+                                    Layanan <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <div
+                                        class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                                        <i class="fas fa-tag text-sm"></i>
+                                    </div>
+                                    <input type="text" name="nama_layanan" x-model="formData.nama_layanan" required
+                                        class="block w-full pl-11 pr-4 py-4 bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 rounded-2xl text-slate-800 dark:text-white font-bold placeholder:text-slate-400 placeholder:font-medium focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
+                                        placeholder="Contoh: Cuci Kering Setrika">
+                                </div>
+                            </div>
+
+                            <!-- Input Harga -->
+                            <div class="group">
+                                <label
+                                    class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Harga
+                                    per Kilogram (Rp) <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <div
+                                        class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                                        <i class="fas fa-coins text-sm"></i>
+                                    </div>
+                                    <input type="number" name="harga_perkilo" x-model="formData.harga_perkilo" required
+                                        class="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 rounded-2xl text-slate-800 dark:text-white font-bold placeholder:text-slate-400 placeholder:font-medium focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
+                                        placeholder="Contoh: 7000">
+                                </div>
+                            </div>
+
+                            <!-- Input Deskripsi -->
+                            <div class="group">
+                                <label
+                                    class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Deskripsi
+                                    Layanan <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <div
+                                        class="absolute top-4 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                                        <i class="fas fa-align-left text-sm"></i>
+                                    </div>
+                                    <textarea name="deskripsi" x-model="formData.deskripsi" rows="3" required
+                                        class="block w-full pl-11 pr-4 py-4 bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 rounded-2xl text-slate-800 dark:text-white font-bold placeholder:text-slate-400 placeholder:font-medium focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all resize-none"
+                                        placeholder="Jelaskan detail layanan ini..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-10 flex items-center gap-3">
+                            <button type="button" @click="modalOpen = false"
+                                class="flex-1 px-6 py-4 rounded-2xl text-sm font-black text-slate-500 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all uppercase tracking-widest">
+                                Batalkan
+                            </button>
+                            <button type="submit"
+                                class="flex-[2] bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-4 rounded-2xl text-sm font-black transition-all shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-2 active:scale-95 uppercase tracking-widest">
+                                <i class="fas fa-save text-lg"></i>
+                                <span x-text="isEdit ? 'Simpan Perubahan' : 'Buat Layanan'"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </template>
     </div>
 
     <script>
         $(document).ready(function() {
             $('#serviceTable').DataTable({
                 "responsive": true,
+                "lengthChange": false,
                 "autoWidth": false,
                 "language": {
                     "search": "",
-                    "searchPlaceholder": "Cari layanan...",
-                    "lengthMenu": "_MENU_",
+                    "searchPlaceholder": "Cari layanan laundry...",
                     "paginate": {
-                        "previous": "<i class='fas fa-chevron-left text-xs'></i>",
-                        "next": "<i class='fas fa-chevron-right text-xs'></i>"
+                        "previous": "<i class='fas fa-chevron-left'></i>",
+                        "next": "<i class='fas fa-chevron-right'></i>"
                     }
                 }
             });
 
-            // Styling search input
             $('.dataTables_filter input').addClass(
-                'bg-slate-100 dark:bg-slate-700 border-transparent rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none px-4 py-2 w-64 mb-4 transition-all'
-                );
-            $('.dataTables_length select').addClass(
-                'bg-slate-100 dark:bg-slate-700 border-transparent rounded-lg text-sm px-2 py-1 outline-none transition-all'
-                );
+                'bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none px-6 py-3 w-72 mb-4 transition-all'
+            );
         });
     </script>
 
     <style>
-        /* Styling khusus tombol paginasi */
         .dataTables_wrapper .dataTables_paginate .paginate_button {
             padding: 0 !important;
-            margin: 0 2px !important;
+            margin: 0 4px !important;
             border: none !important;
         }
 
@@ -135,26 +235,33 @@
         }
 
         .dataTables_paginate .paginate_button i {
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
-            background: #f1f5f9;
+            border-radius: 12px;
+            background: #f8fafc;
             color: #64748b;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            border: 2px solid #f1f5f9;
         }
 
         .dark .dataTables_paginate .paginate_button i {
-            background: #334155;
+            background: #1e293b;
             color: #94a3b8;
+            border-color: #334155;
         }
 
         .dataTables_paginate .paginate_button.current i {
             background: #6366f1;
-            /* Indigo matching theme */
             color: white;
+            border-color: #6366f1;
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+        }
+
+        [x-cloak] {
+            display: none !important;
         }
     </style>
 @endsection

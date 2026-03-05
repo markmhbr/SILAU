@@ -22,7 +22,21 @@ class AbsensiController extends Controller
 
     public function kiosk()
     {
-        return view('backend.admin.absensi.kiosk');
+        $tanggal_hari_ini = Carbon::today()->toDateString();
+
+        // Ambil absensi hari ini beserta karyawan (untuk waktu masuk/keluar)
+        $absensiHariIni = Absensi::with(['karyawan.user', 'karyawan.jabatan'])
+            ->where('tanggal', $tanggal_hari_ini)
+            ->get();
+
+        $sudahAbsenIds = $absensiHariIni->pluck('karyawan_id')->toArray();
+
+        $sudahAbsen = $absensiHariIni; // Koleksi absensi (karyawan ada di dalamnya)
+        $belumAbsen = Karyawan::with(['user', 'jabatan'])
+            ->whereNotIn('id', $sudahAbsenIds)
+            ->get();
+
+        return view('backend.admin.absensi.kiosk', compact('sudahAbsen', 'belumAbsen'));
     }
 
     public function create()
@@ -126,9 +140,12 @@ class AbsensiController extends Controller
                 'success' => true,
                 'message' => $message,
                 'data' => [
+                    'karyawan_id' => $karyawan->id,
                     'nama' => $karyawan->user->name,
+                    'jabatan' => $karyawan->jabatan->nama_jabatan ?? '-',
                     'tipe' => $tipe,
-                    'waktu' => $waktu_sekarang
+                    'waktu' => Carbon::parse($waktu_sekarang)->format('H:i'),
+                    'avatar_initial' => substr($karyawan->user->name, 0, 1)
                 ]
             ]);
         }

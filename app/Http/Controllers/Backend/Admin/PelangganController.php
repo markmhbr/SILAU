@@ -14,7 +14,7 @@ class PelangganController extends Controller
     public function index()
     {
         $pelanggans = Pelanggan::all();
-        return view ('content.backend.admin.pelanggan.index', compact('pelanggans'));
+        return view('content.backend.admin.pelanggan.index', compact('pelanggans'));
     }
 
     /**
@@ -22,7 +22,7 @@ class PelangganController extends Controller
      */
     public function create()
     {
-        return view ('content.backend.admin.pelanggan.form');   
+        return view('content.backend.admin.pelanggan.form');
     }
 
     /**
@@ -32,13 +32,23 @@ class PelangganController extends Controller
     {
         try {
             $request->validate([
-                'alamat' => 'required|string',
+                'name' => 'required|string|max:255',
+                'email' => 'nullable|email|unique:users,email',
                 'no_hp' => 'required|string|max:15',
+                'alamat' => 'required|string',
+            ]);
+
+            $user = \App\Models\User::create([
+                'name' => $request->name,
+                'email' => $request->email ?? strtolower(str_replace(' ', '', $request->name)) . rand(100, 999) . '@laundry.com',
+                'password' => bcrypt('pelanggan123'),
+                'role' => 'pelanggan',
             ]);
 
             Pelanggan::create([
-                'alamat' => $request->alamat,
+                'user_id' => $user->id,
                 'no_hp' => $request->no_hp,
+                'alamat_lengkap' => $request->alamat,
             ]);
 
             return redirect()->route('admin.pelanggan.index')->with('success', 'Data pelanggan berhasil ditambahkan.');
@@ -60,7 +70,7 @@ class PelangganController extends Controller
      */
     public function edit(string $id)
     {
-        $pelanggan = Pelanggan::findOrFail($id); // ambil data pelanggan berdasarkan ID
+        $pelanggan = Pelanggan::findOrFail($id);
         return view('content.backend.admin.pelanggan.form', compact('pelanggan'));
     }
 
@@ -69,15 +79,26 @@ class PelangganController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $pelanggan = Pelanggan::findOrFail($id);
+
         $request->validate([
+            'name' => 'required|string|max:255',
             'no_hp' => 'required|string|max:15',
             'alamat' => 'required|string',
         ]);
 
-        $pelanggan = Pelanggan::findOrFail($id);
+        if ($pelanggan->user) {
+            $updateData = ['name' => $request->name];
+            if ($request->email) {
+                $updateData['email'] = $request->email;
+                $request->validate(['email' => 'email|unique:users,email,' . $pelanggan->user_id]);
+            }
+            $pelanggan->user->update($updateData);
+        }
+
         $pelanggan->update([
             'no_hp' => $request->no_hp,
-            'alamat' => $request->alamat,
+            'alamat_lengkap' => $request->alamat,
         ]);
 
         return redirect()->route('admin.pelanggan.index')->with('success', 'Data pelanggan berhasil diupdate!');
@@ -89,7 +110,12 @@ class PelangganController extends Controller
     public function destroy(string $id)
     {
         $pelanggan = Pelanggan::findOrFail($id);
+        $userId = $pelanggan->user_id;
         $pelanggan->delete();
+
+        if ($userId) {
+            \App\Models\User::find($userId)?->delete();
+        }
 
         return redirect()->route('admin.pelanggan.index')->with('success', 'Data berhasil dihapus!');
     }
