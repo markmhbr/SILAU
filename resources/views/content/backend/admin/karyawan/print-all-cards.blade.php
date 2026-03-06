@@ -156,12 +156,12 @@
                                     <div
                                         class="glass flex flex-col items-center p-2 rounded-xl gap-1.5 border border-white/5 mx-1">
                                         <div
-                                            class="bg-white p-1 rounded-lg shadow-md w-14 h-14 flex items-center justify-center overflow-hidden">
+                                            class="bg-white p-1 rounded-lg shadow-md w-20 h-20 flex items-center justify-center overflow-hidden">
                                             {!! $qrCode !!}
                                         </div>
                                         <div class="text-center w-full">
                                             <p
-                                                class="mono text-[8px] mt-0.5 font-bold text-white tracking-widest truncate">
+                                                class="mono text-[8.5px] mt-0.5 font-black text-white tracking-widest truncate">
                                                 {{ $karyawan->barcode }}</p>
                                         </div>
                                     </div>

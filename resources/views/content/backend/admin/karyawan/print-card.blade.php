@@ -95,82 +95,69 @@
         </a>
     </div>
 
-    <!-- ID CARD CONTAINER (CR-80 Sized Portrait) -->
+    <!-- ID CARD CONTAINER (CR-80 Sized Portrait like All Cards) -->
     <div
-        class="card-wrapper relative w-[380px] h-[580px] bg-white rounded-[3rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] overflow-hidden p-3 border-8 border-slate-900">
-
-        <div class="card-bg w-full h-full rounded-[2.2rem] flex flex-col relative">
+        class="card-wrapper relative w-[60mm] h-[93mm] bg-white rounded-2xl overflow-hidden p-1.5 border-4 border-slate-900 shadow-2xl mx-auto">
+        <div class="card-bg w-full h-full rounded-xl flex flex-col relative">
 
             {{-- Decoration Elements --}}
-            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-0 left-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl"></div>
+            <div class="absolute bottom-0 left-0 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl"></div>
 
             {{-- Body --}}
-            <div class="flex flex-col items-center flex-grow pt-10 px-6 relative z-10">
-
+            <div class="flex flex-col items-center flex-grow pt-4 px-2 relative z-10 w-full">
                 {{-- Header / Logo --}}
-                <div class="text-center mb-8">
-                    <div class="inline-block px-4 py-1.5 glass rounded-full mb-2">
-                        <span class="text-[10px] font-black text-emerald-400 tracking-[0.4em] uppercase">Official
-                            Identity</span>
+                <div class="text-center mb-3">
+                    <div class="inline-block px-2 py-0.5 glass rounded-full mb-1">
+                        <span class="text-[6px] font-black text-emerald-400 tracking-[0.2em] uppercase">Identity</span>
                     </div>
-                    <h1 class="text-2xl font-black text-white tracking-tighter uppercase">Laundry <span
-                            class="text-emerald-500">LPJ</span></h1>
+                    <h1 class="text-xs font-black text-white tracking-tighter uppercase leading-none">
+                        Laundry <span class="text-emerald-500">LPJ</span></h1>
                 </div>
 
                 {{-- Photo Frame --}}
-                <div class="relative mb-8 pt-4">
-                    {{-- Decorative Rings --}}
-                    <div class="absolute inset-0 -m-3 border border-emerald-500/20 rounded-[3rem] animate-pulse"></div>
-                    <div class="absolute inset-0 -m-6 border border-emerald-500/10 rounded-[4rem]"></div>
-
+                <div class="relative mb-3 pt-1 w-full flex justify-center">
                     <div
-                        class="w-40 h-40 rounded-[2.5rem] border-4 border-white/10 shadow-2xl overflow-hidden bg-slate-800 relative z-10">
+                        class="w-16 h-16 rounded-2xl border-2 border-white/10 shadow-lg overflow-hidden bg-slate-800 relative z-10 mx-auto">
                         <img src="{{ $karyawan->foto_url }}" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 hologram"></div>
                     </div>
-
                     {{-- Status Badge --}}
                     <div
-                        class="absolute -bottom-2 -right-2 bg-emerald-500 text-white text-[9px] font-black px-4 py-1.5 rounded-xl shadow-lg uppercase tracking-widest border-2 border-slate-950 z-20">
-                        Active Staf
+                        class="absolute -bottom-1 right-2 bg-emerald-500 text-white text-[6px] font-black px-1.5 py-0.5 rounded-md shadow-lg uppercase tracking-wider border border-slate-950 z-20">
+                        Staf
                     </div>
                 </div>
 
                 {{-- Name & Jabatan --}}
-                <div class="text-center space-y-1 mb-10 w-full">
-                    <h2 class="text-2xl font-extrabold text-white leading-tight uppercase tracking-tight">
-                        {{ $karyawan->user->name }}</h2>
-                    <div class="w-12 h-1 bg-emerald-500 mx-auto rounded-full my-3"></div>
-                    <p class="text-sm font-semibold text-emerald-400 uppercase tracking-[0.2em]">
-                        {{ $karyawan->jabatan->nama_jabatan }}</p>
+                <div class="text-center space-y-0.5 w-full">
+                    <h2
+                        class="text-xs font-extrabold text-white leading-tight uppercase tracking-tight truncate w-full px-1">
+                        {{ $karyawan->user->name }}
+                    </h2>
+                    <div class="w-6 h-0.5 bg-emerald-500 mx-auto rounded-full my-1"></div>
+                    <p class="text-[7px] font-semibold text-emerald-400 uppercase tracking-widest truncate w-full">
+                        {{ $karyawan->jabatan->nama_jabatan }}
+                    </p>
                 </div>
 
                 {{-- QR Section --}}
-                <div class="w-full mt-auto mb-6">
-                    <div class="glass flex flex-col items-center p-5 rounded-[2rem] gap-3 border border-white/5">
+                <div class="w-full mt-auto mb-2">
+                    <div class="glass flex flex-col items-center p-2 rounded-xl gap-1.5 border border-white/5 mx-1">
                         <div
-                            class="bg-white p-3 rounded-2xl shadow-xl w-32 h-32 flex items-center justify-center overflow-hidden">
+                            class="bg-white p-1 rounded-lg shadow-md w-20 h-20 flex items-center justify-center overflow-hidden">
                             {!! $qrCode !!}
                         </div>
                         <div class="text-center w-full">
-                            <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">Employee
-                                ID</p>
-                            <p class="mono text-[12px] font-bold text-white tracking-widest truncate">
+                            <p class="mono text-[8.5px] mt-0.5 font-black text-white tracking-widest truncate">
                                 {{ $karyawan->barcode }}</p>
-                            <p class="text-[9px] text-slate-400 mt-2 leading-tight italic px-1">
-                                Scan untuk absensi harian via dashboard admin.
-                            </p>
                         </div>
                     </div>
                 </div>
-
             </div>
 
             {{-- Bottom Accent --}}
-            <div class="h-12 w-full bg-slate-950 flex items-center justify-center px-8 border-t border-white/5">
-                <p class="text-[8px] text-slate-500 font-bold tracking-[0.3em] uppercase">Professional Laundry
-                    Management System</p>
+            <div class="h-4 w-full bg-slate-950 flex items-center justify-center border-t border-white/5">
+                <p class="text-[4px] text-slate-500 font-bold tracking-[0.2em] uppercase">Laundry Management</p>
             </div>
 
         </div>

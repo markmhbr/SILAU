@@ -23,11 +23,31 @@
 
 
 
-        <!-- Tabel Rekap -->
+        <!-- Tabel Rekap & Filter -->
         <div
             class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-            <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+            <div
+                class="p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <h3 class="text-lg font-bold">Semua Riwayat Kehadiran</h3>
+
+                {{-- Date Filter Form --}}
+                <form action="{{ route('admin.absensi.index') }}" method="GET"
+                    class="flex items-center gap-2 w-full md:w-auto">
+                    <div class="relative w-full md:w-48">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-calendar-alt text-slate-400"></i>
+                        </div>
+                        <input type="date" name="tanggal" value="{{ $selectedDate ?? '' }}"
+                            class="w-full pl-10 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white"
+                            onchange="this.form.submit()">
+                    </div>
+                    @if (isset($selectedDate))
+                        <a href="{{ route('admin.absensi.index') }}"
+                            class="p-2 text-slate-400 hover:text-red-500 transition-colors" title="Reset Filter">
+                            <i class="fas fa-times-circle text-lg"></i>
+                        </a>
+                    @endif
+                </form>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left" id="dataTable">
@@ -120,24 +140,41 @@
                 @csrf
                 @method('PUT')
 
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Status</label>
-                    <select name="status" id="edit_status"
-                        class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 focus:ring-2 focus:ring-primary-500 transition-all dark:text-white"
-                        required>
-                        <option value="hadir">Hadir</option>
-                        <option value="izin">Izin</option>
-                        <option value="sakit">Sakit</option>
-                        <option value="alfa">Alfa</option>
-                    </select>
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Status
+                        Kehadiran</label>
+
+                    {{-- Hidden input to store selected status --}}
+                    <input type="hidden" name="status" id="edit_status" required>
+
+                    {{-- Status Buttons --}}
+                    <div class="grid grid-cols-2 gap-3 mb-2" id="status_buttons">
+                        <button type="button" data-status="hadir"
+                            class="status-btn py-2.5 rounded-xl border-2 font-bold text-sm transition-all focus:outline-none flex py-2 border-slate-200 text-slate-500 hover:border-green-500 hover:text-green-600 bg-white">
+                            <i class="fas fa-check-circle mr-2 mt-[2px]"></i> Hadir
+                        </button>
+                        <button type="button" data-status="izin"
+                            class="status-btn py-2.5 rounded-xl border-2 font-bold text-sm transition-all focus:outline-none flex py-2 border-slate-200 text-slate-500 hover:border-blue-500 hover:text-blue-600 bg-white">
+                            <i class="fas fa-envelope-open mr-2 mt-[2px]"></i> Izin
+                        </button>
+                        <button type="button" data-status="sakit"
+                            class="status-btn py-2.5 rounded-xl border-2 font-bold text-sm transition-all focus:outline-none flex py-2 border-slate-200 text-slate-500 hover:border-amber-500 hover:text-amber-600 bg-white">
+                            <i class="fas fa-briefcase-medical mr-2 mt-[2px]"></i> Sakit
+                        </button>
+                        <button type="button" data-status="alfa"
+                            class="status-btn py-2.5 rounded-xl border-2 font-bold text-sm transition-all focus:outline-none flex py-2 border-slate-200 text-slate-500 hover:border-red-500 hover:text-red-600 bg-white">
+                            <i class="fas fa-times-circle mr-2 mt-[2px]"></i> Alfa
+                        </button>
+                    </div>
                 </div>
 
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Keterangan
-                        Tambahan</label>
+                <div class="mb-6 hidden transition-all duration-300 transform origin-top opacity-0"
+                    id="keterangan_container">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Keterangan / Alasan
+                        <span class="text-red-500">*</span></label>
                     <textarea name="keterangan" id="edit_keterangan" rows="3"
-                        class="w-full rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 focus:ring-2 focus:ring-primary-500 transition-all dark:text-white"
-                        placeholder="Contoh: Sakit demam berdarah / Izin keperluan keluarga"></textarea>
+                        class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-4 py-3 focus:ring-2 focus:ring-primary-500 transition-all dark:text-white"
+                        placeholder="Masukkan alasan izin atau sakit..."></textarea>
                 </div>
 
                 <div class="flex justify-end gap-3">
@@ -155,5 +192,102 @@
     </div>
 
     @push('scripts')
+        <script>
+            const statusConfig = {
+                'hadir': {
+                    bg: 'bg-green-50',
+                    border: 'border-green-500',
+                    text: 'text-green-700'
+                },
+                'izin': {
+                    bg: 'bg-blue-50',
+                    border: 'border-blue-500',
+                    text: 'text-blue-700'
+                },
+                'sakit': {
+                    bg: 'bg-amber-50',
+                    border: 'border-amber-500',
+                    text: 'text-amber-700'
+                },
+                'alfa': {
+                    bg: 'bg-red-50',
+                    border: 'border-red-500',
+                    text: 'text-red-700'
+                }
+            };
+
+            const defaultClass = 'border-slate-200 text-slate-500 bg-white hover:bg-slate-50';
+
+            function updateButtonStyles(selectedStatus) {
+                document.querySelectorAll('.status-btn').forEach(btn => {
+                    const status = btn.dataset.status;
+
+                    // Reset to default
+                    btn.className =
+                        `status-btn py-2.5 px-4 rounded-xl border-2 font-bold text-sm transition-all focus:outline-none flex justify-center items-center gap-2 ${defaultClass}`;
+
+                    // Apply active styles if selected
+                    if (status === selectedStatus) {
+                        const conf = statusConfig[status];
+                        // Remove default classes
+                        btn.classList.remove('border-slate-200', 'text-slate-500', 'bg-white', 'hover:bg-slate-50');
+                        // Add active classes
+                        btn.classList.add(conf.bg, conf.border, conf.text, 'shadow-sm');
+                    }
+                });
+            }
+
+            // Initialize button click handlers
+            document.querySelectorAll('.status-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const status = this.dataset.status;
+                    const ketContainer = document.getElementById('keterangan_container');
+                    const ketInput = document.getElementById('edit_keterangan');
+                    const statusInput = document.getElementById('edit_status');
+
+                    // Update hidden input
+                    statusInput.value = status;
+
+                    // Update styles
+                    updateButtonStyles(status);
+
+                    // Show/hide keterangan
+                    if (status === 'izin' || status === 'sakit') {
+                        ketContainer.classList.remove('hidden');
+                        // Small delay to allow display:block to apply before animating opacity
+                        setTimeout(() => {
+                            ketContainer.classList.remove('opacity-0', 'scale-y-95');
+                            ketContainer.classList.add('opacity-100', 'scale-y-100');
+                        }, 10);
+                        ketInput.setAttribute('required', 'required');
+                    } else {
+                        ketContainer.classList.remove('opacity-100', 'scale-y-100');
+                        ketContainer.classList.add('opacity-0', 'scale-y-95');
+                        setTimeout(() => {
+                            ketContainer.classList.add('hidden');
+                        }, 300); // Wait for transition
+                        ketInput.removeAttribute('required');
+                        ketInput.value = ''; // clear if changing to hadir/alfa
+                    }
+                });
+            });
+
+            function openEditModal(id, currentStatus, keterangan) {
+                document.getElementById('editForm').action = `/admin/absensi/${id}`;
+                document.getElementById('editModal').classList.remove('hidden');
+                document.getElementById('editModal').classList.add('flex');
+
+                document.getElementById('edit_keterangan').value = keterangan || '';
+
+                // Trigger click on the appropriate button to set state
+                const btn = document.querySelector(`.status-btn[data-status="${currentStatus}"]`);
+                if (btn) btn.click();
+            }
+
+            function closeEditModal() {
+                document.getElementById('editModal').classList.add('hidden');
+                document.getElementById('editModal').classList.remove('flex');
+            }
+        </script>
     @endpush
 @endsection

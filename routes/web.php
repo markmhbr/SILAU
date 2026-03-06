@@ -167,9 +167,11 @@ Route::middleware(['auth', 'role:karyawan'])->prefix('karyawan')->name('karyawan
         ->name('kasir.pelanggan.show');
 
     Route::resource('/kasir', KasirController::class)->names('kasir');
+    Route::get('/kasir/struk/{id}', [KasirController::class, 'cetakStruk'])->name('kasir.struk');
     Route::patch('/kasir/{id}/status', [KasirController::class, 'updateStatus'])->name('kasir.status');
     Route::put('/kasir/{id}/berat', [KasirController::class, 'updateBerat'])
         ->name('kasir.berat');
+    Route::post('/kasir/{id}/bayar', [KasirController::class, 'bayar'])->name('kasir.bayar');
 
     // =====================
     // DRIVER

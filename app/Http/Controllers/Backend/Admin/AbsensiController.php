@@ -10,14 +10,20 @@ use Carbon\Carbon;
 
 class AbsensiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $absensis = Absensi::with(['karyawan.user', 'karyawan.jabatan'])
+        $query = Absensi::with(['karyawan.user', 'karyawan.jabatan'])
             ->orderBy('tanggal', 'desc')
-            ->orderBy('waktu_masuk', 'desc')
-            ->get();
+            ->orderBy('waktu_masuk', 'desc');
 
-        return view('backend.admin.absensi.index', compact('absensis'));
+        if ($request->filled('tanggal')) {
+            $query->where('tanggal', $request->tanggal);
+        }
+
+        $absensis = $query->get();
+        $selectedDate = $request->query('tanggal');
+
+        return view('backend.admin.absensi.index', compact('absensis', 'selectedDate'));
     }
 
     public function kiosk()

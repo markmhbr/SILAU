@@ -49,40 +49,6 @@
                     </div>
                 </div>
 
-                {{-- FORM INPUT BERAT AKTUAL (Muncul jika belum ditimbang) --}}
-                @if (is_null($transaksi->berat_aktual))
-                    <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-sm border-2 border-brand/20">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div
-                                class="w-10 h-10 bg-brand text-white rounded-xl flex items-center justify-center shadow-lg shadow-brand/20">
-                                ⚖️</div>
-                            <div>
-                                <h3 class="font-black text-slate-800 dark:text-white uppercase tracking-wider text-sm">
-                                    Penimbangan Riil</h3>
-                                <p class="text-[10px] text-slate-400 font-bold uppercase">Masukkan berat aktual untuk
-                                    menghitung harga final</p>
-                            </div>
-                        </div>
-
-                        <form action="{{ route('karyawan.kasir.berat', $transaksi->id) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <div class="flex flex-col md:flex-row gap-4">
-                                <div class="flex-1 relative">
-                                    <input type="number" step="0.01" name="berat_aktual"
-                                        class="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 focus:border-brand outline-none transition font-black text-brand text-lg"
-                                        placeholder="0.00" required>
-                                    <span
-                                        class="absolute right-6 top-1/2 -translate-y-1/2 font-black text-slate-400 uppercase text-xs">Kilogram</span>
-                                </div>
-                                <button type="submit"
-                                    class="px-8 py-4 bg-brand hover:bg-brandDark text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl shadow-brand/20 active:scale-95">
-                                    Hitung & Simpan Harga
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                @endif
 
                 {{-- HASIL AKHIR & RINCIAN NOTA --}}
                 <div
@@ -147,8 +113,7 @@
                     </p>
                 </div>
 
-                {{-- AKSI PEMBAYARAN KASIR --}}
-                @if (in_array($transaksi->status, ['ditimbang', 'menunggu pembayaran']) && $transaksi->harga_final)
+                @if ($transaksi->status === 'menunggu pembayaran' && $transaksi->metode_pembayaran === 'qris')
                     <div
                         class="bg-brand/10 dark:bg-brand/5 border-2 border-brand/20 rounded-[2.5rem] p-8 shadow-sm relative overflow-hidden">
                         <div class="flex items-center gap-4 mb-4">
@@ -164,31 +129,11 @@
                         </div>
 
                         <div class="mt-6 flex flex-col sm:flex-row gap-4">
-                            @if ($transaksi->metode_pembayaran === 'tunai')
-                                <form action="{{ route('karyawan.kasir.bayar', $transaksi->id) }}" method="POST"
-                                    class="w-full">
-                                    @csrf
-                                    <button type="submit"
-                                        class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black px-6 py-4 rounded-2xl uppercase tracking-widest text-xs transition shadow-lg shadow-emerald-500/30">
-                                        <i class="fas fa-money-bill-wave mr-2"></i> Konfirmasi Pembayaran Tunai
-                                    </button>
-                                </form>
-                            @elseif($transaksi->metode_pembayaran === 'qris')
-                                @if (!$transaksi->snap_token)
-                                    <form action="{{ route('karyawan.kasir.bayar', $transaksi->id) }}" method="POST"
-                                        class="w-full">
-                                        @csrf
-                                        <button type="submit"
-                                            class="w-full bg-brand hover:bg-brandDark text-white font-black px-6 py-4 rounded-2xl uppercase tracking-widest text-xs transition shadow-lg shadow-brand/30">
-                                            <i class="fas fa-qrcode mr-2"></i> Generate QRIS Token
-                                        </button>
-                                    </form>
-                                @else
-                                    <button type="button" id="pay-button"
-                                        class="w-full bg-slate-900 dark:bg-slate-700 hover:bg-black text-white font-black px-6 py-4 rounded-2xl uppercase tracking-widest text-xs transition shadow-lg">
-                                        <i class="fas fa-qrcode mr-2"></i> Tampilkan QRIS Midtrans
-                                    </button>
-                                @endif
+                            @if ($transaksi->snap_token)
+                                <button type="button" id="pay-button"
+                                    class="w-full bg-slate-900 dark:bg-slate-700 hover:bg-black text-white font-black px-6 py-4 rounded-2xl uppercase tracking-widest text-xs transition shadow-lg">
+                                    <i class="fas fa-qrcode mr-2"></i> Tampilkan QRIS Midtrans
+                                </button>
                             @endif
                         </div>
                     </div>
@@ -266,40 +211,52 @@
     </div>
 
     @if ($transaksi->snap_token && $transaksi->metode_pembayaran === 'qris' && $transaksi->status === 'menunggu pembayaran')
-        @push('scripts')
-            <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}">
-            </script>
-            <script>
+        <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}">
+        </script>
+        <script>
+            // Fungsi memunculkan midtrans
+            function openMidtrans() {
+                snap.pay('{{ $transaksi->snap_token }}', {
+                    onSuccess: function(result) {
+                        fetch("{{ route('karyawan.kasir.bayar', $transaksi->id) }}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({
+                                qris_success: true
+                            })
+                        }).then(r => r.json()).then(data => {
+                            if (data.success) {
+                                window.location.reload();
+                            }
+                        });
+                    },
+                    onPending: function(result) {
+                        alert("Menunggu pembayaran Anda!");
+                    },
+                    onError: function(result) {
+                        alert("Pembayaran gagal!");
+                    }
+                });
+            }
+
+            // Tambahkan event click pada tombol
+            if (document.getElementById('pay-button')) {
                 document.getElementById('pay-button').onclick = function() {
-                    // SnapToken acquired from previous step
-                    snap.pay('{{ $transaksi->snap_token }}', {
-                        // Optional
-                        onSuccess: function(result) {
-                            // Update status transaksi jika berhasil
-                            fetch("{{ route('karyawan.kasir.bayar', $transaksi->id) }}", {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                                },
-                                body: JSON.stringify({
-                                    qris_success: true
-                                })
-                            }).then(r => r.json()).then(data => {
-                                if (data.success) {
-                                    window.location.reload();
-                                }
-                            });
-                        },
-                        onPending: function(result) {
-                            alert("Menunggu pembayaran Anda!");
-                        },
-                        onError: function(result) {
-                            alert("Pembayaran gagal!");
-                        }
-                    });
+                    openMidtrans();
                 };
-            </script>
-        @endpush
+            }
+
+            // Jika baru dibuat dan masuk halaman ini pertama kali (bisa dideteksi dari status menunggu pembayaran),
+            // Kita coba popup langsung
+            window.onload = function() {
+                if (!sessionStorage.getItem('opened_qris_{{ $transaksi->id }}')) {
+                    sessionStorage.setItem('opened_qris_{{ $transaksi->id }}', 'true');
+                    openMidtrans();
+                }
+            };
+        </script>
     @endif
 @endsection

@@ -219,3 +219,25 @@
         </div>
     </div>
 </aside>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-scroll sidebar to active menu item
+        const sidebarNav = document.querySelector('aside#sidebar nav');
+        if (sidebarNav) {
+            // Find the active link indicating the current page
+            // Based on the classes used in sidebar.blade.php for active items
+            const activeLink = sidebarNav.querySelector(
+                '.bg-primary-50, .text-indigo-600.font-bold, .bg-white.dark\\:bg-slate-800.shadow-sm');
+
+            if (activeLink) {
+                // Scroll the sidebar navigation area to show the active link
+                // Behavior 'auto' is used to prevent visible scrolling animation on initial load
+                activeLink.scrollIntoView({
+                    behavior: 'auto',
+                    block: 'center'
+                });
+            }
+        }
+    });
+</script>

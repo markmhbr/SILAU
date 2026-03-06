@@ -15,6 +15,10 @@ class AccountController extends Controller
         // Langsung ambil data user yang sedang login dari tabel users
         $user = Auth::user();
 
+        if ($user->role === 'admin') {
+            return view('content.backend.admin.account.index', compact('user'));
+        }
+
         return view('content.backend.account', compact('user'));
     }
 

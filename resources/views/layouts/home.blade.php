@@ -53,6 +53,10 @@
     </script>
 
     <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
         ::-webkit-scrollbar {
             width: 5px;
         }

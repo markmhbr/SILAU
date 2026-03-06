@@ -68,7 +68,7 @@ class KasirController extends Controller
     {
         $request->validate([
             'layanan_id' => 'required|exists:layanan,id',
-            'estimasi_berat' => 'required|numeric|min:0.1',
+            'berat_aktual' => 'required|numeric|min:0.1',
             'metode_pembayaran' => 'required|in:tunai,qris',
             'email' => 'nullable|email',
             'diskon_id' => 'nullable|exists:diskon,id',
@@ -90,20 +90,31 @@ class KasirController extends Controller
 
             $layanan = Layanan::findOrFail($request->layanan_id);
 
-            // hitung estimasi
-            $hargaEstimasi = $layanan->harga_perkilo * $request->estimasi_berat;
+            // hitung harga final langsung dari berat_aktual
+            $hargaLayanan = $layanan->harga_perkilo * $request->berat_aktual;
 
             $diskonNominal = 0;
             if ($request->diskon_id) {
                 $diskon = Diskon::find($request->diskon_id);
-                if ($diskon && $hargaEstimasi >= $diskon->minimal_transaksi) {
+                if ($diskon && $hargaLayanan >= $diskon->minimal_transaksi) {
                     $diskonNominal = $diskon->tipe === 'persentase'
-                        ? ($hargaEstimasi * $diskon->nilai / 100)
+                        ? ($hargaLayanan * $diskon->nilai / 100)
                         : $diskon->nilai;
                 }
             }
 
-            $hargaEstimasiFinal = max(0, $hargaEstimasi - $diskonNominal);
+            $hargaFinal = max(0, $hargaLayanan - $diskonNominal);
+
+            // Tentukan status awal berdasarkan metode pembayaran
+            $statusAwal = 'diterima kasir';
+            $paidAt = null;
+
+            if ($request->metode_pembayaran === 'tunai') {
+                $statusAwal = 'dibayar';
+                $paidAt = now();
+            } elseif ($request->metode_pembayaran === 'qris') {
+                $statusAwal = 'menunggu pembayaran';
+            }
 
             $transaksi = Transaksi::create([
                 'order_id'         => 'TRX-' . time(),
@@ -113,16 +124,40 @@ class KasirController extends Controller
                 'diskon_id'        => $request->diskon_id,
                 'cara_serah'       => 'antar',
 
-                'estimasi_berat'   => $request->estimasi_berat,
-                'harga_estimasi'   => $hargaEstimasiFinal,
+                'estimasi_berat'   => $request->berat_aktual,
+                'harga_estimasi'   => $hargaFinal,
 
-                'berat_aktual'     => null,
-                'harga_final'      => null,
+                'berat_aktual'     => $request->berat_aktual,
+                'harga_final'      => $hargaFinal,
 
                 'metode_pembayaran' => $request->metode_pembayaran,
-                'status'           => 'diterima kasir',
+                'status'           => $statusAwal,
+                'paid_at'          => $paidAt,
                 'catatan'          => $request->catatan,
             ]);
+
+            // Jika QRIS, langsung buat token Midtrans
+            if ($request->metode_pembayaran === 'qris') {
+                \Midtrans\Config::$serverKey = config('midtrans.server_key');
+                \Midtrans\Config::$isProduction = config('midtrans.is_production');
+                \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
+                \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
+
+                $params = [
+                    'transaction_details' => [
+                        'order_id' => $transaksi->order_id,
+                        'gross_amount' => $transaksi->harga_final,
+                    ],
+                    'customer_details' => [
+                        'first_name' => $transaksi->pelanggan ? $transaksi->pelanggan->user->name : 'Pelanggan',
+                        'email' => $transaksi->pelanggan ? $transaksi->pelanggan->user->email : 'guest@example.com',
+                    ],
+                ];
+
+                $snapToken = \Midtrans\Snap::getSnapToken($params);
+                $transaksi->snap_token = $snapToken;
+                $transaksi->save();
+            }
 
             DB::commit();
             return redirect()
@@ -275,5 +310,17 @@ class KasirController extends Controller
         }
 
         return back()->with('error', 'Metode pembayaran tidak valid.');
+    }
+
+    /**
+     * Cetak Struk format Thermal (Karyawan)
+     */
+    public function cetakStruk($id)
+    {
+        $transaksi = Transaksi::with(['pelanggan.user', 'layanan', 'diskon'])->findOrFail($id);
+
+        $profil = \App\Models\ProfilPerusahaan::first();
+
+        return view('content.backend.admin.transaksi.struk', compact('transaksi', 'profil'));
     }
 }
