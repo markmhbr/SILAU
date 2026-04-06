@@ -131,24 +131,44 @@
                             </form>
 
                             {{-- Script Tracking --}}
+                            <div id="tracking-status-{{ $item->id }}" class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800 flex items-center gap-3">
+                                <div class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+                                <p class="text-[10px] font-bold text-blue-700 dark:text-blue-300 uppercase tracking-widest leading-none">Pelacakan Aktif</p>
+                                <p class="text-[9px] text-blue-500 ml-auto italic">Jangan tutup halaman ini agar pelanggan bisa melacak Anda</p>
+                            </div>
+
                             <script>
-                                if ("geolocation" in navigator) {
-                                    setInterval(() => {
-                                        navigator.geolocation.getCurrentPosition((position) => {
-                                            fetch("{{ route('karyawan.driver.update-lokasi', $item->id) }}", {
-                                                method: "POST",
-                                                headers: {
-                                                    "Content-Type": "application/json",
-                                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                                                },
-                                                body: JSON.stringify({
-                                                    latitude: position.coords.latitude,
-                                                    longitude: position.coords.longitude
-                                                })
-                                            });
+                                (function() {
+                                    let lastUpdate = 0;
+                                    const minInterval = 8000; // Minimal 8 detik antar hit ke server
+
+                                    if ("geolocation" in navigator) {
+                                        const watchId = navigator.geolocation.watchPosition((position) => {
+                                            const now = Date.now();
+                                            if (now - lastUpdate > minInterval) {
+                                                lastUpdate = now;
+                                                
+                                                fetch("{{ route('karyawan.driver.update-lokasi', $item->id) }}", {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type": "application/json",
+                                                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                                    },
+                                                    body: JSON.stringify({
+                                                        latitude: position.coords.latitude,
+                                                        longitude: position.coords.longitude
+                                                    })
+                                                }).catch(err => console.error("Tracking Error:", err));
+                                            }
+                                        }, (error) => {
+                                            console.error("Geolocation Error:", error);
+                                        }, {
+                                            enableHighAccuracy: true,
+                                            maximumAge: 10000,
+                                            timeout: 5000
                                         });
-                                    }, 10000); 
-                                }
+                                    }
+                                })();
                             </script>
                         @elseif ($item->status == 'diambil driver')
                              <form action="{{ route('karyawan.driver.terima-kasir', $item->id) }}" method="POST">

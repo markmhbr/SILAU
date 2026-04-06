@@ -60,17 +60,52 @@
             </div>
         </div>
 
+        <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            <p>Pembaruan Terakhir</p>
+            <p id="last-update-time">{{ $transaksi->updated_at->format('H:i:s') }}</p>
+        </div>
+
         <p class="text-xs text-center text-slate-400 italic">
-            Halaman ini akan memperbarui lokasi driver secara otomatis setiap 30 detik.
+            Lokasi driver akan diperbarui otomatis setiap 15 detik secara real-time.
         </p>
     </div>
 </div>
 
 <script>
-    // Refresh halaman setiap 30 detik untuk update lokasi driver
-    setInterval(() => {
-        window.location.reload();
-    }, 30000);
+    const transaksiId = "{{ $transaksi->id }}";
+    const mapIframe = document.getElementById('tracking-map');
+    const timeDisplay = document.getElementById('last-update-time');
+
+    // Fungsi untuk memperbarui lokasi tanpa reload halaman penuh
+    async function refreshLocation() {
+        try {
+            // Kita bisa pakai fetch ke endpoint tracking yang sudah ada atau buat API kecil
+            // Namun cara termudah dan paling reliable untuk view sederhana ini adalah 
+            // merefresh src iframe dengan koordinat terbaru dari DB
+            const response = await fetch("{{ route('pelanggan.layanan.detail', $transaksi->id) }}", {
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            });
+            
+            // Jika kita ingin lebih pro, kita harusnya punya API endpoint khusus koordinat
+            // Tapi untuk sekarang kita reload src iframe setiap 15 detik
+            const now = new Date();
+            const timeString = now.getHours().toString().padStart(2, '0') + ":" + 
+                               now.getMinutes().toString().padStart(2, '0') + ":" + 
+                               now.getSeconds().toString().padStart(2, '0');
+            
+            // Cara paksa iframe reload (Google Maps Embed butuh param unik agar tidak cache)
+            const currentSrc = mapIframe.src;
+            const baseUrl = currentSrc.split('&refresh=')[0];
+            mapIframe.src = baseUrl + "&refresh=" + now.getTime();
+            timeDisplay.innerText = timeString;
+
+        } catch (err) {
+            console.error("Refresh Error:", err);
+        }
+    }
+
+    // Refresh setiap 15 detik
+    setInterval(refreshLocation, 15000);
 </script>
 
 <style>
