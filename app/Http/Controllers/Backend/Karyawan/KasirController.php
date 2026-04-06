@@ -347,8 +347,7 @@ class KasirController extends Controller
     {
         $activeDrivers = Transaksi::with(['driver.user', 'pelanggan.user'])
             ->whereIn('status', ['menuju lokasi penjemputan', 'diambil driver'])
-            ->whereNotNull('driver_latitude')
-            ->whereNotNull('driver_longitude')
+            ->latest()
             ->get();
 
         $outlet = \App\Models\ProfilPerusahaan::first();

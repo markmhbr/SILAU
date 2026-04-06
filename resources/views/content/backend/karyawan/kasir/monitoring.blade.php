@@ -29,17 +29,27 @@
             
             <div class="space-y-3">
                 @forelse($activeDrivers as $item)
-                <div class="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center gap-4 hover:shadow-lg transition cursor-pointer" onclick="focusDriver('{{ $item->driver_latitude }}', '{{ $item->driver_longitude }}', '{{ $item->id }}')">
-                    <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-black">
+                <div class="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center gap-4 hover:shadow-lg transition cursor-pointer {{ !$item->driver_latitude ? 'opacity-60' : '' }}" 
+                     onclick="focusDriver('{{ $item->driver_latitude }}', '{{ $item->driver_longitude }}', '{{ $item->id }}')">
+                    <div class="w-12 h-12 rounded-full {{ $item->status == 'menuju lokasi penjemputan' ? 'bg-blue-100 text-blue-600' : 'bg-emerald-100 text-emerald-600' }} flex items-center justify-center font-black">
                         {{ substr($item->driver?->user?->name ?? 'D', 0, 1) }}
                     </div>
                     <div class="flex-1">
-                        <p class="text-sm font-black text-slate-800 dark:text-white truncate">
-                            {{ $item->driver?->user?->name ?? 'Unknown' }}
-                        </p>
-                        <p class="text-[10px] text-slate-400 uppercase tracking-wider">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm font-black text-slate-800 dark:text-white truncate lg:max-w-[100px]">
+                                {{ $item->driver?->user?->name ?? 'Unknown' }}
+                            </p>
+                            <span class="text-[9px] font-mono text-slate-400">{{ $item->order_id }}</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mt-0.5">
                             {{ str_replace('_', ' ', $item->status) }}
                         </p>
+                        @if(!$item->driver_latitude)
+                            <p class="text-[9px] text-rose-500 italic mt-1 flex items-center gap-1">
+                                <span class="w-1 h-1 bg-rose-500 rounded-full animate-pulse"></span>
+                                Lokasi belum tersedia
+                            </p>
+                        @endif
                     </div>
                 </div>
                 @empty
@@ -74,7 +84,10 @@
 
 <script>
     function focusDriver(lat, lng, id) {
-        if (!lat || !lng) return;
+        if (!lat || !lng) {
+            alert("Lokasi driver ini belum tersedia di sistem. Mohon tunggu pembaruan otomatis.");
+            return;
+        }
         const iframe = document.getElementById('monitoring-map');
         iframe.src = `https://www.google.com/maps?q=${lat},${lng}&hl=id&z=17&output=embed`;
     }
