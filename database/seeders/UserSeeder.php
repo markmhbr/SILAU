@@ -32,6 +32,17 @@ class UserSeeder extends Seeder
             ]
         );
 
+        // 3. Create Jabatan
+        $jabatanKasir = Jabatan::updateOrCreate(
+            ['nama_jabatan' => 'Kasir'],
+            ['deskripsi' => 'Pengelola transaksi dan keuangan di outlet.']
+        );
+
+        $jabatanDriver = Jabatan::updateOrCreate(
+            ['nama_jabatan' => 'Driver'],
+            ['deskripsi' => 'Petugas layanan antar-jemput cucian pelanggan.']
+        );
+
         
     }
 }
