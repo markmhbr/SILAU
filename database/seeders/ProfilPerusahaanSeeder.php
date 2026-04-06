@@ -16,7 +16,7 @@ class ProfilPerusahaanSeeder extends Seeder
             ['id' => 1], // pastikan cuma satu data
             [
                 'nama_perusahaan' => 'Silau',
-                'deskripsi' => 'Deskripsi singkat tentang usaha demo.',
+                'deskripsi' => 'Deskripsi singkat tentang usaha Silau.',
                 'tentang_kami' => 'Tentang kami ...',
                 'alamat' => 'Smk Nurul Islam Affandiyah Cianjur',
                 'no_wa' => '089639011628',
