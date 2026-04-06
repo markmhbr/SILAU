@@ -104,10 +104,6 @@
                                class="flex items-center gap-2 text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:text-slate-600 transition-colors">
                                 🧭 Eksternal Maps
                             </a>
-                            <a href="{{ route('karyawan.driver.peta', $item->id) }}"
-                               class="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-700 dark:text-slate-300 font-bold text-[10px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
-                                🗺️ Buka Navigasi App
-                            </a>
                         </div>
 
                         @if ($item->status == 'menunggu penjemputan')
@@ -124,17 +120,23 @@
                                 </button>
                             </form>
                         @elseif ($item->status == 'menuju lokasi penjemputan')
-                            <form action="{{ route('karyawan.driver.sampai', $item->id) }}" method="POST">
-                                @csrf
-                                @method('PATCH')
-                                <button
-                                    class="group bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-black text-sm transition-all hover:shadow-2xl hover:shadow-blue-500/20 active:scale-95 flex items-center gap-3">
-                                    <span>Sampai di Lokasi</span>
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </button>
-                            </form>
+                            <div class="flex items-center gap-3">
+                                <a href="{{ route('karyawan.driver.peta', $item->id) }}"
+                                   class="flex items-center gap-2 px-6 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:shadow-xl transition-all active:scale-95">
+                                    🗺️ Buka Navigasi App
+                                </a>
+                                <form action="{{ route('karyawan.driver.sampai', $item->id) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button
+                                        class="group bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-2xl font-black text-sm transition-all hover:shadow-2xl hover:shadow-blue-500/20 active:scale-95 flex items-center gap-3">
+                                        <span>Sampai</span>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
 
                             {{-- Script Tracking --}}
                             <div id="tracking-status-{{ $item->id }}" class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800 flex items-center gap-3">

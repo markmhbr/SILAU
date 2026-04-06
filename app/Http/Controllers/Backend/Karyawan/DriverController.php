@@ -108,8 +108,9 @@ class DriverController extends Controller
     {
         $karyawan = auth()->user()->karyawan;
 
-        if ($transaksi->driver_id !== $karyawan->id) {
-            abort(403, 'Akses ditolak');
+        // Gunakan perbandingan longgar atau pastikan tipe data sama
+        if (!$transaksi->driver_id || $transaksi->driver_id != $karyawan->id) {
+            abort(403, 'Hanya driver yang bertugas yang dapat mengakses peta navigasi ini.');
         }
 
         return view('content.backend.karyawan.driver.peta', compact('transaksi'));
