@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Struk Laundry - {{ $transaksi->id }}</title>
+    <title>Struk Laundry - {{ $transaksi->order_id }}</title>
     <style>
         body {
             font-family: 'Courier New', monospace;
@@ -65,7 +65,7 @@
 
     <div>
         <div>Tgl: {{ $transaksi->created_at->format('d/m/Y H:i') }}</div>
-        <div>No: #{{ $transaksi->order_id ?? 'TRX' . str_pad($transaksi->id, 5, '0', STR_PAD_LEFT) }}</div>
+        <div>No: #{{ $transaksi->order_id }}</div>
         <div>Kasir: {{ auth()->user()->name }}</div>
     </div>
 

@@ -140,7 +140,7 @@
                                                     📍 {{ $item->pelanggan->alamat_lengkap ?? 'Alamat tidak diisi' }}
                                                 </p>
                                             @else
-                                                <p class="text-[10px] text-slate-400 font-mono">#INV-{{ $item->id }}
+                                            <p class="text-[10px] text-slate-400 font-mono">{{ $item->order_id }}
                                                 </p>
                                             @endif
                                         </div>

@@ -39,7 +39,7 @@
                         @forelse($transaksi as $t)
                             <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group">
                                 <td class="px-6 py-5">
-                                    <p class="font-mono text-xs font-bold text-brand">#{{ $t->id }}</p>
+                                    <p class="font-mono text-xs font-bold text-brand">{{ $t->order_id }}</p>
                                     <p class="text-[10px] text-slate-400 font-medium">
                                         {{ $t->created_at->format('d M Y, H:i') }}
                                     </p>

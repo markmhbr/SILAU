@@ -10,7 +10,7 @@
             📍 Lacak Penjemputan
         </h2>
         <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
-            Pesanan #TRX-{{ str_pad($transaksi->id, 5, '0', STR_PAD_LEFT) }}
+            Pesanan {{ $transaksi->order_id }}
         </p>
     </div>
 

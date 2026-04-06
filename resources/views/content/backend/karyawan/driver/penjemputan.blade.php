@@ -49,7 +49,7 @@
                                     📍 {{ $item->pelanggan?->alamat_lengkap ?? 'Alamat belum tersedia' }}
                                 </p>
                                 <p class="text-[10px] text-slate-400 font-mono mt-1">
-                                    #TRX-{{ str_pad($item->id, 5, '0', STR_PAD_LEFT) }}
+                                    {{ $item->order_id }}
                                 </p>
                             </div>
                         </div>

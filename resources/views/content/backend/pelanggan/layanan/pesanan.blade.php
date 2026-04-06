@@ -66,6 +66,9 @@
                                             class="font-bold text-slate-800 dark:text-white group-hover:text-brand transition-colors whitespace-nowrap">
                                             {{ $transaksi->layanan->nama_layanan }}
                                         </div>
+                                        <div class="text-[10px] text-slate-400 font-mono mt-0.5">
+                                            {{ $transaksi->order_id }}
+                                        </div>
                                         <div
                                             class="text-[10px] bg-brand/10 text-brand px-2 py-0.5 rounded-md inline-block mt-1 font-black uppercase tracking-tighter">
                                             {{ $transaksi->layanan->jenis_layanan }}

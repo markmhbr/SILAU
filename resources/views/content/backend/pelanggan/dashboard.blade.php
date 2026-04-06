@@ -107,7 +107,7 @@
                                     {{ $transaksi->layanan->nama_layanan }}
                                 </p>
                                 <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-mono">
-                                    #INV-{{ $transaksi->id }}{{ date('dmY', strtotime($transaksi->tanggal_masuk)) }}
+                                    {{ $transaksi->order_id }}
                                 </p>
                             </div>
                         </div>
