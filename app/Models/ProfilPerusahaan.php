@@ -20,6 +20,8 @@ class ProfilPerusahaan extends Model
         'tiktok',
         'youtube',
         'logo',
+        'latitude',
+        'longitude',
         'service_hours',
         'fast_response',
         'tentang_kami',

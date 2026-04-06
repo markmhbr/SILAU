@@ -192,7 +192,24 @@ Route::middleware(['auth', 'role:karyawan'])->prefix('karyawan')->name('karyawan
 
         Route::patch('/antar/{transaksi}', [DriverController::class, 'antar'])
             ->name('antar');
+
+        Route::patch('/sampai/{transaksi}', [DriverController::class, 'sampai'])
+            ->name('sampai');
+
+        Route::patch('/terima-kasir/{transaksi}', [DriverController::class, 'terimaKasir'])
+            ->name('terima-kasir');
+
+        Route::post('/update-lokasi/{transaksi}', [DriverController::class, 'updateLokasi'])
+            ->name('update-lokasi');
     });
+});
+
+// Tracking Routes (Publicly accessible but usually auth protected)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/tracking/{transaksi}', [InterfaceController::class, 'tracking'])
+        ->name('tracking');
+    Route::get('/kasir/monitoring-driver', [KasirController::class, 'monitoring'])
+        ->name('karyawan.kasir.monitoring');
 });
 
 

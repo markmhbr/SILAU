@@ -338,6 +338,21 @@ class KasirController extends Controller
 
         $profil = \App\Models\ProfilPerusahaan::first();
 
-        return view('content.backend.admin.transaksi.struk', compact('transaksi', 'profil'));
+    }
+
+    /**
+     * Halaman Monitoring Driver (Real-time dari Kasir)
+     */
+    public function monitoring()
+    {
+        $activeDrivers = Transaksi::with(['driver.user', 'pelanggan.user'])
+            ->whereIn('status', ['menuju lokasi penjemputan', 'diambil driver'])
+            ->whereNotNull('driver_latitude')
+            ->whereNotNull('driver_longitude')
+            ->get();
+
+        $outlet = \App\Models\ProfilPerusahaan::first();
+
+        return view('content.backend.karyawan.kasir.monitoring', compact('activeDrivers', 'outlet'));
     }
 }

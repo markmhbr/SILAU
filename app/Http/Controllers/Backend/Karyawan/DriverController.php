@@ -24,7 +24,17 @@ class DriverController extends Controller
         }
 
         $antreanTugas = Transaksi::with(['pelanggan.user'])
-            ->where('status', 'menunggu penjemputan')
+            ->where(function($query) use ($user) {
+                // Yang masih nunggu (siapa aja driver bisa ambil)
+                $query->where('status', 'menunggu penjemputan')
+                      ->whereNull('driver_id');
+                
+                // ATAU yang sedang diproses oleh driver ini
+                $query->orWhere(function($q) use ($user) {
+                    $q->whereIn('status', ['menuju lokasi penjemputan', 'diambil driver'])
+                      ->where('driver_id', $user->karyawan->id);
+                });
+            })
             ->whereHas('pelanggan', function ($q) {
                 $q->whereNotNull('latitude')
                   ->whereNotNull('longitude');
@@ -60,13 +70,83 @@ class DriverController extends Controller
         }
 
         $transaksi->update([
-            'status' => 'diambil driver',
-            'driver_id' => $karyawan->id, // GUNAKAN driver_id, bukan id_karyawan
+            'status' => 'menuju lokasi penjemputan',
+            'driver_id' => $karyawan->id, 
         ]);
 
         return redirect()
             ->route('karyawan.driver.penjemputan')
-            ->with('success', 'Penjemputan dimulai');
+            ->with('success', 'Penjemputan dimulai, sedang menuju lokasi pelanggan');
+    }
+
+    /**
+     * Driver sampai di lokasi pelanggan
+     */
+    public function sampai(Transaksi $transaksi)
+    {
+        $karyawan = auth()->user()->karyawan;
+
+        if ($transaksi->driver_id !== $karyawan->id) {
+            abort(403, 'Akses ditolak');
+        }
+
+        if ($transaksi->status !== 'menuju lokasi penjemputan') {
+            return back()->with('error', 'Status tidak valid');
+        }
+
+        $transaksi->update([
+            'status' => 'diambil driver'
+        ]);
+
+        return back()->with('success', 'Berhasil sampai di lokasi, silakan ambil pakaian');
+    }
+
+    /**
+     * Update lokasi driver secara real-time
+     */
+    public function updateLokasi(Request $request, Transaksi $transaksi)
+    {
+        $karyawan = auth()->user()->karyawan;
+
+        if ($transaksi->driver_id !== $karyawan->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+
+        $transaksi->update([
+            'driver_latitude' => $request->latitude,
+            'driver_longitude' => $request->longitude,
+        ]);
+
+        return response()->json(['message' => 'Location updated']);
+    }
+
+    /**
+     * Driver sampai di outlet dan pakaian diterima kasir
+     */
+    public function terimaKasir(Transaksi $transaksi)
+    {
+        $karyawan = auth()->user()->karyawan;
+
+        if ($transaksi->driver_id !== $karyawan->id) {
+            abort(403, 'Akses ditolak');
+        }
+
+        if ($transaksi->status !== 'diambil driver') {
+            return back()->with('error', 'Status tidak valid');
+        }
+
+        $transaksi->update([
+            'status' => 'diterima kasir'
+        ]);
+
+        return redirect()
+            ->route('karyawan.driver.penjemputan')
+            ->with('success', 'Pakaian telah diserahkan ke kasir');
     }
 
     /**

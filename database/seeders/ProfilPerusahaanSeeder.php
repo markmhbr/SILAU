@@ -28,6 +28,8 @@ class ProfilPerusahaanSeeder extends Seeder
                 'tiktok' => 'demo_tt',
                 'youtube' => 'https://youtube.com/demo',
                 'logo' => null,
+                'latitude' => -6.7196000,
+                'longitude' => 107.0984000,
             ]
         );
     }

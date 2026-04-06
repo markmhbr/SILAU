@@ -59,11 +59,22 @@
 
                 <div
                     class="bg-rose-50 dark:bg-rose-950/30 p-5 md:p-6 rounded-[2rem] border border-rose-100 dark:border-rose-900/50 flex flex-col justify-center items-center text-center cursor-pointer hover:bg-rose-100 transition-colors border-dashed">
-                    <a href="{{-- {{ route('karyawan.transaksi.create') }} --}}">
+                    <a href="{{ route('karyawan.kasir.create') }}">
                         <div
                             class="w-10 h-10 md:w-12 md:h-12 bg-rose-500 rounded-full flex items-center justify-center text-white text-lg md:text-xl mb-2">
                             +</div>
                         <p class="text-rose-600 dark:text-rose-400 font-black text-xs md:text-sm uppercase">Transaksi Baru
+                        </p>
+                    </a>
+                </div>
+
+                <div
+                    class="bg-blue-50 dark:bg-blue-950/30 p-5 md:p-6 rounded-[2rem] border border-blue-100 dark:border-blue-900/50 flex flex-col justify-center items-center text-center cursor-pointer hover:bg-blue-100 transition-colors border-dashed">
+                    <a href="{{ route('karyawan.kasir.monitoring') }}">
+                        <div
+                            class="w-10 h-10 md:w-12 md:h-12 bg-blue-600 rounded-full flex items-center justify-center text-white text-lg md:text-xl mb-2 text-white">
+                            📍</div>
+                        <p class="text-blue-600 dark:text-blue-400 font-black text-xs md:text-sm uppercase">Monitor Driver
                         </p>
                     </a>
                 </div>

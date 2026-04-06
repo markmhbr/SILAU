@@ -25,6 +25,8 @@ class Transaksi extends Model
         'snap_token',
         'paid_at',
         'status',
+        'driver_latitude',
+        'driver_longitude',
         'catatan',
         'nama_guest',
         'no_hp_guest',

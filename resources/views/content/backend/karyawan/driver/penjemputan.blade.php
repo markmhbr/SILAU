@@ -54,17 +54,38 @@
                             </div>
                         </div>
 
-                        <span
-                            class="px-4 py-1.5 bg-orange-100 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-full">
-                            Pending
+                        @php
+                            $statusLabel = 'Pending';
+                            $statusClass = 'bg-orange-100 text-orange-600';
+                            if ($item->status == 'menuju lokasi penjemputan') {
+                                $statusLabel = 'Menuju Lokasi';
+                                $statusClass = 'bg-blue-100 text-blue-600';
+                            } elseif ($item->status == 'diambil driver') {
+                                $statusLabel = 'Pakaian Diambil';
+                                $statusClass = 'bg-green-100 text-green-600';
+                            }
+                        @endphp
+                        <span class="px-4 py-1.5 {{ $statusClass }} text-[10px] font-black uppercase tracking-[0.2em] rounded-full">
+                            {{ $statusLabel }}
                         </span>
                     </div>
 
                     {{-- MAP --}}
                     @if ($item->pelanggan?->latitude && $item->pelanggan?->longitude)
+                        @php
+                            $destLat = $item->pelanggan->latitude;
+                            $destLng = $item->pelanggan->longitude;
+                            
+                            $outlet = \App\Models\ProfilPerusahaan::first();
+                            if ($item->status == 'diambil driver' && $outlet && $outlet->latitude) {
+                                $destLat = $outlet->latitude;
+                                $destLng = $outlet->longitude;
+                            }
+                        @endphp
                         <iframe
+                            id="map-{{ $item->id }}"
                             class="w-full h-64 rounded-2xl border border-slate-200 dark:border-slate-800"
-                            src="https://www.google.com/maps?q={{ $item->pelanggan->latitude }},{{ $item->pelanggan->longitude }}&hl=id&z=16&output=embed"
+                            src="https://www.google.com/maps?q={{ $destLat }},{{ $destLng }}&hl=id&z=16&output=embed"
                             loading="lazy">
                         </iframe>
                     @else
@@ -77,24 +98,71 @@
                     {{-- ACTION --}}
                     <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-4">
 
-                        <a href="https://www.google.com/maps?q={{ $item->pelanggan?->latitude }},{{ $item->pelanggan?->longitude }}"
+                        <a href="https://www.google.com/maps?q={{ $destLat }},{{ $destLng }}"
                            target="_blank"
                            class="flex items-center gap-2 text-orange-600 font-bold text-xs uppercase tracking-widest">
                             🧭 Buka Google Maps
                         </a>
 
-                        <form action="{{ route('karyawan.driver.jemput', $item->id) }}" method="POST">
-                            @csrf
-                            <button
-                                class="group bg-slate-900 hover:bg-black text-white px-10 py-4 rounded-2xl font-black text-sm transition-all hover:shadow-2xl hover:shadow-orange-500/20 active:scale-95 flex items-center gap-3">
-                                <span>Mulai Jemput</span>
-                                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1"
-                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                </svg>
-                            </button>
-                        </form>
+                        @if ($item->status == 'menunggu penjemputan')
+                            <form action="{{ route('karyawan.driver.jemput', $item->id) }}" method="POST">
+                                @csrf
+                                <button
+                                    class="group bg-slate-900 hover:bg-black text-white px-10 py-4 rounded-2xl font-black text-sm transition-all hover:shadow-2xl hover:shadow-orange-500/20 active:scale-95 flex items-center gap-3">
+                                    <span>Mulai Jemput</span>
+                                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-1"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </button>
+                            </form>
+                        @elseif ($item->status == 'menuju lokasi penjemputan')
+                            <form action="{{ route('karyawan.driver.sampai', $item->id) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                <button
+                                    class="group bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-2xl font-black text-sm transition-all hover:shadow-2xl hover:shadow-blue-500/20 active:scale-95 flex items-center gap-3">
+                                    <span>Sampai di Lokasi</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </button>
+                            </form>
+
+                            {{-- Script Tracking --}}
+                            <script>
+                                if ("geolocation" in navigator) {
+                                    setInterval(() => {
+                                        navigator.geolocation.getCurrentPosition((position) => {
+                                            fetch("{{ route('karyawan.driver.update-lokasi', $item->id) }}", {
+                                                method: "POST",
+                                                headers: {
+                                                    "Content-Type": "application/json",
+                                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                                },
+                                                body: JSON.stringify({
+                                                    latitude: position.coords.latitude,
+                                                    longitude: position.coords.longitude
+                                                })
+                                            });
+                                        });
+                                    }, 10000); 
+                                }
+                            </script>
+                        @elseif ($item->status == 'diambil driver')
+                             <form action="{{ route('karyawan.driver.terima-kasir', $item->id) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                <button
+                                    class="group bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-2xl font-black text-sm transition-all hover:shadow-2xl hover:shadow-green-500/20 active:scale-95 flex items-center gap-3">
+                                    <span>Serahkan ke Kasir</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </button>
+                            </form>
+                        @endif
 
                     </div>
 
