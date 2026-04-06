@@ -65,7 +65,7 @@ class DriverController extends Controller
         }
 
         // LOCK: jangan bisa diambil driver lain
-        if ($transaksi->id_karyawan !== null) {
+        if ($transaksi->driver_id !== null) {
             return back()->with('error', 'Tugas ini sudah diambil driver lain');
         }
 
