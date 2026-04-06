@@ -30,7 +30,7 @@
             {{-- KOLOM KIRI: INPUT & RINCIAN --}}
             <div class="lg:col-span-2 space-y-6">
 
-                {{-- SEKSI ESTIMASI (Data dari Pelanggan) --}}
+                {{-- SEKSI ESTIMASI & GUEST INFO --}}
                 <div
                     class="bg-slate-100/50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 rounded-[2.5rem] p-6">
                     <div class="flex flex-wrap gap-8">
@@ -46,6 +46,14 @@
                             <p class="text-lg font-bold text-slate-700 dark:text-slate-300">Rp
                                 {{ number_format($transaksi->harga_estimasi ?? 0, 0, ',', '.') }}</p>
                         </div>
+                        @if ($transaksi->waktu_ambil)
+                            <div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Waktu Ambil
+                                </p>
+                                <p class="text-lg font-bold text-brand uppercase">
+                                    {{ $transaksi->waktu_ambil }}</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -168,20 +176,34 @@
                     </form>
                 </div>
 
-                {{-- INFO MEMBER --}}
+                {{-- INFO PELANGGAN --}}
                 <div class="bg-brand/5 dark:bg-brand/10 p-8 rounded-[2.5rem] border border-brand/10 dark:border-brand/20">
                     <h4 class="text-brand font-black text-xs uppercase tracking-[0.2em] mb-4">Informasi Pelanggan</h4>
                     @if ($transaksi->pelanggan)
                         <div class="flex items-center gap-4">
                             <div
-                                class="w-12 h-12 bg-brand text-white rounded-2xl flex items-center justify-center font-black">
+                                class="w-12 h-12 bg-brand text-white rounded-2xl flex items-center justify-center font-black uppercase">
                                 {{ substr($transaksi->pelanggan->user->name, 0, 1) }}
                             </div>
                             <div>
                                 <p class="font-black text-slate-800 dark:text-white leading-tight">
                                     {{ $transaksi->pelanggan->user->name }}</p>
                                 <p class="text-[10px] text-slate-500 font-bold uppercase">
-                                    {{ $transaksi->pelanggan->user->email }}</p>
+                                    {{ $transaksi->pelanggan->no_hp ?? '-' }}</p>
+                            </div>
+                        </div>
+                    @elseif($transaksi->nama_guest)
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 bg-slate-800 text-white rounded-2xl flex items-center justify-center font-black uppercase">
+                                {{ substr($transaksi->nama_guest, 0, 1) }}
+                            </div>
+                            <div>
+                                <p class="font-black text-slate-800 dark:text-white leading-tight">
+                                    {{ $transaksi->nama_guest }}</p>
+                                <p class="text-[10px] text-slate-500 font-bold uppercase">
+                                    {{ $transaksi->no_hp_guest ?? '-' }}</p>
+                                <p class="text-[9px] text-slate-400 font-bold italic mt-1">Guest / Non-Member</p>
                             </div>
                         </div>
                     @else
@@ -190,8 +212,8 @@
                                 class="w-12 h-12 bg-slate-200 dark:bg-slate-700 text-slate-500 rounded-2xl flex items-center justify-center text-xl">
                                 👤</div>
                             <div>
-                                <p class="font-black text-slate-800 dark:text-white leading-tight">Pelanggan Guest</p>
-                                <p class="text-[10px] text-slate-500 font-bold italic">Tanpa Akun Member</p>
+                                <p class="font-black text-slate-800 dark:text-white leading-tight">Pelanggan Umum</p>
+                                <p class="text-[10px] text-slate-500 font-bold italic">Tanpa Identitas</p>
                             </div>
                         </div>
                     @endif

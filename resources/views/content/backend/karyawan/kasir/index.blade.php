@@ -57,8 +57,28 @@
                                                     {{ $t->pelanggan->user->name }}
                                                 </p>
                                                 <p class="text-[10px] text-slate-400">
-                                                    {{ $t->pelanggan->user->email }}
+                                                    {{ $t->pelanggan->no_hp ?? '-' }}
                                                 </p>
+                                            </div>
+                                        </div>
+                                    @elseif($t->nama_guest)
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center text-[10px] font-black">
+                                                GS
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-black text-slate-700 dark:text-slate-200">
+                                                    {{ $t->nama_guest }}
+                                                </p>
+                                                <p class="text-[10px] text-slate-400">
+                                                    {{ $t->no_hp_guest ?? '-' }}
+                                                </p>
+                                                @if ($t->waktu_ambil)
+                                                    <p class="text-[9px] font-black text-brand uppercase mt-0.5">
+                                                        Ambil: {{ $t->waktu_ambil }}
+                                                    </p>
+                                                @endif
                                             </div>
                                         </div>
                                     @else
@@ -67,7 +87,7 @@
                                                 class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-[10px] font-black">
                                                 GS
                                             </div>
-                                            <p class="text-sm font-bold text-slate-400 italic">Pelanggan Guest</p>
+                                            <p class="text-sm font-bold text-slate-400 italic">Pelanggan Umum</p>
                                         </div>
                                     @endif
                                 </td>

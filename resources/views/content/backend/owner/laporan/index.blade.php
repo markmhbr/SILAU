@@ -214,8 +214,16 @@
             
             {{-- PELANGGAN --}}
             <td class="px-4 py-4 font-bold">
-                {{ $item->pelanggan->user->name ?? 'Guest' }}
-                <div class="text-[10px] text-slate-400 font-normal">{{ $item->order_id }}</div>
+                <div>{{ $item->pelanggan->user->name ?? ($item->nama_guest ?? 'Guest') }}</div>
+                <div class="text-[10px] text-slate-400 font-normal">
+                    {{ $item->pelanggan->no_hp ?? ($item->no_hp_guest ?? '-') }}
+                </div>
+                @if ($item->waktu_ambil)
+                    <div class="text-[9px] font-black text-brand uppercase mt-0.5 italic mb-0">
+                        Ambil: {{ $item->waktu_ambil }}
+                    </div>
+                @endif
+                <div class="text-[10px] text-slate-300 font-mono mt-1">#{{ $item->order_id ?? $item->id }}</div>
             </td>
 
             {{-- LAYANAN --}}

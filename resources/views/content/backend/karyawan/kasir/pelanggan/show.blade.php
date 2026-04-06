@@ -31,7 +31,7 @@
                             </div>
                             <div>
                                 <p class="text-sm font-black text-slate-700 dark:text-slate-200">{{ $pelanggan->user->name }}</p>
-                                <p class="text-[10px] text-slate-400">{{ $pelanggan->user->email }}</p>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase">{{ $pelanggan->no_hp ?? '-' }}</p>
                             </div>
                         </div>
                     </td>

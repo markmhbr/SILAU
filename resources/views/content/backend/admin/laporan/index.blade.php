@@ -103,7 +103,15 @@
                                                 {{ date('d/m/Y', strtotime($t->tanggal_masuk)) }}</div>
                                         </td>
                                         <td class="px-4 py-4 font-semibold text-slate-700 dark:text-slate-300">
-                                            {{ $t->pelanggan->user->name ?? "Guest" }}
+                                            <div>{{ $t->pelanggan->user->name ?? ($t->nama_guest ?? 'Guest') }}</div>
+                                            <div class="text-[10px] text-slate-400 font-normal">
+                                                {{ $t->pelanggan->no_hp ?? ($t->no_hp_guest ?? '-') }}
+                                            </div>
+                                            @if ($t->waktu_ambil)
+                                                <div class="text-[9px] font-black text-brand uppercase mt-0.5 italic mb-0">
+                                                    Ambil: {{ $t->waktu_ambil }}
+                                                </div>
+                                            @endif
                                         </td>
                                         <td class="px-4 py-4">
                                             <span

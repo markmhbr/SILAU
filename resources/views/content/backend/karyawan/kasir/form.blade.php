@@ -23,36 +23,52 @@
                     {{-- SECTION: DATA PELANGGAN --}}
                     <div
                         class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-sm border border-slate-200 dark:border-slate-800">
-                        <div class="flex items-center gap-3 mb-6">
-                            <span class="p-2 bg-brand/10 text-brand rounded-lg text-xl">👤</span>
-                            <h3 class="font-black text-slate-800 dark:text-white uppercase tracking-wider text-sm">Data
-                                Pelanggan</h3>
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-3">
+                                <span class="p-2 bg-brand/10 text-brand rounded-lg text-xl">👤</span>
+                                <h3 class="font-black text-slate-800 dark:text-white uppercase tracking-wider text-sm">Data
+                                    Pelanggan</h3>
+                            </div>
+                            {{-- TAB SWITCHER --}}
+                            <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                                <button type="button" id="btnTabMember"
+                                    class="px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all bg-white dark:bg-slate-700 shadow-sm text-slate-800 dark:text-white">
+                                    Member
+                                </button>
+                                <button type="button" id="btnTabGuest"
+                                    class="px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all text-slate-500 dark:text-slate-400">
+                                    Guest
+                                </button>
+                            </div>
+                            <input type="hidden" name="pelanggan_tipe" id="pelanggan_tipe" value="member">
                         </div>
 
                         <div class="space-y-4">
-                            <label class="block text-sm font-bold text-slate-700 dark:text-slate-300">Cari Member
-                                (Email)</label>
-                            <div class="relative">
-                                <input type="email" name="email" id="emailSearch"
-                                    class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-brand outline-none transition text-sm"
-                                    placeholder="Masukkan email pelanggan (Kosongkan jika Guest)...">
-                                <button type="button" id="btnCekMember"
-                                    class="absolute right-2 top-2 bottom-2 px-4 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-brand transition">
-                                    Cek
-                                </button>
+                            <div id="sectionMember">
+                                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Cari Member
+                                    (Email)</label>
+                                <div class="relative">
+                                    <input type="email" name="email" id="emailSearch"
+                                        class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-brand outline-none transition text-sm"
+                                        placeholder="Masukkan email pelanggan...">
+                                    <button type="button" id="btnCekMember"
+                                        class="absolute right-2 top-2 bottom-2 px-4 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-brand transition">
+                                        Cek
+                                    </button>
+                                </div>
+
+                                <div id="memberInfo"
+                                    class="hidden mt-4 p-4 rounded-2xl border border-emerald-100 bg-emerald-50 dark:bg-emerald-500/10 dark:border-emerald-500/20">
+                                    <p class="text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                                        ✅ Member Ditemukan: <span id="memberName" class="uppercase"></span>
+                                    </p>
+                                </div>
                             </div>
 
-                            <div id="memberInfo"
-                                class="hidden p-4 rounded-2xl border border-emerald-100 bg-emerald-50 dark:bg-emerald-500/10 dark:border-emerald-500/20">
-                                <p class="text-xs font-bold text-emerald-700 dark:text-emerald-400">
-                                    ✅ Member Ditemukan: <span id="memberName" class="uppercase"></span>
-                                </p>
-                            </div>
-
-                            <div id="guestInfo"
-                                class="p-4 rounded-2xl border border-slate-100 bg-slate-50 dark:bg-slate-800/50">
+                            <div id="sectionGuest"
+                                class="hidden p-4 rounded-2xl border border-slate-100 bg-slate-50 dark:bg-slate-800/50">
                                 <p class="text-xs font-bold text-slate-500 italic">Transaksi diproses sebagai Pelanggan
-                                    Guest (Tanpa Member)</p>
+                                    Guest (Tanpa Member). Silakan isi data di bawah.</p>
                             </div>
                         </div>
                     </div>
@@ -60,6 +76,30 @@
                     {{-- SECTION: DETAIL CUCIAN --}}
                     <div
                         class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-sm border border-slate-200 dark:border-slate-800">
+
+                        {{-- GUEST EXTRA FIELDS --}}
+                        <div id="guestExtraFields"
+                            class="hidden grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 pb-8 border-b border-slate-100 dark:border-slate-800 animate-slideDown">
+                            <div>
+                                <label class="block text-sm font-bold mb-2 text-slate-700 dark:text-slate-300">Atas Nama</label>
+                                <input type="text" name="nama_guest"
+                                    class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none text-sm focus:ring-2 focus:ring-brand"
+                                    placeholder="Nama Lengkap">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold mb-2 text-slate-700 dark:text-slate-300">No. HP</label>
+                                <input type="text" name="no_hp_guest"
+                                    class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none text-sm focus:ring-2 focus:ring-brand"
+                                    placeholder="0812xxxx">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold mb-2 text-slate-700 dark:text-slate-300">Waktu Ambil</label>
+                                <input type="text" name="waktu_ambil"
+                                    class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none text-sm focus:ring-2 focus:ring-brand"
+                                    placeholder="Contoh: Besok Sore">
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label
@@ -210,16 +250,51 @@
 
                 if (data.success) {
                     document.getElementById('memberInfo').classList.remove('hidden');
-                    document.getElementById('guestInfo').classList.add('hidden');
                     document.getElementById('memberName').textContent = data.nama;
                 } else {
                     alert('Member tidak ditemukan');
                     document.getElementById('memberInfo').classList.add('hidden');
-                    document.getElementById('guestInfo').classList.remove('hidden');
                 }
             } catch (error) {
                 console.error(error);
             }
         };
+
+        // Tab Switching Logic
+        const btnTabMember = document.getElementById('btnTabMember');
+        const btnTabGuest = document.getElementById('btnTabGuest');
+        const sectionMember = document.getElementById('sectionMember');
+        const sectionGuest = document.getElementById('sectionGuest');
+        const guestExtraFields = document.getElementById('guestExtraFields');
+        const pelangganTipe = document.getElementById('pelanggan_tipe');
+
+        function switchTab(tipe) {
+            if (tipe === 'member') {
+                pelangganTipe.value = 'member';
+                // Button UI
+                btnTabMember.classList.add('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'text-slate-800', 'dark:text-white');
+                btnTabMember.classList.remove('text-slate-500', 'dark:text-slate-400');
+                btnTabGuest.classList.remove('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'text-slate-800', 'dark:text-white');
+                btnTabGuest.classList.add('text-slate-500', 'dark:text-slate-400');
+                // Content UI
+                sectionMember.classList.remove('hidden');
+                sectionGuest.classList.add('hidden');
+                guestExtraFields.classList.add('hidden');
+            } else {
+                pelangganTipe.value = 'guest';
+                // Button UI
+                btnTabGuest.classList.add('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'text-slate-800', 'dark:text-white');
+                btnTabGuest.classList.remove('text-slate-500', 'dark:text-slate-400');
+                btnTabMember.classList.remove('bg-white', 'dark:bg-slate-700', 'shadow-sm', 'text-slate-800', 'dark:text-white');
+                btnTabMember.classList.add('text-slate-500', 'dark:text-slate-400');
+                // Content UI
+                sectionMember.classList.add('hidden');
+                sectionGuest.classList.remove('hidden');
+                guestExtraFields.classList.remove('hidden');
+            }
+        }
+
+        btnTabMember.addEventListener('click', () => switchTab('member'));
+        btnTabGuest.addEventListener('click', () => switchTab('guest'));
     </script>
 @endsection

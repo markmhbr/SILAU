@@ -70,7 +70,11 @@ class KasirController extends Controller
             'layanan_id' => 'required|exists:layanan,id',
             'berat_aktual' => 'required|numeric|min:0.1',
             'metode_pembayaran' => 'required|in:tunai,qris',
-            'email' => 'nullable|email',
+            'pelanggan_tipe' => 'required|in:member,guest',
+            'email' => 'required_if:pelanggan_tipe,member|nullable|email',
+            'nama_guest' => 'required_if:pelanggan_tipe,guest|nullable|string',
+            'no_hp_guest' => 'required_if:pelanggan_tipe,guest|nullable|string',
+            'waktu_ambil' => 'required_if:pelanggan_tipe,guest|nullable|string',
             'diskon_id' => 'nullable|exists:diskon,id',
             'catatan' => 'nullable|string',
         ]);
@@ -81,11 +85,19 @@ class KasirController extends Controller
 
             // pelanggan (member / guest)
             $pelanggan = null;
-            if ($request->filled('email')) {
+            $namaGuest = null;
+            $hpGuest = null;
+            $waktuAmbil = null;
+
+            if ($request->pelanggan_tipe === 'member' && $request->filled('email')) {
                 $user = User::where('email', $request->email)->first();
                 if ($user && $user->pelanggan) {
                     $pelanggan = $user->pelanggan;
                 }
+            } else {
+                $namaGuest = $request->nama_guest;
+                $hpGuest = $request->no_hp_guest;
+                $waktuAmbil = $request->waktu_ambil;
             }
 
             $layanan = Layanan::findOrFail($request->layanan_id);
@@ -120,6 +132,9 @@ class KasirController extends Controller
                 'order_id'         => 'TRX-' . time(),
                 'kasir_id'         => $kasir->id,
                 'pelanggan_id'     => $pelanggan?->id,
+                'nama_guest'       => $namaGuest,
+                'no_hp_guest'      => $hpGuest,
+                'waktu_ambil'      => $waktuAmbil,
                 'layanan_id'       => $layanan->id,
                 'diskon_id'        => $request->diskon_id,
                 'cara_serah'       => 'antar',
@@ -149,8 +164,9 @@ class KasirController extends Controller
                         'gross_amount' => $transaksi->harga_final,
                     ],
                     'customer_details' => [
-                        'first_name' => $transaksi->pelanggan ? $transaksi->pelanggan->user->name : 'Pelanggan',
+                        'first_name' => $transaksi->pelanggan ? $transaksi->pelanggan->user->name : ($transaksi->nama_guest ?? 'Guest'),
                         'email' => $transaksi->pelanggan ? $transaksi->pelanggan->user->email : 'guest@example.com',
+                        'phone' => $transaksi->pelanggan ? $transaksi->pelanggan->no_hp : $transaksi->no_hp_guest,
                     ],
                 ];
 
@@ -282,8 +298,9 @@ class KasirController extends Controller
                         'gross_amount' => $transaksi->harga_final,
                     ],
                     'customer_details' => [
-                        'first_name' => $transaksi->pelanggan ? $transaksi->pelanggan->user->name : 'Pelanggan',
+                        'first_name' => $transaksi->pelanggan ? $transaksi->pelanggan->user->name : ($transaksi->nama_guest ?? 'Guest'),
                         'email' => $transaksi->pelanggan ? $transaksi->pelanggan->user->email : 'guest@example.com',
+                        'phone' => $transaksi->pelanggan ? $transaksi->pelanggan->no_hp : $transaksi->no_hp_guest,
                     ],
                 ];
 

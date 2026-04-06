@@ -73,8 +73,19 @@
 
     <div>
         <div class="bold">Pelanggan:</div>
-        <div>{{ $transaksi->pelanggan->user->name ?? 'Guest' }}</div>
-        <div>{{ $transaksi->pelanggan->no_hp ?? '-' }}</div>
+        @if ($transaksi->pelanggan)
+            <div>{{ $transaksi->pelanggan->user->name }}</div>
+            <div>{{ $transaksi->pelanggan->no_hp ?? '-' }}</div>
+        @elseif($transaksi->nama_guest)
+            <div>{{ $transaksi->nama_guest }}</div>
+            <div>{{ $transaksi->no_hp_guest ?? '-' }}</div>
+            @if ($transaksi->waktu_ambil)
+                <div>Ambil: <span class="bold">{{ strtoupper($transaksi->waktu_ambil) }}</span></div>
+            @endif
+        @else
+            <div>Guest</div>
+            <div>-</div>
+        @endif
     </div>
 
     <div class="line"></div>

@@ -25,7 +25,10 @@ class Transaksi extends Model
         'snap_token',
         'paid_at',
         'status',
-        'catatan'
+        'catatan',
+        'nama_guest',
+        'no_hp_guest',
+        'waktu_ambil',
     ];
 
     // Tambahkan ini agar tanggal bisa di-format

@@ -75,9 +75,16 @@
                                     </td>
                                     <td class="px-4 py-4">
                                         <div class="font-bold text-slate-800 dark:text-white uppercase">
-                                            {{ $transaksi->pelanggan?->user?->name ?? 'Guest/Umum' }}</div>
-                                        <div class="text-[10px] text-slate-400">{{ $transaksi->pelanggan?->no_hp ?? '-' }}
+                                            {{ $transaksi->pelanggan?->user?->name ?? ($transaksi->nama_guest ?? 'Guest/Umum') }}
                                         </div>
+                                        <div class="text-[10px] text-slate-400">
+                                            {{ $transaksi->pelanggan?->no_hp ?? ($transaksi->no_hp_guest ?? '-') }}
+                                        </div>
+                                        @if ($transaksi->waktu_ambil)
+                                            <div class="text-[9px] font-black text-brand uppercase mt-1 italic">
+                                                Ambil: {{ $transaksi->waktu_ambil }}
+                                            </div>
+                                        @endif
                                     </td>
                                     <td class="px-4 py-4">
                                         <div class="text-slate-700 dark:text-slate-300 font-black text-xs uppercase">

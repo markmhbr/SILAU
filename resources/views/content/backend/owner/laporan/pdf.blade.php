@@ -46,7 +46,13 @@
             <td style="text-align: center;">{{ $index + 1 }}</td>
             <td>{{ $item->created_at->format('d/m/Y') }}</td>
             <td><strong>{{ $item->order_id }}</strong></td>
-            <td>{{ $item->pelanggan->nama ?? 'Guest' }}</td>
+            <td>
+                {{ $item->pelanggan->user->name ?? ($item->nama_guest ?? 'Guest') }}
+                <br><span style="font-size: 8px; color: #666;">{{ $item->pelanggan->no_hp ?? ($item->no_hp_guest ?? '-') }}</span>
+                @if($item->waktu_ambil)
+                    <br><span style="font-size: 8px; color: #2563eb; font-weight: bold;">Ambil: {{ strtoupper($item->waktu_ambil) }}</span>
+                @endif
+            </td>
             <td>{{ $item->layanan->nama_layanan ?? '-' }}</td>
             <td class="status-badge">{{ strtoupper($item->status) }}</td>
             <td class="text-right">
