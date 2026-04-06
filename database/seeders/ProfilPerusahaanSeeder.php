@@ -15,14 +15,14 @@ class ProfilPerusahaanSeeder extends Seeder
         ProfilPerusahaan::updateOrCreate(
             ['id' => 1], // pastikan cuma satu data
             [
-                'nama_perusahaan' => 'Nama Usaha Demo',
+                'nama_perusahaan' => 'Silau',
                 'deskripsi' => 'Deskripsi singkat tentang usaha demo.',
-                'tentang_kami' => 'Tentang kami demo.',
-                'alamat' => 'Jl. Contoh No. 123, Kota Demo',
-                'no_wa' => '628123456789',
+                'tentang_kami' => 'Tentang kami ...',
+                'alamat' => 'Smk Nurul Islam Affandiyah Cianjur',
+                'no_wa' => '089639011628',
                 'service_hours' => 'Senin - Sabtu, 08:00 - 17:00',
                 'fast_response' => '1-2 jam',
-                'email' => 'demo@email.com',
+                'email' => 'silau@email.com',
                 'instagram' => 'demo_ig',
                 'facebook' => 'demo_fb',
                 'tiktok' => 'demo_tt',
