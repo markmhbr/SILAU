@@ -23,7 +23,10 @@ class ProfilKaryawanController extends Controller
             ->firstOrFail();
 
         // Generate QR code for the profile page
-        $qrCode = QrCode::size(120)->generate($karyawan->barcode);
+        $qrCode = null;
+        if ($karyawan->barcode) {
+            $qrCode = QrCode::size(120)->generate($karyawan->barcode);
+        }
 
         return view('content.backend.karyawan.profile', compact('karyawan', 'qrCode'));
     }
@@ -36,10 +39,13 @@ class ProfilKaryawanController extends Controller
         $karyawan = Karyawan::with(['user', 'jabatan'])->where('user_id', Auth::id())->firstOrFail();
 
         // QR Code content is the barcode string
-        $qrCode = QrCode::size(200)
-            ->format('svg')
-            ->margin(1)
-            ->generate($karyawan->barcode);
+        $qrCode = null;
+        if ($karyawan->barcode) {
+            $qrCode = QrCode::size(200)
+                ->format('svg')
+                ->margin(1)
+                ->generate($karyawan->barcode);
+        }
 
         return view('content.backend.admin.karyawan.print-card', compact('karyawan', 'qrCode'));
     }

@@ -13,6 +13,20 @@ class Karyawan extends Model
     // Nama tabel secara default adalah 'karyawans' (jamak), 
     // namun jika kamu ingin eksplisit, bisa aktifkan baris di bawah:
     // protected $table = 'karyawans';
+    
+    protected static function booted()
+    {
+        static::creating(function ($karyawan) {
+            if (!$karyawan->barcode) {
+                // Generate a unique barcode like KRY-123456
+                do {
+                    $barcode = 'KRY-' . str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+                } while (static::where('barcode', $barcode)->exists());
+                
+                $karyawan->barcode = $barcode;
+            }
+        });
+    }
 
     protected $fillable = [
         'user_id',
