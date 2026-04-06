@@ -102,6 +102,20 @@ class DriverController extends Controller
     }
 
     /**
+     * Dedicated navigation view for drivers
+     */
+    public function peta(Transaksi $transaksi)
+    {
+        $karyawan = auth()->user()->karyawan;
+
+        if ($transaksi->driver_id !== $karyawan->id) {
+            abort(403, 'Akses ditolak');
+        }
+
+        return view('content.backend.karyawan.driver.peta', compact('transaksi'));
+    }
+
+    /**
      * Update lokasi driver secara real-time
      */
     public function updateLokasi(Request $request, Transaksi $transaksi)

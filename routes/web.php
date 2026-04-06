@@ -184,6 +184,9 @@ Route::middleware(['auth', 'role:karyawan'])->prefix('karyawan')->name('karyawan
         Route::post('/jemput/{transaksi}', [DriverController::class, 'jemput'])
             ->name('jemput');
 
+        Route::get('/peta/{transaksi}', [DriverController::class, 'peta'])
+            ->name('peta');
+
         // =====================
         // PENGANTARAN
         // =====================

@@ -98,11 +98,17 @@
                     {{-- ACTION --}}
                     <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-4">
 
-                        <a href="https://www.google.com/maps?q={{ $destLat }},{{ $destLng }}"
-                           target="_blank"
-                           class="flex items-center gap-2 text-orange-600 font-bold text-xs uppercase tracking-widest">
-                            🧭 Buka Google Maps
-                        </a>
+                        <div class="flex items-center gap-4">
+                            <a href="https://www.google.com/maps?q={{ $destLat }},{{ $destLng }}"
+                               target="_blank"
+                               class="flex items-center gap-2 text-slate-400 font-bold text-[10px] uppercase tracking-widest hover:text-slate-600 transition-colors">
+                                🧭 Eksternal Maps
+                            </a>
+                            <a href="{{ route('karyawan.driver.peta', $item->id) }}"
+                               class="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-700 dark:text-slate-300 font-bold text-[10px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                                🗺️ Buka Navigasi App
+                            </a>
+                        </div>
 
                         @if ($item->status == 'menunggu penjemputan')
                             <form action="{{ route('karyawan.driver.jemput', $item->id) }}" method="POST">
