@@ -65,7 +65,7 @@ class Pelanggan extends Model
         }
         
         // Return avatar default jika tidak ada foto
-        return asset('images/default-pelanggan.png'); 
+        return asset('images/default-avatar.svg'); 
     }
 
     /**

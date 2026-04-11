@@ -41,9 +41,7 @@
                                 <div
                                     class="relative w-52 h-52 rounded-full overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl">
                                     <img id="profile-photo"
-                                        src="{{ $owner->foto
-                                            ? asset('storage/' . $owner->foto)
-                                            : 'https://ui-avatars.com/api/?name=' . urlencode($owner->user->name) . '&background=10b981&color=fff&size=200' }}"
+                                        src="{{ $owner->foto_url }}"
                                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                                 </div>
 

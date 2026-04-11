@@ -53,8 +53,8 @@
                                     <td class="px-4 py-5 font-bold">
                                         <div class="flex items-center gap-3">
                                             <div
-                                                class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black">
-                                                {{ substr($pelanggan->user->name ?? 'P', 0, 1) }}
+                                                class="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 shadow-sm flex items-center justify-center">
+                                                <img src="{{ $pelanggan->foto_url }}" alt="{{ $pelanggan->user->name ?? 'Pelanggan' }}" class="w-full h-full object-cover">
                                             </div>
                                             <div class="flex flex-col">
                                                 <span

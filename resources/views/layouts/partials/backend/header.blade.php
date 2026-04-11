@@ -25,10 +25,23 @@
             <div class="relative" x-data="{ open: false }">
                 <button @click.stop="open = !open" type="button"
                     class="flex items-center gap-2 p-1 bg-white dark:bg-slate-800 rounded-full border border-slate-200 dark:border-slate-700 hover:ring-2 ring-indigo-500/20 transition focus:outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-sm">
+                    @php
+                        $user = Auth::user();
+                        $fotoUrl = null;
+                        if ($user->role == 'pelanggan' && $user->pelanggan) {
+                            $fotoUrl = $user->pelanggan->foto_url;
+                        } elseif ($user->karyawan) {
+                            $fotoUrl = $user->karyawan->foto_url;
+                        }
+                    @endphp
                     <div
-                        class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center overflow-hidden">
-                        <span
-                            class="text-sm font-bold text-indigo-600 dark:text-indigo-400">{{ substr(Auth::user()->name, 0, 1) }}</span>
+                        class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700">
+                        @if ($fotoUrl)
+                            <img src="{{ $fotoUrl }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
+                        @else
+                            <span
+                                class="text-sm font-bold text-indigo-600 dark:text-indigo-400">{{ substr($user->name, 0, 1) }}</span>
+                        @endif
                     </div>
                 </button>
 

@@ -1,4 +1,3 @@
-{{-- MENU PROFIL (SAMA UNTUK SEMUA) --}}
 @php
     $userRole = Auth::user()->role;
     // Tentukan route akun secara dinamis
@@ -7,12 +6,15 @@
     if ($userRole == 'pelanggan') {
         $profileRoute = 'pelanggan.profil.index';
         $alamatRoute = 'pelanggan.alamat';
+        $fotoUrl = Auth::user()->pelanggan->foto_url;
     } elseif ($userRole == 'owner') {
         $profileRoute = null; // Owner tidak pakai ini
         $alamatRoute = null; // Owner tidak pakai ini
+        $fotoUrl = Auth::user()->karyawan->foto_url;
     } else {
         $profileRoute = 'karyawan.profil.index';
         $alamatRoute = 'karyawan.alamat';
+        $fotoUrl = Auth::user()->karyawan->foto_url;
     }
 @endphp
 
@@ -128,7 +130,8 @@
                     <button @click.stop="open = !open" type="button"
                         class="flex items-center gap-2 p-1 md:pl-3 bg-slate-100 dark:bg-slate-800 rounded-full border border-slate-200 dark:border-slate-700 hover:ring-2 ring-brand/20 transition focus:outline-none">
                         <span class="text-xs font-bold hidden md:block">{{ Auth::user()->name ?? 'Pengguna' }}</span>
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand to-purple-500 shadow-inner">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand to-purple-500 shadow-inner overflow-hidden border border-white dark:border-slate-700">
+                            <img src="{{ $fotoUrl }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
                         </div>
                     </button>
 

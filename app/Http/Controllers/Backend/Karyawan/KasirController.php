@@ -335,9 +335,9 @@ class KasirController extends Controller
     public function cetakStruk($id)
     {
         $transaksi = Transaksi::with(['pelanggan.user', 'layanan', 'diskon'])->findOrFail($id);
-
         $profil = \App\Models\ProfilPerusahaan::first();
 
+        return view('content.backend.admin.transaksi.struk', compact('transaksi', 'profil'));
     }
 
     /**

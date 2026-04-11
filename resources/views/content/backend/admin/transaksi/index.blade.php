@@ -39,10 +39,6 @@
                 class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-white/50 backdrop-blur-md dark:bg-slate-800/50">
                 <h3 class="font-black text-slate-800 dark:text-white uppercase tracking-widest text-xs">Master Data
                     Transaksi</h3>
-                <a href="{{ route('admin.transaksi.create') }}"
-                    class="inline-flex items-center gap-2 bg-slate-900 dark:bg-brand text-white px-5 py-2.5 rounded-2xl text-xs font-black transition hover:scale-105 shadow-xl shadow-slate-900/20 dark:shadow-brand/20">
-                    <i class="fas fa-plus"></i> INPUT TRANSAKSI
-                </a>
             </div>
 
             <div class="p-6">

@@ -83,7 +83,7 @@ class Karyawan extends Model
             return asset('storage/' . $this->foto);
         }
 
-        return asset('images/default-avatar.png');
+        return asset('images/default-avatar.svg');
     }
 
     /**

@@ -33,27 +33,27 @@ class PelangganController extends Controller
         try {
             $request->validate([
                 'name' => 'required|string|max:255',
-                'email' => 'nullable|email|unique:users,email',
-                'no_hp' => 'required|string|max:15',
-                'alamat' => 'required|string',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:6',
+            ], [
+                'email.unique' => 'Email sudah terdaftar, silakan gunakan email lain!',
+                'password.min' => 'Password minimal 6 karakter.',
             ]);
 
             $user = \App\Models\User::create([
                 'name' => $request->name,
-                'email' => $request->email ?? strtolower(str_replace(' ', '', $request->name)) . rand(100, 999) . '@laundry.com',
-                'password' => bcrypt('pelanggan123'),
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
                 'role' => 'pelanggan',
             ]);
 
             Pelanggan::create([
                 'user_id' => $user->id,
-                'no_hp' => $request->no_hp,
-                'alamat_lengkap' => $request->alamat,
             ]);
 
             return redirect()->route('admin.pelanggan.index')->with('success', 'Data pelanggan berhasil ditambahkan.');
         } catch (\Throwable $th) {
-            throw $th;
+            return back()->withInput()->withErrors(['error' => $th->getMessage()]);
         }
     }
 
@@ -70,7 +70,7 @@ class PelangganController extends Controller
      */
     public function edit(string $id)
     {
-        $pelanggan = Pelanggan::findOrFail($id);
+        $pelanggan = Pelanggan::with('user')->findOrFail($id);
         return view('content.backend.admin.pelanggan.form', compact('pelanggan'));
     }
 
@@ -83,23 +83,22 @@ class PelangganController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'no_hp' => 'required|string|max:15',
-            'alamat' => 'required|string',
+            'email' => 'required|email|unique:users,email,' . $pelanggan->user_id,
         ]);
 
         if ($pelanggan->user) {
-            $updateData = ['name' => $request->name];
-            if ($request->email) {
-                $updateData['email'] = $request->email;
-                $request->validate(['email' => 'email|unique:users,email,' . $pelanggan->user_id]);
+            $updateData = [
+                'name' => $request->name,
+                'email' => $request->email
+            ];
+            
+            if ($request->filled('password')) {
+                $request->validate(['password' => 'string|min:6']);
+                $updateData['password'] = bcrypt($request->password);
             }
+            
             $pelanggan->user->update($updateData);
         }
-
-        $pelanggan->update([
-            'no_hp' => $request->no_hp,
-            'alamat_lengkap' => $request->alamat,
-        ]);
 
         return redirect()->route('admin.pelanggan.index')->with('success', 'Data pelanggan berhasil diupdate!');
     }
