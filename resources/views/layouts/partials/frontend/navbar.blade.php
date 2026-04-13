@@ -6,15 +6,15 @@
     if ($userRole == 'pelanggan') {
         $profileRoute = 'pelanggan.profil.index';
         $alamatRoute = 'pelanggan.alamat';
-        $fotoUrl = Auth::user()->pelanggan->foto_url;
+        $fotoUrl = Auth::user()->pelanggan->foto_url ?? asset('images/default-avatar.svg');
     } elseif ($userRole == 'owner') {
         $profileRoute = null; // Owner tidak pakai ini
         $alamatRoute = null; // Owner tidak pakai ini
-        $fotoUrl = Auth::user()->karyawan->foto_url;
+        $fotoUrl = asset('images/default-avatar.svg'); // Owner pakai default saja
     } else {
         $profileRoute = 'karyawan.profil.index';
         $alamatRoute = 'karyawan.alamat';
-        $fotoUrl = Auth::user()->karyawan->foto_url;
+        $fotoUrl = Auth::user()->karyawan->foto_url ?? asset('images/default-avatar.svg');
     }
 @endphp
 
@@ -130,9 +130,17 @@
                     <button @click.stop="open = !open" type="button"
                         class="flex items-center gap-2 p-1 md:pl-3 bg-slate-100 dark:bg-slate-800 rounded-full border border-slate-200 dark:border-slate-700 hover:ring-2 ring-brand/20 transition focus:outline-none">
                         <span class="text-xs font-bold hidden md:block">{{ Auth::user()->name ?? 'Pengguna' }}</span>
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand to-purple-500 shadow-inner overflow-hidden border border-white dark:border-slate-700">
-                            <img src="{{ $fotoUrl }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
-                        </div>
+                        @if ($userRole != 'owner')
+                            <div
+                                class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand to-purple-500 shadow-inner overflow-hidden border border-white dark:border-slate-700">
+                                <img src="{{ $fotoUrl }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                            </div>
+                        @else
+                            <div
+                                class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[10px] font-bold">
+                                {{ substr(Auth::user()->name, 0, 1) }}
+                            </div>
+                        @endif
                     </button>
 
                     <div x-show="open" x-cloak @click.away="open = false"
