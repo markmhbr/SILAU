@@ -46,9 +46,9 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // ================= DATA GRAFIK PENJUALAN (30 HARI TERAKHIR) =================
+        // ================= DATA GRAFIK PENJUALAN (7 HARI TERAKHIR) =================
         $salesData = Transaksi::where('status', 'selesai')
-            ->where('created_at', '>=', now()->subDays(30))
+            ->where('created_at', '>=', now()->subDays(7))
             ->selectRaw('DATE(created_at) as date, SUM(harga_final) as total')
             ->groupBy('date')
             ->orderBy('date')
@@ -58,8 +58,8 @@ class DashboardController extends Controller
         $chartLabels = [];
         $chartTotals = [];
 
-        // Inisialisasi 30 hari terakhir dengan 0 jika tidak ada transaksi
-        for ($i = 29; $i >= 0; $i--) {
+        // Inisialisasi 7 hari terakhir dengan 0 jika tidak ada transaksi
+        for ($i = 6; $i >= 0; $i--) {
             $date = now()->subDays($i)->format('Y-m-d');
             $chartLabels[] = now()->subDays($i)->format('d M');
             

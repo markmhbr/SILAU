@@ -105,7 +105,7 @@
                             Grafik Penjualan
                         </h2>
                         <p class="text-sm text-slate-500 dark:text-slate-400">
-                            Performa omzet 30 hari terakhir
+                            Performa omzet 7 hari terakhir
                         </p>
                     </div>
                     <div class="text-right">
@@ -141,8 +141,20 @@
                             <tr class="bg-slate-50/70 dark:bg-slate-800/40">
                                 <td class="px-4 py-4">
                                     <div class="font-bold text-slate-800 dark:text-white">
-                                        {{ $item->pelanggan->user->name ?? 'Guest' }}
+                                        @if ($item->pelanggan)
+                                            {{ $item->pelanggan->user->name }}
+                                        @else
+                                            {{ $item->nama_guest ?? 'Guest' }}
+                                        @endif
                                     </div>
+                                    <div class="text-[10px] text-slate-500">
+                                        {{ $item->pelanggan->no_hp ?? ($item->no_hp_guest ?? '-') }}
+                                    </div>
+                                    @if ($item->waktu_ambil)
+                                        <div class="text-[9px] font-bold text-brand uppercase">
+                                            Ambil: {{ $item->waktu_ambil }}
+                                        </div>
+                                    @endif
                                     <div class="text-[10px] text-slate-400 uppercase tracking-tight">
                                         {{ $item->order_id ?? '#PENDING' }}
                                     </div>
