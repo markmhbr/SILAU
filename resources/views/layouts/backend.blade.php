@@ -31,6 +31,8 @@
 
     @include('layouts.partials.frontend.footer')
 
+    @stack('scripts')
+
 </body>
 
 </html>

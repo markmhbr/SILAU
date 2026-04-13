@@ -96,6 +96,29 @@
         </div>
 
 
+        {{-- ================= GRAFIK PENJUALAN ================= --}}
+        <div class="grid grid-cols-1 gap-6 mb-10">
+            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-white">
+                            Grafik Penjualan
+                        </h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">
+                            Performa omzet 30 hari terakhir
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-bold text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1 rounded-full uppercase tracking-wider">
+                            Realtime
+                        </span>
+                    </div>
+                </div>
+                <div id="salesChart" class="w-full"></div>
+            </div>
+        </div>
+
+
         {{-- ================= TABEL TRANSAKSI TERAKHIR ================= --}}
         <div
             class="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
@@ -170,3 +193,116 @@ if($item->status === 'selesai') echo 'bg-emerald-100 text-emerald-600';
 
     </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const labels = @json($chartLabels);
+            const totals = @json($chartTotals);
+
+            const options = {
+                series: [{
+                    name: 'Omzet',
+                    data: totals
+                }],
+                chart: {
+                    height: 350,
+                    type: 'area',
+                    toolbar: {
+                        show: false
+                    },
+                    zoom: {
+                        enabled: false
+                    },
+                    fontFamily: 'Inter, sans-serif'
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3,
+                    colors: ['#10b981']
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.45,
+                        opacityTo: 0.05,
+                        stops: [20, 100, 100, 100]
+                    }
+                },
+                xaxis: {
+                    categories: labels,
+                    labels: {
+                        style: {
+                            colors: '#94a3b8',
+                            fontSize: '12px'
+                        }
+                    },
+                    axisBorder: {
+                        show: false
+                    },
+                    axisTicks: {
+                        show: false
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function(val) {
+                            return "Rp " + new Intl.NumberFormat('id-ID').format(val);
+                        },
+                        style: {
+                            colors: '#94a3b8',
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                tooltip: {
+                    x: {
+                        format: 'dd MMM'
+                    },
+                    y: {
+                        formatter: function(val) {
+                            return "Rp " + new Intl.NumberFormat('id-ID').format(val);
+                        }
+                    }
+                },
+                colors: ['#10b981'],
+                grid: {
+                    borderColor: '#e2e8f0',
+                    strokeDashArray: 4,
+                    padding: {
+                        left: 20,
+                        right: 20
+                    }
+                },
+                theme: {
+                    mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+                }
+            };
+
+            const chart = new ApexCharts(document.querySelector("#salesChart"), options);
+            chart.render();
+
+            // Handle theme change if needed
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === "class") {
+                        const isDark = document.documentElement.classList.contains('dark');
+                        chart.updateOptions({
+                            theme: {
+                                mode: isDark ? 'dark' : 'light'
+                            }
+                        });
+                    }
+                });
+            });
+            observer.observe(document.documentElement, {
+                attributes: true
+            });
+        });
+    </script>
+@endpush

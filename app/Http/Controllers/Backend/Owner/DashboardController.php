@@ -46,6 +46,27 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // ================= DATA GRAFIK PENJUALAN (30 HARI TERAKHIR) =================
+        $salesData = Transaksi::where('status', 'selesai')
+            ->where('created_at', '>=', now()->subDays(30))
+            ->selectRaw('DATE(created_at) as date, SUM(harga_final) as total')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // Format data untuk ApexCharts
+        $chartLabels = [];
+        $chartTotals = [];
+
+        // Inisialisasi 30 hari terakhir dengan 0 jika tidak ada transaksi
+        for ($i = 29; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $chartLabels[] = now()->subDays($i)->format('d M');
+            
+            $found = $salesData->firstWhere('date', $date);
+            $chartTotals[] = $found ? (int)$found->total : 0;
+        }
+
         return view('content.backend.owner.dashboard', compact(
             'omzetHariIni',
             'totalTransaksiHariIni',
@@ -53,7 +74,9 @@ class DashboardController extends Controller
             'omzetBulanIni',
             'orderBelumSelesai',
             'layananTerlaris',
-            'transaksiTerbaru'
+            'transaksiTerbaru',
+            'chartLabels',
+            'chartTotals'
         ));
     }
 }
